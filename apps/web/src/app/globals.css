@@ -13,4 +13,8 @@
     background: #101D42;
 }
 
+.bg-gradient{
+    background: linear-gradient(209deg, #68A6F0 39.31%, #F8C670 95.78%);
+}
+
 

@@ -11,9 +11,9 @@ export default function Nav_Home() {
 
       <ul className='flex gap-10 whitespace-nowrap justify-around items-center'>
               <li className="hover:text-black"><Link href="">Features</Link></li>
-              <li><Link href="">Contact Us</Link></li>
-              <li><Link href="">Login</Link></li>
-              <li><Link href="/signup" className="text-md px-10 py-4 bg-[#101D42] text-white">Sign Up</Link></li>
+              <li className="hover:text-black"><Link href="">Contact Us</Link></li>
+              <li className="hover:text-black"><Link href="">Login</Link></li>
+              <li className="hover:text-black"><Link href="/signup" className="text-md px-10 py-4 bg-[#101D42] text-white">Sign Up</Link></li>
               {/* <button className=' text-md px-10 py-3 bg-[#101D42] text-white'>Sign Up</button> */}
           </ul>
       
