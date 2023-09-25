@@ -30,7 +30,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     } catch (err) {
       console.log(err);
     } finally {
-      setIsLoading(false);
+       setIsLoading(false);
     }
   }
 
