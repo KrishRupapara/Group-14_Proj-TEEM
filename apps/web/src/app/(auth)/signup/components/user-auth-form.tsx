@@ -12,7 +12,11 @@ interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [user, setUser] = React.useState({ email: "", password: "" });
+  const [user, setUser] = React.useState({
+    username: "",
+    email: "",
+    password: "",
+  });
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
@@ -52,20 +56,34 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
               disabled={isLoading}
               onChange={(e) => setUser({ ...user, email: e.target.value })}
             />
+            <Label className="sr-only" htmlFor="username">
+              User name
+            </Label>
+            <Input
+              id="username"
+              placeholder="Enter your name"
+              type="text"
+              autoCapitalize="none"
+              autoComplete="text"
+              autoCorrect="off"
+              disabled={isLoading}
+              onChange={(e) => setUser({ ...user, username: e.target.value })}
+            />
+
+            <Label className="sr-only" htmlFor="password">
+              Email
+            </Label>
+            <Input
+              id="password"
+              placeholder="Password"
+              type="password"
+              autoCapitalize="none"
+              autoComplete="off"
+              autoCorrect="off"
+              disabled={isLoading}
+              onChange={(e) => setUser({ ...user, password: e.target.value })}
+            />
           </div>
-          <Label className="sr-only" htmlFor="password">
-            Email
-          </Label>
-          <Input
-            id="password"
-            placeholder="Password"
-            type="password"
-            autoCapitalize="none"
-            autoComplete="off"
-            autoCorrect="off"
-            disabled={isLoading}
-            onChange={(e) => setUser({ ...user, password: e.target.value })}
-          />
 
           <Button disabled={isLoading}>
             {isLoading && (
