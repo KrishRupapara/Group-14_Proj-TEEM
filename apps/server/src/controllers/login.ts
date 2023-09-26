@@ -3,10 +3,14 @@ import { Request, Response } from "express";
 import { db } from "../db";
 import { users } from "../db/schema";
 import { eq } from "drizzle-orm";
+import { createTokenUserJWT } from '../utils/createTokenUser'
+import { attachCookiesToResponse } from '../utils/attachCookiesToResponse'
 
+// const { attachCookiesToResponse, createTokenUserJWT } = require('../utils');
 // import { StatusCodes } from "http-status-codes";
-import { randomBytes } from "crypto";
-import { sendVerificationEmail } from "../utils/sendVerificationEmail";
+import jwt from 'jsonwebtoken';
+
+
 
 export const loginGet = async (req: Request, res: Response) => {
   //     res.sendFile(__dirname + '/public/signup.html');
@@ -19,24 +23,34 @@ export const loginPost = async (req: Request, res: Response) => {
     return res.status(400).send({ error: "Please provide email and password" });
   }
 
+  try {
 
-  const User = await db.select().from(users).where(eq(users.emailId, email)).limit(1);
+    const User = await db
+      .select()
+      .from(users)
+      .where(eq(users.emailId, email))
+      .limit(1);
 
+    if (!User) {
+      return res.status(400).send({ error: "Invalid Credentials" });
+    }
 
-  if (!User) {
-    return res.status(400).send({ error: "Invalid Credentials" });
+    const isPasswordCorrect = User[0].password === password;
+
+    if (!isPasswordCorrect) {
+      return res.status(400).send({ error: "Invalid Credentials" });
+    }
+
+    const userJwtToken = createTokenUserJWT(User[0].id);
+    // const tokenUser = createTokenUser(User);
+    attachCookiesToResponse(res, userJwtToken );
+
+    // res.status(StatusCodes.OK).json({ user: tokenUser });
+
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send({ message: "Internal server error" });
   }
 
-  const isPasswordCorrect = (User[0].password === password);
-
-  if (!isPasswordCorrect) {
-    return res.status(400).send({ error: "Invalid Credentials" });
-  }
-
-  const tokenUser = createTokenUser(user);
-  attachCookiesToResponse({ res, user: tokenUser });
-
-  res.status(StatusCodes.OK).json({ user: tokenUser });
-
-  res.send({ message: "Signup successful" });
+  res.send({ message: "Login successful" });
 };

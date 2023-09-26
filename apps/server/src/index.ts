@@ -4,16 +4,21 @@ import cors from "cors";
 import router from "./routes";
 import { db } from "./db";
 import { users } from "./db/schema";
+import cookieParser from "cookie-parser";
+// import cookieParser = require("cookie-parser");
+
 
 dotenv.config();
 
-const deleteUser = async () => {
-  await db.delete(users);
-};
+// const deleteUser = async () => {
+//   await db.delete(users);
+// };
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
+app.use("/api", router);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -21,7 +26,6 @@ app.get("/", (req, res) => {
 
 // deleteUser();
 
-app.use("/api", router);
 
 const PORT = process.env.PORT || 3500;
 
