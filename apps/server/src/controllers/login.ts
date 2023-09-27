@@ -14,6 +14,8 @@ import jwt from 'jsonwebtoken';
 
 export const loginGet = async (req: Request, res: Response) => {
   //     res.sendFile(__dirname + '/public/signup.html');
+  res.send("<h1>Login</h1>");
+
 };
 
 export const loginPost = async (req: Request, res: Response) => {
@@ -42,7 +44,7 @@ export const loginPost = async (req: Request, res: Response) => {
     }
 
     const userJwtToken = createTokenUserJWT(User[0].id);
-    // const tokenUser = createTokenUser(User);
+    
     attachCookiesToResponse(res, userJwtToken );
 
     // res.status(StatusCodes.OK).json({ user: tokenUser });

@@ -11,7 +11,7 @@ type users = typeof users.$inferInsert;
 export const signupGet = async (req: Request, res: Response) => {
   
 //     res.sendFile(__dirname + '/public/signup.html');
-  
+        res.send("<h1>Signup</h1>");
 };
 
 

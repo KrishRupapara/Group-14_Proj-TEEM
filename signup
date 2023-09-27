@@ -1,0 +1,39 @@
+[1mdiff --git a/apps/server/src/controllers/login.ts b/apps/server/src/controllers/login.ts[m
+[1mindex 8a94dac..9bb3894 100644[m
+[1m--- a/apps/server/src/controllers/login.ts[m
+[1m+++ b/apps/server/src/controllers/login.ts[m
+[36m@@ -14,6 +14,8 @@[m [mimport jwt from 'jsonwebtoken';[m
+ [m
+ export const loginGet = async (req: Request, res: Response) => {[m
+   //     res.sendFile(__dirname + '/public/signup.html');[m
+[32m+[m[32m  res.send("<h1>Login</h1>");[m
+[32m+[m
+ };[m
+ [m
+ export const loginPost = async (req: Request, res: Response) => {[m
+[1mdiff --git a/apps/server/src/controllers/signup.ts b/apps/server/src/controllers/signup.ts[m
+[1mindex 5fcf244..18f10c2 100644[m
+[1m--- a/apps/server/src/controllers/signup.ts[m
+[1m+++ b/apps/server/src/controllers/signup.ts[m
+[36m@@ -11,7 +11,7 @@[m [mtype users = typeof users.$inferInsert;[m
+ export const signupGet = async (req: Request, res: Response) => {[m
+   [m
+ //     res.sendFile(__dirname + '/public/signup.html');[m
+[31m-  [m
+[32m+[m[32m        res.send("<h1>Signup</h1>");[m
+ };[m
+ [m
+ [m
+[1mdiff --git a/apps/server/src/utils/attachCookiesToResponse.ts b/apps/server/src/utils/attachCookiesToResponse.ts[m
+[1mindex 886858c..ab70c1d 100644[m
+[1m--- a/apps/server/src/utils/attachCookiesToResponse.ts[m
+[1m+++ b/apps/server/src/utils/attachCookiesToResponse.ts[m
+[36m@@ -7,7 +7,7 @@[m [mexport const  attachCookiesToResponse = ( res : Response, userJwtToken : string)[m
+ [m
+   const expiresIn = 1000 * 60 * 60 * 24; // one day[m
+ [m
+[31m-  res.cookie('token', userJwtToken, {[m
+[32m+[m[32m  res.cookie('jwtToken', userJwtToken, {[m
+     httpOnly: true,[m
+     expires: new Date(Date.now() + expiresIn),[m
+     // secure: process.env.NODE_ENV === 'production',[m

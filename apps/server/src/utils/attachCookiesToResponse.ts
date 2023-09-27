@@ -7,7 +7,7 @@ export const  attachCookiesToResponse = ( res : Response, userJwtToken : string)
 
   const expiresIn = 1000 * 60 * 60 * 24; // one day
 
-  res.cookie('token', userJwtToken, {
+  res.cookie('jwtToken', userJwtToken, {
     httpOnly: true,
     expires: new Date(Date.now() + expiresIn),
     // secure: process.env.NODE_ENV === 'production',
