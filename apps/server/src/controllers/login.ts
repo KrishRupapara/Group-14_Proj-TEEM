@@ -33,7 +33,7 @@ export const loginPost = async (req: Request, res: Response) => {
       .where(eq(users.emailId, email))
       .limit(1);
 
-    if (!User) {
+    if (User.length<1) {
       return res.status(400).send({ error: "Invalid Credentials" });
     }
 
@@ -45,7 +45,7 @@ export const loginPost = async (req: Request, res: Response) => {
 
     const userJwtToken = createTokenUserJWT(User[0].id);
     
-    attachCookiesToResponse(res, userJwtToken );
+    attachCookiesToResponse(res, userJwtToken );    
 
     // res.status(StatusCodes.OK).json({ user: tokenUser });
 

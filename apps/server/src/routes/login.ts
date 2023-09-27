@@ -4,9 +4,9 @@ import express, { Router } from "express";
 
 
 
-const login: Router = express.Router();
+const router: Router = express.Router();
 
 // login.use(cookieParser())
-login.route("/login").post(loginPost).get(loginGet); 
+router.route("/login").post(loginPost).get(loginGet); 
 
-export default login;
+export default router;
