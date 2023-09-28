@@ -5,6 +5,7 @@ import { users } from "../db/schema";
 import { eq } from "drizzle-orm";
 import { createTokenUserJWT } from '../utils/createTokenUser'
 import { attachCookiesToResponse } from '../utils/attachCookiesToResponse'
+import bcrypt from "bcrypt";
 
 // const { attachCookiesToResponse, createTokenUserJWT } = require('../utils');
 // import { StatusCodes } from "http-status-codes";
@@ -37,7 +38,8 @@ export const loginPost = async (req: Request, res: Response) => {
       return res.status(400).send({ error: "Invalid Credentials" });
     }
 
-    const isPasswordCorrect = User[0].password === password;
+    const isPasswordCorrect = await bcrypt.compare(password, User[0].password);
+    // const isPasswordCorrect = User[0].password === password;
 
     if (!isPasswordCorrect) {
       return res.status(400).send({ error: "Invalid Credentials" });
