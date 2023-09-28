@@ -28,7 +28,8 @@
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^6.9.5",
     "pg": "^8.11.3",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "yarn": "^1.22.19"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.4",

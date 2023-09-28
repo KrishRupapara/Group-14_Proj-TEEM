@@ -33,7 +33,7 @@ export const signupPost = async (req: Request, res: Response) => {
 
     if (existingUser.length > 0) {
       console.log("Email already exists");
-      return res.status(400).send({ meesage: "Email already exists" });
+      return res.status(400).send({ message: "Email already exists" });
     }
 
     await db.insert(users).values({
