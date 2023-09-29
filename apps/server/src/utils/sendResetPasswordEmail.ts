@@ -7,7 +7,7 @@ export const sendResetPasswordEmail = async (
   verificationToken: string,
   origin: string
 ) => {
-  const resetURL = `${origin}/user/reset-password?token=${verificationToken}&email=${email}`;
+  const resetURL = `${origin}/user/resetPassword?token=${verificationToken}&email=${email}`;
   const message = `<p>Please reset password by clicking on the following link : 
   <a href="${resetURL}">Reset Password</a></p>`;
 

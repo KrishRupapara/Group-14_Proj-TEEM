@@ -29,37 +29,32 @@ export const resetPasswordPost = async (req : Request, res : Response) => {
 
     const verificationToken = randomBytes(32).toString("hex");
 
-    const User = await db
+    let User = await db
       .select()
       .from(users)
       .where(eq(users.emailId, email))
       .limit(1);
 
-    if (User.length<1) {
-      return res.status(400).send({ error: "Invalid Credentials" });
-    }
+    res.send(User);
 
-    const isPasswordCorrect = await bcrypt.compare(password, User[0].password);
-    if (!isPasswordCorrect) {
-      return res.status(400).send({ error: "Invalid Credentials" });
-    }
 
-    const salt = await bcrypt.genSalt();
-    const Newpassword = await bcrypt.hash(password, salt);
+    // if (User.length<1) {
+    //   return res.status(400).send({ error: "Invalid Credentials" });
+    // }
 
-    await db.insert(users).values({
-      name: username,
-      emailId: email,
-      password: Newpassword,
-      verificationToken: verificationToken
-    });
+    // const salt = await bcrypt.genSalt();
+    // const Newpassword = await bcrypt.hash(password, salt);
 
-    await sendResetPasswordEmail(
-      username,
-      email,
-      verificationToken,
-      "http://localhost:3500"
-    );
+    // db.models.User
+    // .update({ password: newPassword })
+    // .where({ email: email })
+
+    // await sendResetPasswordEmail(
+    //   username,
+    //   email,
+    //   verificationToken,
+    //   "http://localhost:3500"
+    // );
     
 
   } catch (err) {
