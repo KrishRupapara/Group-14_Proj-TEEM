@@ -19,7 +19,7 @@ export const resetPasswordGet = async (req: Request, res: Response) => {
 };
 
 
-export const resetPassword = async (req : Request, res : Response) => {
+export const resetPasswordPost = async (req : Request, res : Response) => {
   const { token, email, password } = req.body;
   if (!token || !email || !password) {
     return res.status(400).send({ error: "Invalid/insufficient email or Password or token" });
@@ -40,10 +40,7 @@ export const resetPassword = async (req : Request, res : Response) => {
     if (!isPasswordCorrect) {
       return res.status(400).send({ error: "Invalid Credentials" });
     }
-
-    const userJwtToken = createTokenUserJWT(User[0].id);
     
-    attachCookiesToResponse(res, userJwtToken );
 
   } catch (err) {
     console.log(err);
