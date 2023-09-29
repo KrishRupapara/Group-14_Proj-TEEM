@@ -6,5 +6,4 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
   emailId: varchar("email_id", { length: 60 }).notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
-  verificationToken: text("verification_token").notNull(),
 });

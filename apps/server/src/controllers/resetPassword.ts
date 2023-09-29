@@ -21,9 +21,9 @@ export const resetPasswordGet = async (req: Request, res: Response) => {
 
 
 export const resetPasswordPost = async (req : Request, res : Response) => {
-  const { token, email, password , username} = req.body;
-  if (!token || !email || !password) {
-    return res.status(400).send({ error: "Invalid/insufficient email or Password or token" });
+  let { email, password} = req.body;
+  if (!email || !password) {
+    return res.status(400).send({ error: "Invalid/insufficient email or Password" });
   }
   try {
 
@@ -35,32 +35,30 @@ export const resetPasswordPost = async (req : Request, res : Response) => {
       .where(eq(users.emailId, email))
       .limit(1);
 
-    res.send(User);
-
-
-    // if (User.length<1) {
-    //   return res.status(400).send({ error: "Invalid Credentials" });
-    // }
-
-    // const salt = await bcrypt.genSalt();
-    // const Newpassword = await bcrypt.hash(password, salt);
-
-    // db.models.User
-    // .update({ password: newPassword })
-    // .where({ email: email })
-
-    // await sendResetPasswordEmail(
-    //   username,
-    //   email,
-    //   verificationToken,
-    //   "http://localhost:3500"
-    // );
+    if (User.length<1) {
+      return res.status(400).send({ error: "Invalid Credentials" });
+      
+    }
+    // const oldUser = User;
+    // console.log(User);
     
 
+    const salt = await bcrypt.genSalt();
+    password=await bcrypt.hash(password, salt);
+
+
+
+    await db
+    .update(users)
+    .set({password : password})
+    .where(eq(users.emailId , email));
+    
   } catch (err) {
     console.log(err);
     return res.status(500).send({ message: "Internal server error" });
   }
 
-res.send('reset password');
+
+  res.send("Password has been reset successfully");
+
 };

@@ -23,7 +23,7 @@ export const signupPost = async (req: Request, res: Response) => {
     return res.status(400).send({ error: "Username and password required" });
   }
 
-  const verificationToken = randomBytes(32).toString("hex");
+  // const verificationToken = randomBytes(32).toString("hex");
 
   try {
     const existingUser = await db
@@ -44,15 +44,14 @@ export const signupPost = async (req: Request, res: Response) => {
       name: username,
       emailId: email,
       password: password,
-      verificationToken: verificationToken,
     });
 
-    await sendVerificationEmail(
-      username,
-      email,
-      verificationToken,
-      "http://localhost:3500"
-    );
+    // await sendVerificationEmail(
+    //   username,
+    //   email,
+    //   verificationToken,
+    //   "http://localhost:3500"
+    // );
   } catch (err) {
     console.log(err);
     return res.status(500).send({ message: "Internal server error" });
