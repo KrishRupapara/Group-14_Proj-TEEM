@@ -27,7 +27,7 @@ export const forgotPassword = async (req : Request, res : Response) => {
         if (user.length<1) {
           return res.status(400).send({ error: "Invalid Credentials" });
         }
-  
+
     
   }catch (err) {
     console.log(err);

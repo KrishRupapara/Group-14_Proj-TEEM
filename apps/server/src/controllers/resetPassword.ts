@@ -8,6 +8,7 @@ import { attachCookiesToResponse } from '../utils/attachCookiesToResponse'
 import { randomBytes } from "crypto";
 import { sendVerificationEmail } from "../utils/sendVerificationEmail";
 import bcrypt from "bcrypt";
+import { sendResetPasswordEmail } from "../utils/sendResetPasswordEmail";
 
 type users = typeof users.$inferInsert;
 
@@ -20,11 +21,13 @@ export const resetPasswordGet = async (req: Request, res: Response) => {
 
 
 export const resetPasswordPost = async (req : Request, res : Response) => {
-  const { token, email, password } = req.body;
+  const { token, email, password , username} = req.body;
   if (!token || !email || !password) {
     return res.status(400).send({ error: "Invalid/insufficient email or Password or token" });
   }
   try {
+
+    const verificationToken = randomBytes(32).toString("hex");
 
     const User = await db
       .select()
@@ -40,6 +43,23 @@ export const resetPasswordPost = async (req : Request, res : Response) => {
     if (!isPasswordCorrect) {
       return res.status(400).send({ error: "Invalid Credentials" });
     }
+
+    const salt = await bcrypt.genSalt();
+    const Newpassword = await bcrypt.hash(password, salt);
+
+    await db.insert(users).values({
+      name: username,
+      emailId: email,
+      password: Newpassword,
+      verificationToken: verificationToken
+    });
+
+    await sendResetPasswordEmail(
+      username,
+      email,
+      verificationToken,
+      "http://localhost:3500"
+    );
     
 
   } catch (err) {
