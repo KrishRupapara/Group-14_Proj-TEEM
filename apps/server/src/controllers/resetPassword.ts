@@ -3,12 +3,12 @@ import { Request, Response } from "express";
 import { db } from "../db";
 import { users } from "../db/schema";
 import { eq } from "drizzle-orm";
-import { createTokenUserJWT } from '../utils/createTokenUser'
-import { attachCookiesToResponse } from '../utils/attachCookiesToResponse'
+// import { createTokenUserJWT } from '../utils/createTokenUser'
+// import { attachCookiesToResponse } from '../utils/attachCookiesToResponse'
 import { randomBytes } from "crypto";
-import { sendVerificationEmail } from "../utils/sendVerificationEmail";
+// import { sendVerificationEmail } from "../utils/sendVerificationEmail";
 import bcrypt from "bcrypt";
-import { sendResetPasswordEmail } from "../utils/sendResetPasswordEmail";
+// import { sendResetPasswordEmail } from "../utils/sendResetPasswordEmail";
 
 type users = typeof users.$inferInsert;
 

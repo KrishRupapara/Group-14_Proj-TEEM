@@ -1,4 +1,4 @@
-import { resetPasswordGet,resetPasswordPost } from "../controllers/resetPassword";
+import { resetPasswordGet,resetPasswordPost} from "../controllers/resetPassword";
 import express, { Router } from "express";
 
 
