@@ -1,5 +1,4 @@
-// import { createTestAccount, createTransport } from "nodemailer";
-import { transporter } from "./nodemailerConfig";
+import { transporter } from "../config/nodemailer";
 
 interface SendEmailProps {
   to: string;
@@ -8,8 +7,6 @@ interface SendEmailProps {
 }
 
 export const sendEmail = async ({ to, subject, html }: SendEmailProps) => {
-  // let testAccount = await createTestAccount();
-
   return transporter.sendMail({
     from: '"Krish" <krishrupapara01@gmail.com>',
     to: to,
