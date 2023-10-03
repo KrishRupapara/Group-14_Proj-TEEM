@@ -5,7 +5,7 @@ import { useState } from 'react';
 // import { cn } from "@/lib/utils";
 import { Icons } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
-
+import Link from 'next/link';
 
 export default function Loginpage() {
   
@@ -125,7 +125,7 @@ export default function Loginpage() {
                             )}
                             Login</button>
                         </div>
-                        <span>Doesn't have an account yet? <a href='!#' className='text-blue-800 underline underline-offset-2'>Sign up</a></span>
+                        <span>Doesn't have an account yet? <Link href='/signup' className='text-blue-800 underline underline-offset-2'>Sign up</Link></span>
                         
                     </div>
                 {/* {JSON.stringify(user)} */}

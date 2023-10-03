@@ -1,12 +1,18 @@
-import { Request, Response } from "express";
+import {
+  signupGet,
+  signupPost,
+  loginGet,
+  loginPost,
+  verifyUser,
+} from "./authController";
 
-export const signup = async (req: Request, res: Response) => {
-  // const { email, password } = req.body;
+import { googleoauthHandler } from "./oAuthController";
 
-  // if (!email || !password) {
-  //   return res.status(400).send({ error: "Username and password required" });
-  // }
-  console.log(req.body);
-
-  res.send({ message: "Signup successful" });
+export {
+  signupGet,
+  signupPost,
+  loginGet,
+  loginPost,
+  verifyUser,
+  googleoauthHandler,
 };
