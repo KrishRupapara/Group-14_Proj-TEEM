@@ -5,6 +5,7 @@ import { users } from "../db/schema";
 import { eq } from "drizzle-orm";
 import { randomBytes } from "crypto";
 import { sendVerificationEmail } from "../utils/sendVerificationEmail";
+import bcrypt from "bcrypt";
 
 type users = typeof users.$inferInsert;
 
@@ -16,7 +17,7 @@ export const signupGet = async (req: Request, res: Response) => {
 
 
 export const signupPost = async (req: Request, res: Response) => {
-  const { email, username, password } = req.body;
+  var { email, username, password } = req.body;
 
   if (!email || !username || !password) {
     return res.status(400).send({ error: "Username and password required" });
@@ -35,6 +36,9 @@ export const signupPost = async (req: Request, res: Response) => {
       console.log("Email already exists");
       return res.status(400).send({ message: "Email already exists" });
     }
+
+    const salt = await bcrypt.genSalt();
+    password = await bcrypt.hash(password, salt);
 
     await db.insert(users).values({
       name: username,
