@@ -2,11 +2,12 @@
 import React from 'react'
 import Image from 'next/image'
 import { useState } from 'react';
+// import { cn } from "@/lib/utils";
 import { Icons } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 
 
-export default function UserAuthForm() {
+export default function Loginpage() {
   
     async function submitgoogle(event: React.SyntheticEvent) {
       event.preventDefault();
@@ -62,31 +63,10 @@ export default function UserAuthForm() {
         <div className='h-[calc(100vh-4rem)] flex'>
             <div className='h-full w-1/2 mx-auto p-4 card-bg'>
                 {/* card */}
-                <form action="" onSubmit={onSubmit} className=" mx-auto h-full ">
-                <div className='h-[50vh] w-full py-2 flex flex-col justify-around items-center'>
-                    <h2 className='font-bold text-2xl text-white'>Sign up with TEEM for free</h2> 
+                <form action="" onSubmit={onSubmit} className=" mx-auto h-full flex flex-col justify-center">
+                <div className='h-[40vh] w-full py-2 flex flex-col justify-around items-center '>
+                    <h2 className='font-bold text-2xl text-white'>Login with TEEM for free</h2> 
                         {/* name */}
-                        <div className='flex flex-col w-3/5 mx-auto py-1'>
-                        <label htmlFor="name" id="name" className='font-bold mb-1'>Enter Your Full Name</label>
-                        <input 
-                        id="name"
-                        placeholder="name"
-                        type="text"
-                        autoCapitalize="none"
-                        autoComplete="off"
-                        autoCorrect="off"
-                        disabled={isLoading}
-                        //onChange={(e) => setUser({ ...user, password: e.target.value })}
-                        
-                        className='border border-black rounded-lg bg-gray-200 p-3' 
-                        onChange={(e)=>{
-                            setUser({
-                                ...user,
-                                name:e.target.value
-                            })
-                        }}
-                        value={user.name}/>
-                        </div>
                         {/* email */}
                         <div className='flex flex-col w-3/5 mx-auto py-1'>
                         <label htmlFor="email" id="email" className='font-bold mb-1'>Enter Your Email</label>
@@ -134,29 +114,8 @@ export default function UserAuthForm() {
                         </div>
                     </div>
 
-                    <div className=' h-[30vh] w-full flex flex-col justify-around items-center'>
-                        <p>--------------------------OR--------------------------</p>
-                        <div className='flex flex-col w-3/5 mx-auto py-1'>
-                            <button disabled={isLoading} onClick={submitgoogle}
-                            className='border border-black rounded-full py-2 px-3 hover:bg-gray-300 flex items-center justify-center bg-white'>
-                            {isLoading?(
-                            <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-                            ) : (
-                            <Icons.google className="mr-2 h-4 w-4" />
-                            )}{" "}
-                                {/* <Image src="/img/googlelogo.png" alt='image not found' width={20} height={20}/> */}
-                                &nbsp; Sign Up with Google</button>
-                        </div>
-                        {/* <div className='flex flex-col w-3/5 mx-auto py-1'>
-                            <button disabled={isLoading}
-                            className='border border-black rounded-full py-2 px-3 hover:bg-gray-300 flex items-center justify-center bg-white'>
-                            
-                            {isLoading && (
-                                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-                            )}
-                            <Image src="/img/slacklogo.png" alt='image not found' width={20} height={20}/>
-                                &nbsp; Sign Up with Slack</button>
-                        </div> */}
+                    <div className='h-[20vh] w-full flex flex-col justify-around items-center'>
+                       
                         <div className='flex flex-col w-3/5 mx-auto py-1'>
                             <button disabled={isLoading}
                             type="submit" 
@@ -164,9 +123,9 @@ export default function UserAuthForm() {
                             {isLoading && (
                                 <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
                             )}
-                            Get Started</button>
+                            Login</button>
                         </div>
-                        <span>Already have an account? <a href='!#' className='text-blue-800 underline underline-offset-2'>Log in</a></span>
+                        <span>Doesn't have an account yet? <a href='!#' className='text-blue-800 underline underline-offset-2'>Sign up</a></span>
                         
                     </div>
                 {/* {JSON.stringify(user)} */}
