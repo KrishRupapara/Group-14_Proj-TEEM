@@ -7,6 +7,7 @@ import {
   verifyUser,
   googleoauthHandler,
   forgotPasswordPost,
+  resetPasswordPost,
 } from "../controllers";
 
 const router: Router = Router();
@@ -20,5 +21,7 @@ router.route("/verify").post(verifyUser);
 router.route("/auth/oauth/google").get(googleoauthHandler);
 
 router.route("/forgotPassword").post(forgotPasswordPost);
+
+router.route("resetPassword").post(resetPasswordPost);
 
 export { router as authRouter };

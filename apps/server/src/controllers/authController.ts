@@ -209,3 +209,43 @@ export const forgotPasswordPost = async (req : Request, res : Response) => {
 
 };
 
+export const resetPasswordPost = async (req : Request, res : Response) => {
+  let { email, password , otp} = req.body;
+  if (!email || !password || !otp) {
+    return res.status(400).send({ error: "Invalid/insufficient email or Password" });
+  }
+  try {
+
+    redisClient.get(email, async (err, otp_secure) => {       // extracting otp from redisclient
+      if (err) {
+        console.log(err);
+        return res.status(500).send({ message: "Internal server error" });
+      }
+      console.log(otp_secure);
+      if (!otp_secure) {
+        return res.status(400).send({ message: "OTP expired" });
+      }
+      const isValid = await bcrypt.compare(otp, otp_secure);
+      if (!isValid) {
+        return res.status(400).send({ message: "Invalid OTP" });
+      }
+
+      const salt = await bcrypt.genSalt();              // adding salt
+      password = await bcrypt.hash(password, salt);
+  
+      await db              // update the password inside database.
+        .update(users)
+        .set({ password : password})
+        .where(eq(users.emailId, email));
+  
+      return res.send({ message: "Password Reset Successfully" });
+    });
+    
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send({ message: "Internal server error" });
+  }
+
+
+};
+
