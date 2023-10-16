@@ -4,6 +4,7 @@ import {
   loginGet,
   loginPost,
   verifyUser,
+  forgotPasswordPost,
 } from "./authController";
 
 import { googleoauthHandler } from "./oAuthController";
@@ -15,4 +16,5 @@ export {
   loginPost,
   verifyUser,
   googleoauthHandler,
+  forgotPasswordPost,
 };
