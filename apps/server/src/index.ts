@@ -16,7 +16,7 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import { rateLimit } from "express-rate-limit";
 import { client as redisClient } from "./config/redisConnect";
-import { findSessions } from "./services/sessionServies";
+// import { findSessions } from "./services/sessionServies";
 
 app.set("trust proxy", 1);
 app.use(

@@ -13,9 +13,9 @@ function getGoogleUrl() {
     ].join(" "),
   };
 
-  const qs = new URLSearchParams(options).toString();
+  const qs = new URLSearchParams(options);
 
-  return `${rootUrl}?${qs}`;
+  return `${rootUrl}?${qs.toString()}`;
 }
 
 export default getGoogleUrl;

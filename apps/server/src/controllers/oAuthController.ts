@@ -3,10 +3,12 @@ import { getGoogleOAuthToken, getGoogleUser } from "../services/userServices";
 import { db } from "../config/database";
 import { users } from "../model/User";
 import { signJWT } from "../utils/jwt";
-import { createSession } from "@server/services/sessionServies";
+import { createSession } from "../services/sessionServies";
 
 export const googleoauthHandler = async (req: Request, res: Response) => {
   const code = req.query.code as string;
+
+  console.log(req.query);
 
   try {
     const { id_token, access_token } = await getGoogleOAuthToken({ code });
@@ -24,7 +26,11 @@ export const googleoauthHandler = async (req: Request, res: Response) => {
 
     const id = await db
       .insert(users)
-      .values({ name: googleUser.name, emailId: googleUser.email })
+      .values({
+        name: googleUser.name,
+        emailId: googleUser.email,
+        isVerified: true,
+      })
       .returning({ id: users.id });
 
     const session_id = id[0].id.toString();
