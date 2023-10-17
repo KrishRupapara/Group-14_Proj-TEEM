@@ -230,6 +230,21 @@ export const resetPasswordPost = async (req : Request, res : Response) => {
         return res.status(400).send({ message: "Invalid OTP" });
       }
 
+      const user = await db
+      .select()
+      .from(users)
+      .where(eq(users.emailId, email))
+      .limit(1);
+
+      if (user.length<1) {
+        return res.status(400).send({ error: "Invalid Credentials" });
+      }
+
+      const isSame = await bcrypt.compare(password,user.password);
+      if(isSame){
+        res.status(167).send("New Password is same as current password.");
+      }
+
       const salt = await bcrypt.genSalt();              // adding salt
       password = await bcrypt.hash(password, salt);
   
