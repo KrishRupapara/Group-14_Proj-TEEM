@@ -1,18 +1,20 @@
 "use client";
-
-import * as React from "react";
-
-import { cn } from "@/lib/utils";
+import React from "react";
+import Image from "next/image";
+import { useState } from "react";
 import { Icons } from "@/components/ui/icons";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import Link from "next/link";
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
+import getGoogleUrl from "@/utils/getGoogleurl";
 
-export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [user, setUser] = React.useState({ email: "", password: "" });
+export default function UserAuthForm() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [user, setUser] = useState({
+    email: "",
+    username: "",
+    password: "",
+  });
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
@@ -30,69 +32,165 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     } catch (err) {
       console.log(err);
     } finally {
-       setIsLoading(false);
+      setIsLoading(false);
     }
   }
 
   return (
-    <div className={cn("grid gap-6", className)} {...props}>
-      <form onSubmit={onSubmit}>
-        <div className="grid gap-2">
-          <div className="grid gap-1">
-            <Label className="sr-only" htmlFor="email">
-              Email
-            </Label>
-            <Input
-              id="email"
-              placeholder="name@example.com"
-              type="email"
-              autoCapitalize="none"
-              autoComplete="email"
-              autoCorrect="off"
-              disabled={isLoading}
-              onChange={(e) => setUser({ ...user, email: e.target.value })}
-            />
-          </div>
-          <Label className="sr-only" htmlFor="password">
-            Email
-          </Label>
-          <Input
-            id="password"
-            placeholder="Password"
-            type="password"
-            autoCapitalize="none"
-            autoComplete="off"
-            autoCorrect="off"
-            disabled={isLoading}
-            onChange={(e) => setUser({ ...user, password: e.target.value })}
-          />
+    <div className="bg-gray-300 h-screen">
+      <div className="h-[4rem] signup-bg flex px-5">
+        <Image
+          src="/img/logo.png"
+          alt="Image Not found"
+          width={150}
+          height={150}
+        />
+      </div>
+      <div className="h-[calc(100vh-4rem)] flex">
+        <div className="h-full w-1/2 mx-auto p-4 card-bg">
+          {/* card */}
+          <form action="" onSubmit={onSubmit} className=" mx-auto h-full">
+            <div className="h-[50vh] w-full py-2 flex flex-col justify-around items-center">
+              <h2 className="font-bold text-2xl text-white">
+                Sign up with TEEM for free
+              </h2>
+              {/* name */}
+              <div className="flex flex-col w-3/5 mx-auto py-1">
+                <label htmlFor="name" id="name" className="font-bold mb-1">
+                  Enter Your Full Name
+                </label>
+                <input
+                  id="name"
+                  placeholder="name"
+                  type="text"
+                  autoCapitalize="none"
+                  autoComplete="off"
+                  autoCorrect="off"
+                  disabled={isLoading}
+                  className="rounded-xl focus:outline-slate-600 bg-gray-200 p-3"
+                  onChange={(e) => {
+                    setUser({
+                      ...user,
+                      username: e.target.value,
+                    });
+                  }}
+                  value={user.username}
+                />
+              </div>
+              {/* email */}
+              <div className="flex flex-col w-3/5 mx-auto py-1">
+                <label htmlFor="email" id="email" className="font-bold mb-1">
+                  Enter Your Email
+                </label>
+                <input
+                  id="email"
+                  placeholder="name@example.com"
+                  type="email"
+                  autoCapitalize="none"
+                  autoComplete="email"
+                  autoCorrect="off"
+                  disabled={isLoading}
+                  className="rounded-xl focus:outline-slate-600 bg-gray-200 p-3"
+                  onChange={(e) =>
+                    setUser({
+                      ...user,
+                      email: e.target.value,
+                    })
+                  }
+                  value={user.email}
+                />
+              </div>
+              {/* password */}
+              <div className="flex flex-col w-3/5 mx-auto py-1">
+                <label
+                  htmlFor="password"
+                  id="password"
+                  className="font-bold mb-1"
+                >
+                  Enter Your Password
+                </label>
+                <input
+                  id="password"
+                  placeholder="Password"
+                  type="password"
+                  autoCapitalize="none"
+                  autoComplete="off"
+                  autoCorrect="off"
+                  disabled={isLoading}
+                  className="rounded-xl focus:outline-slate-600  bg-gray-200 p-3"
+                  onChange={(e) => {
+                    setUser({
+                      ...user,
+                      password: e.target.value,
+                    });
+                  }}
+                  value={user.password}
+                />
+              </div>
+            </div>
 
-          <Button disabled={isLoading}>
-            {isLoading && (
-              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            Sign In with Email
-          </Button>
+            <div className=" h-[30vh] w-full flex flex-col justify-around items-center">
+              <p>-------------------------- OR --------------------------</p>
+              <div className="flex flex-col w-3/5 mx-auto py-1">
+                <button
+                  disabled={isLoading}
+                  className="rounded-full px-3 hover:bg-slate-900 hover:text-white transition-colors bg-white"
+                >
+                  <a
+                    href={getGoogleUrl()}
+                    className="flex items-center justify-center py-2"
+                  >
+                    {isLoading ? (
+                      <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <Image
+                        src="/img/googlelogo.png"
+                        alt="image not found"
+                        width={20}
+                        height={20}
+                      />
+                    )}{" "}
+                    &nbsp; Sign Up with Google
+                  </a>
+                </button>
+
+                {/* <a href={getGoogleUrl()}>Google login</a> */}
+              </div>
+
+              <div className="flex flex-col w-3/5 mx-auto py-1">
+                <button
+                  disabled={isLoading}
+                  type="submit"
+                  className=" bg-blue-600 rounded-full py-2 px-3 hover:bg-slate-900 transition-colors font-bold text-white text-lg flex items-center justify-center"
+                >
+                  {isLoading && (
+                    <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Get Started
+                </button>
+              </div>
+              <span>
+                Already have an account?{" "}
+                <Link
+                  href="/login"
+                  className="text-blue-800 underline underline-offset-2"
+                >
+                  Log in
+                </Link>
+              </span>
+            </div>
+            {/* {JSON.stringify(user)} */}
+          </form>
         </div>
-      </form>
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
-          </span>
+        <div className="h-full w-1/2 signup-right flex flex-col items-center justify-center">
+          <Image
+            src="/img/signup1.png"
+            alt="image not found"
+            width={500}
+            height={500}
+          />
         </div>
       </div>
-      <Button variant="outline" type="button" disabled={isLoading}>
-        {isLoading ? (
-          <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-          <Icons.gitHub className="mr-2 h-4 w-4" />
-        )}{" "}
-        Github
-      </Button>
     </div>
   );
 }

@@ -13,8 +13,17 @@
     background: #101D42;
 }
 
-.bg-gradient{
-    background: linear-gradient(209deg, #68A6F0 39.31%, #F8C670 95.78%);
+.signup-bg{
+    background: #101D42;
 }
 
+.signup-right{
+    background: #E9F4F8;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    mix-blend-mode: darken;
+}
 
+.card-bg{
+    background: linear-gradient(224deg, #002ABD 4.54%, #4F66B7 14.52%, rgba(79, 102, 
+    183, 0.56) 29.9%, rgba(79, 102, 183, 0.26) 52.71%, rgba(170, 89, 142, 0.87) 73.01%);
+}
