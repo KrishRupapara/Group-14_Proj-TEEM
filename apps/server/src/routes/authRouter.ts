@@ -1,20 +1,18 @@
 import { Router } from "express";
 import {
-  signupGet,
-  signupPost,
-  loginGet,
-  loginPost,
-  verifyUser,
+  signUpHandler,
+  loginHandler,
+  verifyUserHandler,
   googleoauthHandler,
 } from "../controllers";
 
 const router: Router = Router();
 
-router.route("/signup").get(signupGet).post(signupPost);
+router.route("/signup").post(signUpHandler);
 
-router.route("/login").post(loginPost).get(loginGet);
+router.route("/login").post(loginHandler);
 
-router.route("/verify").post(verifyUser);
+router.route("/verify").post(verifyUserHandler);
 
 router.route("/auth/oauth/google").get(googleoauthHandler);
 

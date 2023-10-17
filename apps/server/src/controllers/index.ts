@@ -1,18 +1,9 @@
 import {
-  signupGet,
-  signupPost,
-  loginGet,
-  loginPost,
-  verifyUser,
+  signUpHandler,
+  verifyUserHandler,
+  loginHandler,
 } from "./authController";
 
 import { googleoauthHandler } from "./oAuthController";
 
-export {
-  signupGet,
-  signupPost,
-  loginGet,
-  loginPost,
-  verifyUser,
-  googleoauthHandler,
-};
+export { signUpHandler, verifyUserHandler, loginHandler, googleoauthHandler };
