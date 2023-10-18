@@ -5,7 +5,7 @@ import express from "express";
 const app = express();
 
 //routers
-import { authRouter } from "./routes";
+import { authRouter ,  workspaceRouter } from "./routes";
 
 //middlewares
 import { requireAuth } from "./middleware/authMiddleware";
@@ -34,6 +34,8 @@ app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET));
 
 app.use("/api", authRouter);
+app.use("/api",  workspaceRouter);
+
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

@@ -81,6 +81,9 @@ importers:
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.2
+      jwt-decode:
+        specifier: ^3.1.2
+        version: 3.1.2
       nodemailer:
         specifier: ^6.9.5
         version: 6.9.5
@@ -93,9 +96,6 @@ importers:
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
-      yarn:
-        specifier: ^1.22.19
-        version: 1.22.19
     devDependencies:
       '@types/cookie-parser':
         specifier: ^1.4.4
@@ -2983,6 +2983,10 @@ packages:
       safe-buffer: 5.2.1
     dev: false
 
+  /jwt-decode@3.1.2:
+    resolution: {integrity: sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A==}
+    dev: false
+
   /keyv@4.5.3:
     resolution: {integrity: sha512-QCiSav9WaX1PgETJ+SpNnx2PRRapJ/oRSXM4VO5OGYGSjrxbKPVFVhB3l2OCbLCk329N8qyAtsJjSjvVBWzEug==}
     dependencies:
@@ -4567,13 +4571,6 @@ packages:
   /yaml@2.3.2:
     resolution: {integrity: sha512-N/lyzTPaJasoDmfV7YTrYCI0G/3ivm/9wdG0aHuheKowWQwGTsK0Eoiw6utmzAnI6pkJa0DUVygvp3spqqEKXg==}
     engines: {node: '>= 14'}
-    dev: false
-
-  /yarn@1.22.19:
-    resolution: {integrity: sha512-/0V5q0WbslqnwP91tirOvldvYISzaqhClxzyUKXYxs07yUILIs5jx/k6CFe8bvKSkds5w+eiOqta39Wk3WxdcQ==}
-    engines: {node: '>=4.0.0'}
-    hasBin: true
-    requiresBuild: true
     dev: false
 
   /yn@3.1.1:

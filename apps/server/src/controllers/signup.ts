@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 
-import { db } from "../db";
-import { users } from "../db/schema";
+import { db } from "../config/database";
+import { users } from "../model/User";
 import { eq } from "drizzle-orm";
 import { randomBytes } from "crypto";
-import { sendVerificationEmail } from "../utils/sendVerificationEmail";
+import { sendOTP } from "../services/sendOTP";
+// import { sendVerificationEmail } from "../utils/sendVerificationEmail";
 import bcrypt from "bcrypt";
 
 type users = typeof users.$inferInsert;
@@ -42,16 +43,15 @@ export const signupPost = async (req: Request, res: Response) => {
 
     await db.insert(users).values({
       name: username,
-      emailId: email,
       password: password,
-      verificationToken: verificationToken,
+      emailId: email,
+      // verificationToken: verificationToken,
     });
 
-    await sendVerificationEmail(
+    await sendOTP(
       username,
       email,
       verificationToken,
-      "http://localhost:3500"
     );
   } catch (err) {
     console.log(err);

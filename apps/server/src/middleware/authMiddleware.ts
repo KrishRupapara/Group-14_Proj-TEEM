@@ -25,6 +25,8 @@ export const requireAuth = (
           // res.redirect('/login');
         } else {
           console.log(decodedToken);
+          res.locals.userid = decodedToken.id;
+          // req.user = decodedToken;
           next();
         }
       }
