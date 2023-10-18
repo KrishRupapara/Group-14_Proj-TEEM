@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 
 import { Request, Response, NextFunction } from "express";
 import cookieParser from "cookie-parser";
+import { signJWT} from "../utils/jwt"
 
 export const requireAuth = (
   req: Request,
@@ -25,7 +26,7 @@ export const requireAuth = (
           // res.redirect('/login');
         } else {
           console.log(decodedToken);
-          res.locals.userid = decodedToken.id;
+          res.locals.userid = decodedToken.userID;
           // req.user = decodedToken;
           next();
         }

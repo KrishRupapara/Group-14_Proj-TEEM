@@ -14,8 +14,8 @@ import { workspaces } from "./Workspace";
   
 export const members = pgTable("members", {
     workspaceID: integer("workspaceID").references(() => workspaces.workspaceID),
-    memberID: varchar("memberID", { length: 60 }).references(() => users.emailId), // emailID is not primary key in users table
-    role: integer("role"),
+    memberID: integer("memberID").references(() => users.userID),
+    role: integer("role").notNull(),
     // createdAt: timestamp("created_at").notNull().defaultNow(),
   }, (table) => {
     return {

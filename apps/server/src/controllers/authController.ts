@@ -54,7 +54,7 @@ export const signupPost = async (req: Request, res: Response) => {
         emailId: email,
         password: password,
       })
-      .returning({ id: users.id });
+      .returning({ id: users.userID });
 
     // console.log(id[0].id);
 
@@ -123,7 +123,7 @@ export const loginPost = async (req: Request, res: Response) => {
       return res.status(400).send({ error: "Invalid Credentials" });
     }
 
-    const session_id = User[0].id.toString();
+    const session_id = User[0].userID.toString();
     const existing_session = await findSessions(session_id);
 
     if (existing_session) {

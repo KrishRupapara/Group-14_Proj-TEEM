@@ -25,7 +25,7 @@ export const googleoauthHandler = async (req: Request, res: Response) => {
     const id = await db
       .insert(users)
       .values({ name: googleUser.name, emailId: googleUser.email })
-      .returning({ id: users.id });
+      .returning({ id: users.userID });
 
     const session_id = id[0].id.toString();
 
