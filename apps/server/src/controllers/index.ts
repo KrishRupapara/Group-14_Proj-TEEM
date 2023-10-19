@@ -1,9 +1,7 @@
 import {
-  signupGet,
-  signupPost,
-  loginGet,
-  loginPost,
-  verifyUser,
+  signUpHandler,
+  verifyUserHandler,
+  loginHandler,
 } from "./authController";
 
 import { googleoauthHandler } from "./oAuthController";
@@ -15,11 +13,9 @@ import {
 
 
 export {
-  signupGet,
-  signupPost,
-  loginGet,
-  loginPost,
-  verifyUser,
+  signUpHandler,
+  verifyUserHandler,
+  loginHandler,
   googleoauthHandler,
   createWorkspaceGet,
   createWorkspacePost,

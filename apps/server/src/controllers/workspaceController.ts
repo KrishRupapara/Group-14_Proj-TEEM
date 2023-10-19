@@ -59,11 +59,8 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
       })
       .returning({ workspace_id: workspaces.workspaceID });
 
+    console.log(workspace_id[0].workspace_id);
     
-
-    //   console.log(workspace_id[0].workspace_id);
-    
-
 
     for (const Member of Members) {
       const { member_id, Role } = Member;

@@ -16,11 +16,7 @@ import {
 } from "../services/sessionServies";
 import { signJWT } from "../utils/jwt";
 
-export const signupGet = async (req: Request, res: Response) => {
-  res.send("<h1>Signup</h1>");
-};
-
-export const signupPost = async (req: Request, res: Response) => {
+export const signUpHandler = async (req: Request, res: Response) => {
   var { email, username, password } = req.body;
 
   if (!email || !username || !password) {
@@ -60,7 +56,7 @@ export const signupPost = async (req: Request, res: Response) => {
 
     console.log(otp);
 
-    // await sendOTP(username, email, otp); //do not remove this comment as it is for sending the email!!!
+    await sendOTP(username, email, otp); //do not remove this comment as it is for sending the email!!!
   } catch (err) {
     console.log(err);
     return res.status(500).send({ message: "Internal server error" });
@@ -69,7 +65,7 @@ export const signupPost = async (req: Request, res: Response) => {
   res.send({ message: "Signup successful" });
 };
 
-export const verifyUser = async (req: Request, res: Response) => {
+export const verifyUserHandler = async (req: Request, res: Response) => {
   const { email, otp } = req.body;
 
   redisClient.get(email, async (err, otp_secure) => {
@@ -95,11 +91,7 @@ export const verifyUser = async (req: Request, res: Response) => {
   });
 };
 
-export const loginGet = async (req: Request, res: Response) => {
-  res.send("<h1>Login</h1>");
-};
-
-export const loginPost = async (req: Request, res: Response) => {
+export const loginHandler = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -164,3 +156,9 @@ export const loginPost = async (req: Request, res: Response) => {
     return res.status(500).send({ message: "Internal server error" });
   }
 };
+
+// export const logoutHandler = async (req: Request, res: Response) => {
+//   try {
+
+//   }
+// }

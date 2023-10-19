@@ -8,6 +8,8 @@ import { createSession } from "../services/sessionServies";
 export const googleoauthHandler = async (req: Request, res: Response) => {
   const code = req.query.code as string;
 
+  console.log(req.query);
+
   try {
     const { id_token, access_token } = await getGoogleOAuthToken({ code });
     console.log({ id_token, access_token });
@@ -24,7 +26,11 @@ export const googleoauthHandler = async (req: Request, res: Response) => {
 
     const id = await db
       .insert(users)
-      .values({ name: googleUser.name, emailId: googleUser.email })
+      .values({
+        name: googleUser.name,
+        emailId: googleUser.email,
+        isVerified: true,
+      })
       .returning({ id: users.userID });
 
     const session_id = id[0].id.toString();
