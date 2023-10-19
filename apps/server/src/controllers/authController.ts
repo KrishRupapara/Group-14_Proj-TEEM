@@ -56,7 +56,7 @@ export const signupPost = async (req: Request, res: Response) => {
       })
       .returning({ id: users.userID });
 
-    // console.log(id[0].id);
+    console.log(id[0].id);
 
     console.log(otp);
 

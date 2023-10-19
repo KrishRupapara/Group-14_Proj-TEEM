@@ -3,7 +3,7 @@ import { getGoogleOAuthToken, getGoogleUser } from "../services/userServices";
 import { db } from "../config/database";
 import { users } from "../model/User";
 import { signJWT } from "../utils/jwt";
-import { createSession } from "@server/services/sessionServies";
+import { createSession } from "../services/sessionServies";
 
 export const googleoauthHandler = async (req: Request, res: Response) => {
   const code = req.query.code as string;

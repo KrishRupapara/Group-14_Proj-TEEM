@@ -4,25 +4,26 @@ import jwt from "jsonwebtoken";
 
 import { Request, Response, NextFunction } from "express";
 import cookieParser from "cookie-parser";
-import { signJWT} from "../utils/jwt"
+import { signJWT, verifyJWT} from "../utils/jwt"
 
 export const requireAuth = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.signedCookies.jwtToken;
+  const token = req.cookies.accessToken;
   console.log(token);
-  console.log(req.cookies.accesstoken);
+  console.log(req.cookies.accessToken);
   // check json web token exists & is verified
   if (token) {
     jwt.verify(
       token,
-      JSON.stringify(process.env.JWT_SECRET),
+      process.env.JWT_SECRET!,
       (err: any, decodedToken: any) => {
         if (err) {
           console.log(err.meesage);
-          res.send("Login again");
+          console.log(err);
+          res.send("Login again err");
           // res.redirect('/login');
         } else {
           console.log(decodedToken);
