@@ -6,17 +6,13 @@ import {
 
 import { googleoauthHandler } from "./oAuthController";
 
-import {
-  createWorkspaceGet,
-  createWorkspacePost,
-} from "./workspaceController";
+import { createWorkspaceGet, createWorkspacePost } from "./workspaceController";
 
-
-export {
-  signUpHandler,
-  verifyUserHandler,
-  loginHandler,
+export { 
+  signUpHandler, 
+  verifyUserHandler, 
+  loginHandler, 
   googleoauthHandler,
   createWorkspaceGet,
-  createWorkspacePost,
+  createWorkspacePost 
 };
