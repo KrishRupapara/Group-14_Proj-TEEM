@@ -15,6 +15,7 @@ import {
   refreshTokenCookieOptions,
 } from "../services/sessionServies";
 import { signJWT } from "../utils/jwt";
+import { } from "../routes";
 
 export const signUpHandler = async (req: Request, res: Response) => {
   var { email, username, password } = req.body;
@@ -150,7 +151,9 @@ export const loginHandler = async (req: Request, res: Response) => {
     res.cookie("refreshToken", refresh_token, refreshTokenCookieOptions);
     res.cookie("accessToken", access_token, accessTokenCookieOptions);
 
+    // res.redirect("/TEEMdashboard");
     return res.send({ access_token, refresh_token });
+
   } catch (err) {
     console.log(err);
     return res.status(500).send({ message: "Internal server error" });
