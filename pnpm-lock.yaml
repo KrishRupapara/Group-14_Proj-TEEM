@@ -81,6 +81,9 @@ importers:
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.2
+      jwt-decode:
+        specifier: ^3.1.2
+        version: 3.1.2
       nodemailer:
         specifier: ^6.9.5
         version: 6.9.5
@@ -3133,6 +3136,10 @@ packages:
     dependencies:
       jwa: 1.4.1
       safe-buffer: 5.2.1
+    dev: false
+
+  /jwt-decode@3.1.2:
+    resolution: {integrity: sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A==}
     dev: false
 
   /keyv@4.5.3:

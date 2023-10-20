@@ -6,4 +6,16 @@ import {
 
 import { googleoauthHandler } from "./oAuthController";
 
-export { signUpHandler, verifyUserHandler, loginHandler, googleoauthHandler };
+import { createWorkspaceGet, createWorkspacePost } from "./workspaceController";
+
+import { TEEMdashboardGet } from "./TEEMdashboardController";
+
+export { 
+  signUpHandler, 
+  verifyUserHandler, 
+  loginHandler, 
+  googleoauthHandler,
+  createWorkspaceGet,
+  createWorkspacePost,
+  TEEMdashboardGet, 
+};

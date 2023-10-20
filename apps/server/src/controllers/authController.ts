@@ -15,6 +15,7 @@ import {
   refreshTokenCookieOptions,
 } from "../services/sessionServies";
 import { signJWT } from "../utils/jwt";
+import { } from "../routes";
 
 export const signUpHandler = async (req: Request, res: Response) => {
   var { email, username, password } = req.body;
@@ -50,9 +51,9 @@ export const signUpHandler = async (req: Request, res: Response) => {
         emailId: email,
         password: password,
       })
-      .returning({ id: users.id });
+      .returning({ id: users.userID });
 
-    // console.log(id[0].id);
+    console.log(id[0].id);
 
     console.log(otp);
 
@@ -115,7 +116,7 @@ export const loginHandler = async (req: Request, res: Response) => {
       return res.status(400).send({ error: "Invalid Credentials" });
     }
 
-    const session_id = User[0].id.toString();
+    const session_id = User[0].userID.toString();
     const existing_session = await findSessions(session_id);
 
     if (existing_session) {
@@ -150,7 +151,9 @@ export const loginHandler = async (req: Request, res: Response) => {
     res.cookie("refreshToken", refresh_token, refreshTokenCookieOptions);
     res.cookie("accessToken", access_token, accessTokenCookieOptions);
 
+    // res.redirect("/TEEMdashboard");
     return res.send({ access_token, refresh_token });
+
   } catch (err) {
     console.log(err);
     return res.status(500).send({ message: "Internal server error" });
