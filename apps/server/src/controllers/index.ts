@@ -2,6 +2,7 @@ import {
   signUpHandler,
   verifyUserHandler,
   loginHandler,
+  logoutHandler,
 } from "./authController";
 
 import { googleoauthHandler } from "./oAuthController";
@@ -15,6 +16,7 @@ export {
   verifyUserHandler, 
   loginHandler, 
   googleoauthHandler,
+  logoutHandler,
   createWorkspaceGet,
   createWorkspacePost,
   TEEMdashboardGet, 

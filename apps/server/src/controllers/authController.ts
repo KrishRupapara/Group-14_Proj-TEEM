@@ -13,6 +13,7 @@ import {
   findSessions,
   accessTokenCookieOptions,
   refreshTokenCookieOptions,
+  deleteSession,
 } from "../services/sessionServies";
 import { signJWT } from "../utils/jwt";
 import { } from "../routes";
@@ -160,8 +161,33 @@ export const loginHandler = async (req: Request, res: Response) => {
   }
 };
 
-// export const logoutHandler = async (req: Request, res: Response) => {
-//   try {
+export const logoutHandler = async(req: Request, res: Response)=>{
+    
+  try {
+    
+    // res.clearCookie("jwtToken"); 
 
-//   }
-// }
+    const token = req.cookies.accessToken;
+    deleteSession(token);
+    
+    res.cookie('accessToken', 'logout', {
+      httpOnly: true,
+      expires: new Date(Date.now()),
+    });
+
+    res.cookie('refreshToken', 'logout', {
+      httpOnly: true,
+      expires: new Date(Date.now()),
+    });
+
+    res.status(200).send({ message: "Logout successful" });
+ 
+
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({ message: "Internal server error" });
+  }
+  
+
+}
