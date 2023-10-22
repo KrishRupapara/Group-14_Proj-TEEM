@@ -44,21 +44,31 @@ export const findSessions = async (userId: string) => {
   return val;
 };
 
-export const deleteSession = async(token: string) =>{
-  
+export const getDecodedToken = async(token: string) => {
+   
+  var dToken:any;
+
   jwt.verify(
     token,
     process.env.JWT_SECRET!,
     (err: any, decodedToken: any) => {
       if (err) {
-        console.log(err.message);
+        console.log(err.meesage);
         console.log(err);
+        throw Error(err.message);
+        // res.redirect('/login');
       } 
       else {
         console.log(decodedToken);
-        redisClient.del(decodedToken.session_id);
-        // req.user = decodedToken;
-  
-      }
+        dToken = decodedToken;
+        
+        // req.user = decodedToken;   
+      }  
     });
+
+    return dToken;
+}
+
+export const deleteSession = async(session_id: string) =>{
+        redisClient.del(session_id);
   };

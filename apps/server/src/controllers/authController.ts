@@ -13,10 +13,12 @@ import {
   findSessions,
   accessTokenCookieOptions,
   refreshTokenCookieOptions,
+  getDecodedToken,
   deleteSession,
 } from "../services/sessionServies";
 import { signJWT } from "../utils/jwt";
 import { } from "../routes";
+import { decode } from "punycode";
 
 export const signUpHandler = async (req: Request, res: Response) => {
   var { email, username, password } = req.body;
@@ -168,7 +170,12 @@ export const logoutHandler = async(req: Request, res: Response)=>{
     // res.clearCookie("jwtToken"); 
 
     const token = req.cookies.accessToken;
-    deleteSession(token);
+    const decodedToken = await getDecodedToken(token);
+    
+   //console.log("In logout");
+    console.log(decodedToken.session);
+    deleteSession(decodedToken.session);
+    
     
     res.cookie('accessToken', 'logout', {
       httpOnly: true,
