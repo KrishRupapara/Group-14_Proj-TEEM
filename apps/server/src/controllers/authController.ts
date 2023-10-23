@@ -187,6 +187,11 @@ export const logoutHandler = async(req: Request, res: Response)=>{
       expires: new Date(Date.now()),
     });
 
+    res.cookie('wsToken', 'logout', {
+      httpOnly: true,
+      expires: new Date(Date.now()),
+    });
+
     res.status(200).send({ message: "Logout successful" });
  
 
