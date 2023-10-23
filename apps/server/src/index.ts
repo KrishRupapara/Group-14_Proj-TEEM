@@ -5,7 +5,7 @@ import express from "express";
 const app = express();
 
 //routers
-import { authRouter } from "./routes";
+import { authRouter ,  workspaceRouter, TEEMdashboardRouter } from "./routes";
 
 //middlewares
 import { requireAuth } from "./middleware/authMiddleware";
@@ -16,7 +16,7 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import { rateLimit } from "express-rate-limit";
 import { client as redisClient } from "./config/redisConnect";
-import { findSessions } from "./services/sessionServies";
+// import { findSessions } from "./services/sessionServies";
 
 app.set("trust proxy", 1);
 app.use(
@@ -34,6 +34,9 @@ app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET));
 
 app.use("/api", authRouter);
+app.use("/api",  workspaceRouter);
+app.use("/api",  TEEMdashboardRouter);
+
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -44,9 +47,9 @@ redisClient.on("error", (err) => {
 });
 
 //this is protected route
-app.get("/smoothies", requireAuth, (req, res) => {
-  res.send("Only for logged in user");
-});
+// app.get("/smoothies", requireAuth, (req, res) => {
+//   res.send("Only for logged in user");
+// });
 
 const PORT = process.env.PORT || 3500;
 
