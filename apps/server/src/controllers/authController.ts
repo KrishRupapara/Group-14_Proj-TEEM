@@ -221,7 +221,6 @@ export const resetPasswordPost = async (req : Request, res : Response) => {
         console.log(err);
         return res.status(500).send({ message: "Internal server error" });
       }
-      console.log(otp_secure);
       if (!otp_secure) {
         return res.status(400).send({ message: "OTP expired" });
       }
