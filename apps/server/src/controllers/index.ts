@@ -3,6 +3,9 @@ import {
   verifyUserHandler,
   loginHandler,
   logoutHandler,
+  forgotPasswordPost,
+  resetPasswordPost,
+  
 } from "./authController";
 
 import { googleoauthHandler } from "./oAuthController";
@@ -22,4 +25,6 @@ export {
   addMembersPost,
   addMembersGet,
   TEEMdashboardGet, 
+  forgotPasswordPost,
+  resetPasswordPost,
 };

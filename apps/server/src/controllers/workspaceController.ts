@@ -126,6 +126,7 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
   
 };
 
+
 export const addMembersGet = async(req: Request, res: Response) => {
   
   res.send('You can add members');
@@ -237,3 +238,18 @@ export const addMembersPost = async (req: Request, res: Response) => {
 
 
 }
+=======
+
+export const deleteWorkspacePost = async (req: Request, res: Response) => {
+
+  try{
+        res.send({"message" : "Delete workspace"});
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send({ message: "Internal server error in workspace" });
+  }
+
+};
+
+
+
