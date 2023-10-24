@@ -13,9 +13,12 @@ import {
   findSessions,
   accessTokenCookieOptions,
   refreshTokenCookieOptions,
+  getDecodedToken,
+  deleteSession,
 } from "../services/sessionServies";
 import { signJWT } from "../utils/jwt";
 import { } from "../routes";
+import { decode } from "punycode";
 
 export const signUpHandler = async (req: Request, res: Response) => {
   var { email, username, password } = req.body;
@@ -160,9 +163,47 @@ export const loginHandler = async (req: Request, res: Response) => {
   }
 };
 
-// export const logoutHandler = async (req: Request, res: Response) => {
-//   try {
+export const logoutHandler = async(req: Request, res: Response)=>{
+    
+  try {
+    
+    // res.clearCookie("jwtToken"); 
 
+    const token = req.cookies.accessToken;
+    const decodedToken = await getDecodedToken(token);
+    
+   //console.log("In logout");
+    console.log(decodedToken.session);
+    deleteSession(decodedToken.session);
+    
+    
+    res.cookie('accessToken', 'logout', {
+      httpOnly: true,
+      expires: new Date(Date.now()),
+    });
+
+    res.cookie('refreshToken', 'logout', {
+      httpOnly: true,
+      expires: new Date(Date.now()),
+    });
+
+    res.cookie('wsToken', 'logout', {
+      httpOnly: true,
+      expires: new Date(Date.now()),
+    });
+
+    res.status(200).send({ message: "Logout successful" });
+ 
+
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({ message: "Internal server error" });
+  }
+  
+
+
+}
 //   }
 // }
 export const forgotPasswordPost = async (req : Request, res : Response) => {

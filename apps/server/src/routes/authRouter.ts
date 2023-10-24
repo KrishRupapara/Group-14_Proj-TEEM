@@ -4,9 +4,11 @@ import {
   loginHandler,
   verifyUserHandler,
   googleoauthHandler,
+  logoutHandler,
   forgotPasswordPost,
   resetPasswordPost,
 } from "../controllers";
+import { requireAuth } from "../middleware";
 
 const router: Router = Router();
 
@@ -18,6 +20,7 @@ router.route("/verify").post(verifyUserHandler);
 
 router.route("/auth/oauth/google").get(googleoauthHandler);
 
+router.route("/logout").get(requireAuth, logoutHandler);
 router.route("/forgotPassword").post(forgotPasswordPost);
 
 router.route("/resetPassword").post(resetPasswordPost);

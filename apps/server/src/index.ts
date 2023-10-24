@@ -47,9 +47,9 @@ redisClient.on("error", (err) => {
 });
 
 //this is protected route
-// app.get("/smoothies", requireAuth, (req, res) => {
-//   res.send("Only for logged in user");
-// });
+app.get("/smoothies", requireAuth, (req, res) => {
+   res.send("Only for logged in user");
+ });
 
 const PORT = process.env.PORT || 3500;
 
