@@ -242,7 +242,7 @@ export const resetPasswordPost = async (req : Request, res : Response) => {
 
       const isSame = await bcrypt.compare(password,user[0].password!);
       if(isSame){
-        res.status(167).send("New Password is same as current password.");
+        res.send("New Password is same as current password.");
       }
 
       const salt = await bcrypt.genSalt();              // adding salt

@@ -20,6 +20,6 @@ router.route("/auth/oauth/google").get(googleoauthHandler);
 
 router.route("/forgotPassword").post(forgotPasswordPost);
 
-router.route("resetPassword").post(resetPasswordPost);
+router.route("/resetPassword").post(resetPasswordPost);
 
 export { router as authRouter };
