@@ -117,9 +117,42 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
 
 
 export const deleteWorkspacePost = async (req: Request, res: Response) => {
-
   try{
-        res.send({"message" : "Delete workspace"});
+
+    // checking for requests
+    const {workspaceID} = req.body;
+    if(!workspaceID){
+      res.send({"message" : "Please enter your workspaceID a"});
+    }
+
+    const toDelete = workspaceID;
+
+    // Finding the workspace inside database.
+    const currentWorkspace =await db
+    .select()
+    .from(workspaces)
+    .where(eq(workspaces.workspaceID, toDelete))
+    .limit(1);
+
+
+
+    // check if the user requesting the deletion is the manager of that workspace.
+    if(res.locals.userid as number !== currentWorkspace[0].projectManager){
+      res.send({"message" : "You are not Project Manager"});
+    }
+
+
+    //  deletion from database.
+    await db
+    .delete(workspaces)
+    .where(eq(toDelete, workspaces.workspaceID));
+
+    res.send("deleted successfully");
+
+
+    // still there is a problem in which the entry is not deleted 
+    //from all the tables where workspace ID is a value
+  
   } catch (err) {
     console.log(err);
     return res.status(500).send({ message: "Internal server error in workspace" });

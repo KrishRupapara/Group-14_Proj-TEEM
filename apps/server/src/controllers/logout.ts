@@ -6,7 +6,12 @@ export const logoutGet = async(req: Request, res: Response)=>{
       
       // res.clearCookie("jwtToken"); 
       
-      res.cookie('jwtToken', 'logout', {
+      res.cookie('accessToken', 'logout', {
+        httpOnly: true,
+        expires: new Date(Date.now()),
+      });
+      
+      res.cookie('refreshToken', 'logout', {
         httpOnly: true,
         expires: new Date(Date.now()),
       });

@@ -13,6 +13,6 @@ router.route("/createWorkspace")
     .get(requireAuth, createWorkspaceGet)
     .post(requireAuth, createWorkspacePost);
 
-router.route("/deleteWorkspace").post(requireAuth,deleteWorkspacePost);
+router.route("/deleteWorkspace/:wsid").post(requireAuth,deleteWorkspacePost);
 
 export { router as workspaceRouter };

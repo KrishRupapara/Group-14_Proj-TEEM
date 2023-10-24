@@ -6,7 +6,7 @@ const router: Router = express.Router();
 
 router.route('/logout').get(requireAuth, logoutGet);
 
-export default router;
+export {router as logoutRouter};
 
 
 
