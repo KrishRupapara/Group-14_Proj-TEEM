@@ -5,7 +5,7 @@ import express from "express";
 const app = express();
 
 //routers
-import { authRouter ,  workspaceRouter, TEEMdashboardRouter, logoutRouter } from "./routes";
+import { authRouter ,  workspaceRouter, TEEMdashboardRouter } from "./routes";
 
 //middlewares
 import { requireAuth } from "./middleware/authMiddleware";
@@ -36,7 +36,6 @@ app.use(cookieParser(process.env.JWT_SECRET));
 app.use("/api", authRouter);
 app.use("/api",  workspaceRouter);
 app.use("/api",  TEEMdashboardRouter);
-app.use("/api", logoutRouter);
 
 
 app.get("/", (req, res) => {
@@ -48,9 +47,9 @@ redisClient.on("error", (err) => {
 });
 
 //this is protected route
-// app.get("/smoothies", requireAuth, (req, res) => {
-//   res.send("Only for logged in user");
-// });
+app.get("/smoothies", requireAuth, (req, res) => {
+   res.send("Only for logged in user");
+ });
 
 const PORT = process.env.PORT || 3500;
 

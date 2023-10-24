@@ -2,6 +2,7 @@ import {
   signUpHandler,
   verifyUserHandler,
   loginHandler,
+  logoutHandler,
   forgotPasswordPost,
   resetPasswordPost,
   
@@ -9,7 +10,7 @@ import {
 
 import { googleoauthHandler } from "./oAuthController";
 
-import { createWorkspaceGet, createWorkspacePost , deleteWorkspacePost } from "./workspaceController";
+import { createWorkspaceGet, createWorkspacePost,addMembersPost, addMembersGet, deleteWorkspacePost } from "./workspaceController";
 
 import { TEEMdashboardGet } from "./TEEMdashboardController";
 
@@ -18,9 +19,12 @@ export {
   verifyUserHandler, 
   loginHandler, 
   googleoauthHandler,
+  logoutHandler,
   createWorkspaceGet,
   createWorkspacePost,
   deleteWorkspacePost,
+  addMembersPost,
+  addMembersGet,
   TEEMdashboardGet, 
   forgotPasswordPost,
   resetPasswordPost,

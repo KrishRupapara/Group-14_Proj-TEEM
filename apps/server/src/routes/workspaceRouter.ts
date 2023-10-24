@@ -2,6 +2,8 @@ import { Router } from "express";
 import {
     createWorkspaceGet,
     createWorkspacePost,
+    addMembersPost,
+    addMembersGet,
     deleteWorkspacePost,
 } from "../controllers";
 
@@ -13,6 +15,10 @@ router.route("/createWorkspace")
     .get(requireAuth, createWorkspaceGet)
     .post(requireAuth, createWorkspacePost);
 
-router.route("/deleteWorkspace/:wsid").post(requireAuth,deleteWorkspacePost);
+router.route("/addMembers")
+    .get(requireAuth, addMembersGet)
+    .post(addMembersPost);
+
+router.route("/deleteWorkspace").post(requireAuth,deleteWorkspacePost);
 
 export { router as workspaceRouter };
