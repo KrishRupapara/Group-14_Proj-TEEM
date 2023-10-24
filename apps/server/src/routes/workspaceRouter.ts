@@ -3,7 +3,8 @@ import {
     createWorkspaceGet,
     createWorkspacePost,
     addMembersPost,
-    addMembersGet
+    addMembersGet,
+    deleteWorkspacePost,
 } from "../controllers";
 
 import{requireAuth} from "../middleware" 
@@ -17,5 +18,7 @@ router.route("/createWorkspace")
 router.route("/addMembers")
     .get(requireAuth, addMembersGet)
     .post(addMembersPost);
+
+router.route("/deleteWorkspace").post(requireAuth,deleteWorkspacePost);
 
 export { router as workspaceRouter };
