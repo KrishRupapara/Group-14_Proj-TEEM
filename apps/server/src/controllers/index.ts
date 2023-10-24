@@ -9,7 +9,7 @@ import {
 
 import { googleoauthHandler } from "./oAuthController";
 
-import { createWorkspaceGet, createWorkspacePost } from "./workspaceController";
+import { createWorkspaceGet, createWorkspacePost , deleteWorkspacePost } from "./workspaceController";
 
 import { TEEMdashboardGet } from "./TEEMdashboardController";
 
@@ -20,6 +20,7 @@ export {
   googleoauthHandler,
   createWorkspaceGet,
   createWorkspacePost,
+  deleteWorkspacePost,
   TEEMdashboardGet, 
   forgotPasswordPost,
   resetPasswordPost,
