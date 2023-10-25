@@ -166,7 +166,7 @@ export default function UserAuthForm() {
                   {isLoading && (
                     <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
                   )}
-                  Get Started
+                  <Link href={"Verification?email=" +user.email}>Get Started</Link>
                 </button>
               </div>
               <span>
