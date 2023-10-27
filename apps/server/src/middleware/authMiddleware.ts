@@ -35,6 +35,6 @@ export const requireAuth = (
     );
   } else {
     // res.redirect('/login');
-    res.send("Login again");
+    res.send("Login Required!");
   }
 };
