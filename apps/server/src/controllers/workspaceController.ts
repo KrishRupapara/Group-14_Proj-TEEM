@@ -118,6 +118,89 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
   }
 };
 
+export const getWorkspace = async (req: Request, res: Response) => {
+ 
+  const workspaceID : {wsID:any} = {
+    wsID: req.params.wsid
+};
+ 
+  //console.log(workspaceID);
+  
+  const wsToken = signJWT(
+    { ...workspaceID},
+  );
+
+  res.cookie("wsToken", wsToken, wsTokenOptions);
+   
+  try {
+    
+  const workspace = await db
+    .select({
+      title: workspaces.title,
+      description: workspaces.description,
+      projectManager: users.name})
+    .from(workspaces)
+    .where(eq(workspaces.workspaceID, workspaceID.wsID))
+    .innerJoin(users, eq(workspaces.projectManager , users.userID))
+    .limit(1);
+
+  let Members = await db
+    .select({
+       name: users.name,
+       role: members.role,
+    })
+    .from(members)
+    .where(eq(members.workspaceID, workspaceID.wsID))
+    .innerJoin(users, eq(members.memberID , users.userID))
+
+    console.log(JSON.stringify(workspace));
+    console.log(JSON.stringify(Members));
+
+    /*
+    type wsMembers = {
+      name: string,
+      role: string
+    }
+    
+
+    const len = Members.length;
+
+    let wsMemArray: wsMembers[] = new Array(len); 
+
+    for(let i = 0; i<len; ++i)
+    { 
+       wsMemArray[i].name = Members[i].name;
+      if(Members[i].role === 0)
+       {
+        wsMemArray[i].role = 'Teammate';
+       }
+
+       if(Members[i].role === 1)
+       {
+        wsMemArray[i].role = 'Collaborator';
+       }
+
+       if(Members[i].role === 2)
+       {
+        wsMemArray[i].role = 'Client';
+       }
+      }
+     
+    const wsDetails = JSON.stringify(workspace).concat(JSON.stringify(wsMemArray));
+   */
+
+    const wsDetails = JSON.stringify(workspace).concat(JSON.stringify(Members));
+    res.json(wsDetails);
+    
+    
+ 
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({ message: "Internal server error in workspace" });
+  }
+
+};
+
 export const addMembersGet = async (req: Request, res: Response) => {
   res.send("You can add members");
 };

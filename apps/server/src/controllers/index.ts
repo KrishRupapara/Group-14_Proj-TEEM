@@ -10,9 +10,9 @@ import {
 
 import { googleoauthHandler } from "./oAuthController";
 
-import { createWorkspaceGet, createWorkspacePost,addMembersPost, addMembersGet, deleteWorkspacePost } from "./workspaceController";
+import { createWorkspaceGet, createWorkspacePost,getWorkspace,addMembersPost, addMembersGet, deleteWorkspacePost } from "./workspaceController";
 
-import { dashboardGet } from "./dashboardController";
+import { dashboardGet, profileGet } from "./dashboardController";
 
 import {
   assignTaskGet,
@@ -24,15 +24,17 @@ export {
   verifyUserHandler, 
   loginHandler, 
   googleoauthHandler,
+  forgotPasswordPost,
+  resetPasswordPost,
   logoutHandler,
   createWorkspaceGet,
   createWorkspacePost,
-  deleteWorkspacePost,
-  addMembersPost,
+  getWorkspace,
   addMembersGet,
-  dashboardGet, 
-  forgotPasswordPost,
-  resetPasswordPost,
+  addMembersPost,
+  deleteWorkspacePost,
+  dashboardGet,
   assignTaskGet,
   assignTaskPost,
+  profileGet
 };
