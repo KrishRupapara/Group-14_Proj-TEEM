@@ -12,7 +12,12 @@ import { googleoauthHandler } from "./oAuthController";
 
 import { createWorkspaceGet, createWorkspacePost,addMembersPost, addMembersGet, deleteWorkspacePost } from "./workspaceController";
 
-import { TEEMdashboardGet } from "./TEEMdashboardController";
+import { dashboardGet } from "./dashboardController";
+
+import {
+  assignTaskGet,
+  assignTaskPost,
+} from "./taskController"
 
 export { 
   signUpHandler, 
@@ -25,7 +30,9 @@ export {
   deleteWorkspacePost,
   addMembersPost,
   addMembersGet,
-  TEEMdashboardGet, 
+  dashboardGet, 
   forgotPasswordPost,
   resetPasswordPost,
+  assignTaskGet,
+  assignTaskPost,
 };

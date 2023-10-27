@@ -1,12 +1,12 @@
 import { Router } from "express";
 import {
-    TEEMdashboardGet,
+    dashboardGet,
 } from "../controllers";
 
 import{requireAuth} from "../middleware" 
 
 const router: Router = Router();
 
-router.route("/TEEMdashboard").get(requireAuth, TEEMdashboardGet);
+router.route("/dashboard").get(requireAuth, dashboardGet);
 
-export { router as TEEMdashboardRouter };
+export { router as dashboardRouter };

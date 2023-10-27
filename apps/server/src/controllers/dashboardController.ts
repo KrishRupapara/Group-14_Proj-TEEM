@@ -8,7 +8,7 @@ import { sendInvitation } from "../services/sendInvitation";
 import { workspaces } from "../model/Workspace";
 import { members } from "../model/Member";
 
-export const TEEMdashboardGet = async (req: Request, res: Response) => {
+export const dashboardGet = async (req: Request, res: Response) => {
   const User = await db
     .select()
     .from(users)
