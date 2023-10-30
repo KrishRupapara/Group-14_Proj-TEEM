@@ -14,8 +14,8 @@ import {
 
 import { members } from "./Member";
 import { tasks } from "./Task";
-export const meets = pgTable("meets", {
-    taskID : serial("taskID"),
+export const assignees = pgTable("assignees", {
+    taskID : integer("taskID"),
     workspaceID: integer("workspaceID"),
     assigneeID: integer("assigneeID"),
     // createdAt: timestamp("created_at").notNull().defaultNow(),

@@ -5,7 +5,7 @@ import express from "express";
 const app = express();
 
 //routers
-import { authRouter ,  workspaceRouter, TEEMdashboardRouter } from "./routes";
+import { authRouter ,  workspaceRouter, dashboardRouter, taskRouter } from "./routes";
 
 //middlewares
 import { requireAuth } from "./middleware/authMiddleware";
@@ -35,8 +35,8 @@ app.use(cookieParser(process.env.JWT_SECRET));
 
 app.use("/api", authRouter);
 app.use("/api",  workspaceRouter);
-app.use("/api",  TEEMdashboardRouter);
-
+app.use("/api",  dashboardRouter);
+app.use("/api",  taskRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

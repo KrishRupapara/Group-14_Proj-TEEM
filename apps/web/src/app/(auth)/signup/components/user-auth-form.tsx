@@ -61,7 +61,7 @@ export default function UserAuthForm() {
                 </label>
                 <input
                   id="name"
-                  placeholder="name"
+                  placeholder="Name"
                   type="text"
                   autoCapitalize="none"
                   autoComplete="off"
@@ -111,7 +111,7 @@ export default function UserAuthForm() {
                 </label>
                 <input
                   id="password"
-                  placeholder="Password"
+                  placeholder="password"
                   type="password"
                   autoCapitalize="none"
                   autoComplete="off"
