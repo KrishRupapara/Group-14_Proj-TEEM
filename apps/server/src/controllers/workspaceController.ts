@@ -8,7 +8,7 @@ import { sendInvitation } from "../services/sendInvitation";
 import { signJWT } from "../utils/jwt";
 
 import { workspaces } from "../model/Workspace";
-import { members } from "../model/Member";
+import { members } from "../model/Workspace";
 import { wsTokenOptions } from "../services/workspaceServices";
 
 export const createWorkspaceGet = async (req: Request, res: Response) => {
@@ -119,39 +119,36 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
 };
 
 export const getWorkspace = async (req: Request, res: Response) => {
- 
-  const workspaceID : {wsID:any} = {
-    wsID: req.params.wsid
-};
- 
+  const workspaceID: { wsID: any } = {
+    wsID: req.params.wsid,
+  };
+
   //console.log(workspaceID);
-  
-  const wsToken = signJWT(
-    { ...workspaceID},
-  );
+
+  const wsToken = signJWT({ ...workspaceID });
 
   res.cookie("wsToken", wsToken, wsTokenOptions);
-   
-  try {
-    
-  const workspace = await db
-    .select({
-      title: workspaces.title,
-      description: workspaces.description,
-      projectManager: users.name})
-    .from(workspaces)
-    .where(eq(workspaces.workspaceID, workspaceID.wsID))
-    .innerJoin(users, eq(workspaces.projectManager , users.userID))
-    .limit(1);
 
-  let Members = await db
-    .select({
-       name: users.name,
-       role: members.role,
-    })
-    .from(members)
-    .where(eq(members.workspaceID, workspaceID.wsID))
-    .innerJoin(users, eq(members.memberID , users.userID))
+  try {
+    const workspace = await db
+      .select({
+        title: workspaces.title,
+        description: workspaces.description,
+        projectManager: users.name,
+      })
+      .from(workspaces)
+      .where(eq(workspaces.workspaceID, workspaceID.wsID))
+      .innerJoin(users, eq(workspaces.projectManager, users.userID))
+      .limit(1);
+
+    let Members = await db
+      .select({
+        name: users.name,
+        role: members.role,
+      })
+      .from(members)
+      .where(eq(members.workspaceID, workspaceID.wsID))
+      .innerJoin(users, eq(members.memberID, users.userID));
 
     console.log(JSON.stringify(workspace));
     console.log(JSON.stringify(Members));
@@ -191,14 +188,12 @@ export const getWorkspace = async (req: Request, res: Response) => {
 
     const wsDetails = JSON.stringify(workspace).concat(JSON.stringify(Members));
     res.json(wsDetails);
-    
-    
- 
   } catch (error) {
     console.log(error);
-    return res.status(500).send({ message: "Internal server error in workspace" });
+    return res
+      .status(500)
+      .send({ message: "Internal server error in workspace" });
   }
-
 };
 
 export const addMembersGet = async (req: Request, res: Response) => {

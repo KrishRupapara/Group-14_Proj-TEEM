@@ -8,7 +8,7 @@ import { signJWT } from "../utils/jwt";
 
 import { tasks } from "../model/Task";
 import { workspaces } from "../model/Workspace";
-import { members } from "../model/Member";
+import { members } from "../model/Workspace";
 import { assignees } from "../model/TaskAssignee";
 import { timestamp } from "drizzle-orm/pg-core";
 
@@ -71,7 +71,7 @@ export const assignTaskPost = async (req: Request, res: Response) => {
           .from(members)
           .where(
             and(
-              eq(members.workspaceID,Workspace[0].workspaceID),
+              eq(members.workspaceID, Workspace[0].workspaceID),
               eq(members.memberID, User[0].userID)
             )
           )
@@ -89,7 +89,7 @@ export const assignTaskPost = async (req: Request, res: Response) => {
             assigneeID: member[0].memberID,
           });
         }
-      }else{
+      } else {
         unregisteredAssignee.push(assignee_id);
       }
     }
@@ -104,9 +104,8 @@ export const assignTaskPost = async (req: Request, res: Response) => {
     } else {
       res.send({ message: "Task assigned successfully", assignee });
     }
-    
+
     // await sendTask(Workspace[0].title, title, assignee); // send mail to assignees(only member)
-  
   } catch (err) {
     console.log(err);
     return res.status(500).send({ message: "Internal server error in task" });

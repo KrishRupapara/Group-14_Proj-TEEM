@@ -5,24 +5,28 @@ import {
   logoutHandler,
   forgotPasswordPost,
   resetPasswordPost,
-  
 } from "./authController";
 
 import { googleoauthHandler } from "./oAuthController";
 
-import { createWorkspaceGet, createWorkspacePost,getWorkspace,addMembersPost, addMembersGet, deleteWorkspacePost } from "./workspaceController";
+import {
+  createWorkspaceGet,
+  createWorkspacePost,
+  getWorkspace,
+  addMembersPost,
+  addMembersGet,
+  deleteWorkspacePost,
+} from "./workspaceController";
 
 import { dashboardGet, profileGet } from "./dashboardController";
 
-import {
-  assignTaskGet,
-  assignTaskPost,
-} from "./taskController"
+import { scheduleMeetHandler } from "./meetController";
+import { assignTaskGet, assignTaskPost } from "./taskController";
 
-export { 
-  signUpHandler, 
-  verifyUserHandler, 
-  loginHandler, 
+export {
+  signUpHandler,
+  verifyUserHandler,
+  loginHandler,
   googleoauthHandler,
   forgotPasswordPost,
   resetPasswordPost,
@@ -36,5 +40,6 @@ export {
   dashboardGet,
   assignTaskGet,
   assignTaskPost,
-  profileGet
+  profileGet,
+  scheduleMeetHandler,
 };

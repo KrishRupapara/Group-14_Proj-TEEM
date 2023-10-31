@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { db } from "../config/database";
 import { users } from "../model/User";
 import { workspaces } from "../model/Workspace";
-import { members } from "../model/Member";
+import { members } from "../model/Workspace";
 import { and, eq } from "drizzle-orm";
 import { getDecodedToken } from "../services/sessionServies";
 
