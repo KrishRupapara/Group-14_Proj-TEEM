@@ -5,27 +5,41 @@ import {
   logoutHandler,
   forgotPasswordPost,
   resetPasswordPost,
-  
 } from "./authController";
 
 import { googleoauthHandler } from "./oAuthController";
 
-import { createWorkspaceGet, createWorkspacePost,addMembersPost, addMembersGet, deleteWorkspacePost } from "./workspaceController";
+import {
+  createWorkspaceGet,
+  createWorkspacePost,
+  getWorkspace,
+  addMembersPost,
+  addMembersGet,
+  deleteWorkspacePost,
+} from "./workspaceController";
 
-import { TEEMdashboardGet } from "./TEEMdashboardController";
+import { dashboardGet, profileGet } from "./dashboardController";
 
-export { 
-  signUpHandler, 
-  verifyUserHandler, 
-  loginHandler, 
+import { scheduleMeetHandler } from "./meetController";
+import { assignTaskGet, assignTaskPost } from "./taskController";
+
+export {
+  signUpHandler,
+  verifyUserHandler,
+  loginHandler,
   googleoauthHandler,
+  forgotPasswordPost,
+  resetPasswordPost,
   logoutHandler,
   createWorkspaceGet,
   createWorkspacePost,
-  deleteWorkspacePost,
-  addMembersPost,
+  getWorkspace,
   addMembersGet,
-  TEEMdashboardGet, 
-  forgotPasswordPost,
-  resetPasswordPost,
+  addMembersPost,
+  deleteWorkspacePost,
+  dashboardGet,
+  assignTaskGet,
+  assignTaskPost,
+  profileGet,
+  scheduleMeetHandler,
 };

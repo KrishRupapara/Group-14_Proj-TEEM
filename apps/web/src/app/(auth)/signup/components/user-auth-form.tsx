@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { Icons } from "@/components/ui/icons";
 
+
 import Link from 'next/link';
 import {zodResolver} from '@hookform/resolvers/zod'
 import {z, ZodType} from 'zod'
@@ -93,6 +94,7 @@ export default function UserAuthForm() {
         });
     
   return (
+
     // <div>
     <div className='bg-gray-300 h-screen signup-bg'>
         <div className='h-[6rem] flex flex-row justify-between items-center px-5'>
@@ -103,6 +105,7 @@ export default function UserAuthForm() {
             <div className="h-full w-1/3 flex flex-col justify-end place-items-start">
               <Image src="/img/doodleleft.png" alt="Image Not found" width={300} height={250}/>
             </div>
+            
             <div className='h-full w-1/2 mx-auto p-4'>
                 {/* card */}
                 <form action="" onSubmit={handleSubmit(onSubmit)} className=" mx-auto h-full flex flex-col justify-center">

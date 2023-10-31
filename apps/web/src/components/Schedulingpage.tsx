@@ -26,7 +26,7 @@ export default function Schedulepage() {
       <div className="w-4/5 mx-auto grid grid-cols-12 h-1/4">
         <div className="col-span-9 flex flex-col justify-around">
           <h1 className="font-bold text-5xl font-sans my-5">
-            Sheduling made easy!
+            Scheduling made easy!
           </h1>
           <p className="w-3/4">
             Jump into the world of smoother collaborations, fewer headaches, and
@@ -34,7 +34,7 @@ export default function Schedulepage() {
             <br /> <br />
             Say goodbye to the chaos of endless emails, missed deadlines, and
             ineffective meetings. Get things done hassle-free without scheduling
-            coming in the way. You'll just have to give your calendars and leave
+            coming in the way. You just have to give your calendars and leave
             the rest to us.
           </p>
         </div>

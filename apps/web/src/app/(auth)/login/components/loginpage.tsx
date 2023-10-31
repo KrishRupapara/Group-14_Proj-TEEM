@@ -1,34 +1,34 @@
-"use client"
-import React from 'react'
-import Image from 'next/image'
-import { useState } from 'react';
+"use client";
+import React from "react";
+import Image from "next/image";
+import { useState } from "react";
 // import { cn } from "@/lib/utils";
 import { Icons } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
-import Link from 'next/link';
+import Link from "next/link";
 
 export default function Loginpage() {
-  
-    async function submitgoogle(event: React.SyntheticEvent) {
-      event.preventDefault();
-      try {
-        setIsLoading(true);
-  
-        const res = await fetch("http://localhost:3500/api/auth/oauth/google", {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(user),
-        }).then((res) => res.json());
-        console.log(res.message);
-      } catch (err) {
-        console.log(err);
-      } finally {
-         setIsLoading(false);
-      }
-    }
+  async function submitgoogle(event: React.SyntheticEvent) {
+    event.preventDefault();
+    try {
+      setIsLoading(true);
 
-    const [isLoading, setIsLoading] = useState(false);
+      const res = await fetch("http://localhost:3500/api/auth/oauth/google", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      }).then((res) => res.json());
+      console.log(res.message);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const [isLoading, setIsLoading] = useState(false);
+
 
     const [user,setUser]= useState({
         name:"",
@@ -114,9 +114,8 @@ export default function Loginpage() {
                             })
                         }}
                         value={user.password}/>
-
-                        </div>
-                    </div>
+                       </div>
+              </div>
 
                     <div className='h-[20vh] w-full flex flex-col justify-around items-center'>
                     
@@ -141,7 +140,9 @@ export default function Loginpage() {
             {/* <div className='h-full w-1/2 signup-right flex flex-col items-center justify-center'>
                 <Image src="/img/signup1.png" alt="image not found" width={500} height={500} />
             </div> */}
-        </div>
+
+        
+      </div>
     </div>
   )
 }
