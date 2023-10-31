@@ -36,7 +36,7 @@ export const authorizeManager = async (
     console.log(workspaceID.wsID);
     console.log(userID);
 
-    if (isManager[0].projectManager === userID) next();
+    if (isManager[0].projectManager === userID as number) next();
     else {
       res.send("You do not own the workspace");
     }
