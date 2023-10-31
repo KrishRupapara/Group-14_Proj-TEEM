@@ -11,6 +11,7 @@ import { workspaces } from "../model/Workspace";
 import { members } from "../model/Workspace";
 import { assignees } from "../model/TaskAssignee";
 import { timestamp } from "drizzle-orm/pg-core";
+import {updateProjectProgress} from "../utils/progress"
 
 export const assignTaskGet = async (req: Request, res: Response) => {
   res.send("<h1>You can create new Task</h1>");
@@ -105,7 +106,8 @@ export const assignTaskPost = async (req: Request, res: Response) => {
     } else {
       res.send({ message: "Task assigned successfully", assignee });
     }
-
+    const updatedProgress = await updateProjectProgress(wsID);
+    console.log({updated_progress : updatedProgress});
     // await sendTask(Workspace[0].title, title, assignee); // send mail to assignees(only member)
   } catch (err) {
     console.log(err);

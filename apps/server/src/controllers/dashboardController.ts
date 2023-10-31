@@ -6,7 +6,7 @@ import { eq } from "drizzle-orm";
 
 import { users } from "../model/User";
 import { workspaces } from "../model/Workspace";
-import {calculateProjectProgress} from "../utils/calculateProgress";
+// import {updateProjectProgress} from "../utils/progress";
 
 
 export const dashboardGet = async (req: Request, res: Response) => {
