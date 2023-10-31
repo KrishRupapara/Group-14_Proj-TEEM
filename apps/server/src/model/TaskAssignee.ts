@@ -24,14 +24,14 @@ export const assignees = pgTable("assignees", {
         pk: primaryKey(table.taskID, table.workspaceID, table.assigneeID),
 
         meetReference: foreignKey({
-            columns: [table.taskID],
-            foreignColumns: [tasks.taskID]
-        }),
-
-        inviteeReference: foreignKey({
-            columns: [table.workspaceID, table.assigneeID],
-            foreignColumns: [members.workspaceID, members.memberID]
+            columns: [table.taskID,table.workspaceID, table.assigneeID],
+            foreignColumns: [tasks.taskID,members.workspaceID, members.memberID]
         })
+
+        // inviteeReference: foreignKey({
+        //     columns: [],
+        //     foreignColumns: []
+        // })
     };
   });
   

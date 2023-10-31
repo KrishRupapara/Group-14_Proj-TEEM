@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 
 import { users } from "../model/User";
 import { workspaces } from "../model/Workspace";
+import {calculateProjectProgress} from "../utils/calculateProgress";
 
 
 export const dashboardGet = async (req: Request, res: Response) => {
@@ -16,14 +17,21 @@ export const dashboardGet = async (req: Request, res: Response) => {
     .limit(1);
 
   try {
+    const wsList = [];
     const Workspace = await db
-      .select({ Title: workspaces.title, Description: workspaces.description })
+      .select({ wsID:workspaces.workspaceID, Title: workspaces.title, Description: workspaces.description })
       .from(workspaces)
       .where(eq(workspaces.projectManager, User[0].userID));
 
     console.log(Workspace);
-
-    res.json(Workspace);
+    for (const workspace of Workspace){
+      
+      const { wsID, Title ,Description } = workspace;
+      const Progress = calculateProjectProgress(workspace.wsID)
+      const ws = {Title,Description,Progress};
+      wsList.push(ws);
+    }
+    res.json(wsList);
     // res.send("<h1>Welcom to TEEM dashboard</h1>");
 
   } catch (err) {

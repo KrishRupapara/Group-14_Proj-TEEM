@@ -25,14 +25,14 @@ export const invitees = pgTable("invitees", {
         pk: primaryKey(table.meetID, table.workspaceID, table.inviteeID),
 
         meetReference: foreignKey({
-            columns: [table.meetID],
-            foreignColumns: [meets.meetID]
+            columns: [table.meetID,table.workspaceID, table.inviteeID],
+            foreignColumns: [meets.meetID,members.workspaceID, members.memberID]
         }),
 
-        inviteeReference: foreignKey({
-            columns: [table.workspaceID, table.inviteeID],
-            foreignColumns: [members.workspaceID, members.memberID]
-        })
+        // inviteeReference: foreignKey({
+        //     columns: [table.workspaceID, table.inviteeID],
+        //     foreignColumns: [members.workspaceID, members.memberID]
+        // })
     };
   });
   
