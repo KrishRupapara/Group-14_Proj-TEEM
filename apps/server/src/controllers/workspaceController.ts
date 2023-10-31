@@ -328,15 +328,15 @@ export const deleteWorkspacePost = async (req: Request, res: Response) => {
       .where(eq(workspaces.workspaceID, toDelete))
       .limit(1);
 
-    // check if the user requesting the deletion is the manager of that workspace.
-    if ((res.locals.userid as number) !== currentWorkspace[0].projectManager) {
-      res.send({ message: "You are not Project Manager" });
-    }
+    // // check if the user requesting the deletion is the manager of that workspace.
+    // if ((res.locals.userid as number) !== currentWorkspace[0].projectManager) {
+    //   res.send({ message: "You are not Project Manager" });
+    // }
 
     //  deletion from database.
     await db.delete(workspaces).where(eq(toDelete, workspaces.workspaceID));
 
-    res.send("deleted successfully");
+    res.send("Workspace deleted successfully");
 
     // still there is a problem in which the entry is not deleted
     //from all the tables where workspace ID is a value
@@ -345,5 +345,44 @@ export const deleteWorkspacePost = async (req: Request, res: Response) => {
     return res
       .status(500)
       .send({ message: "Internal server error in workspace" });
+  }
+};
+
+
+export const deleteMembers = async (req: Request, res: Response) => {
+  try {
+    // checking for requests
+    const { workspaceID , memberID } = req.body;
+    if (!workspaceID || !memberID) {
+      res.send({ message: "Please enter workspaceID and memberID" });
+    }
+
+    const toDeletemember = memberID;
+    const toDeletews = workspaceID;
+
+    // Finding the workspace inside database.
+    const currentMember = await db
+      .select()
+      .from(members)
+      .where(eq(members.workspaceID, toDeletews) && eq(toDeletemember,members.memberID))
+      .limit(1);
+
+    // // check if the user requesting the deletion is the manager of that workspace.
+    // if ((res.locals.userid as number) !== currentWorkspace[0].projectManager) {
+    //   res.send({ message: "You are not Project Manager" });
+    // }
+
+    //  deletion from database.
+    await db.delete(members).where(eq(members.workspaceID, toDeletews) && eq(toDeletemember,members.memberID));
+
+    res.send("Member deleted successfully");
+
+    // still there is a problem in which the entry is not deleted
+    //from all the tables where workspace ID is a value
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(500)
+      .send({ message: "Internal server error in member" });
   }
 };
