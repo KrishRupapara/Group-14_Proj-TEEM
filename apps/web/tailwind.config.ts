@@ -17,6 +17,7 @@ module.exports = {
     },
     extend: {
       colors: {
+        'prim-brown' :'#564154',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -72,5 +73,6 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"),require("daisyui")],
+
 }

@@ -46,7 +46,7 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
   const ProjectManager = await db
     .select()
     .from(users)
-    .where(eq(users.userID, res.locals.userid))
+    .where(eq(users.userID, 65))
     .limit(1);
 
   try {

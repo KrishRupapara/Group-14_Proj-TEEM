@@ -10,6 +10,6 @@ const router: Router = Router();
 
 router.route("/createWorkspace")
     .get(requireAuth, createWorkspaceGet)
-    .post(requireAuth, createWorkspacePost);
+    .post(createWorkspacePost);
 
 export { router as workspaceRouter };
