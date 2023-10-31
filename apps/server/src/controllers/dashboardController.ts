@@ -17,21 +17,15 @@ export const dashboardGet = async (req: Request, res: Response) => {
     .limit(1);
 
   try {
-    const wsList = [];
+ 
     const Workspace = await db
-      .select({ wsID:workspaces.workspaceID, Title: workspaces.title, Description: workspaces.description })
+      .select({ Title: workspaces.title, Description: workspaces.description , Progress : workspaces.progress })
       .from(workspaces)
       .where(eq(workspaces.projectManager, User[0].userID));
 
     console.log(Workspace);
-    for (const workspace of Workspace){
-      
-      const { wsID, Title ,Description } = workspace;
-      const Progress = calculateProjectProgress(workspace.wsID)
-      const ws = {Title,Description,Progress};
-      wsList.push(ws);
-    }
-    res.json(wsList);
+    
+    res.json(Workspace);
     // res.send("<h1>Welcom to TEEM dashboard</h1>");
 
   } catch (err) {

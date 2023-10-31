@@ -9,7 +9,7 @@ import { sendInvite} from "../services/sendInvite";
 import { signJWT } from "../utils/jwt";
 
 import { workspaces } from "../model/Workspace";
-import { members } from "../model/Member";
+import { members } from "../model/Workspace";
 import { tasks } from "../model/Task";
 import { wsTokenOptions } from "../services/workspaceServices";
 
@@ -40,7 +40,7 @@ export const createWorkspaceGet = async (req: Request, res: Response) => {
 
 export const createWorkspacePost = async (req: Request, res: Response) => {
   // res.send("<h1>You can create new workspace</h1>");
-  var { title, description, Members = [] , deadline } = req.body;
+  var { title, description, Members = [] , type } = req.body;
 
   if (!title) {
     return res.status(400).send({ error: "Tilte is required" });
@@ -60,25 +60,26 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
       .insert(workspaces)
       .values({
         title: title,
+        type : type,
         description: description,
-        projectManager: ProjectManager[0].userID,
+        projectManager: ProjectManager[0].userID
       })
       .returning({ workspace_id: workspaces.workspaceID });
 
     console.log(workspace_id[0].workspace_id);
 
-    const task_id = await db
-      .insert(tasks)
-      .values({
-        title : "Workspace Completion",
-        description :"This Task represent the completion of the Workspace",
-        deadline : deadline,
-        type : "Completion",
-        status : "1",
-        workspaceID : workspace_id[0].workspace_id
-      }).returning({task_id : tasks.taskID});
+    // const task_id = await db
+    //   .insert(tasks)
+    //   .values({
+    //     title : "Workspace Completion",
+    //     description :"This Task represent the completion of the Workspace",
+    //     taskType : "Completion",
+    //     deadline : deadline,
+    //     status : "To Do",
+    //     workspaceID : workspace_id[0].workspace_id
+    //   }).returning({task_id : tasks.taskID});
 
-    console.log(task_id[0].task_id);
+    // console.log(task_id[0].task_id);
 
     for (const Member of Members) {
       const { member_id, Role } = Member;
@@ -134,39 +135,36 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
 };
 
 export const getWorkspace = async (req: Request, res: Response) => {
- 
-  const workspaceID : {wsID:any} = {
-    wsID: req.params.wsid
-};
- 
+  const workspaceID: { wsID: any } = {
+    wsID: req.params.wsid,
+  };
+
   //console.log(workspaceID);
-  
-  const wsToken = signJWT(
-    { ...workspaceID},
-  );
+
+  const wsToken = signJWT({ ...workspaceID });
 
   res.cookie("wsToken", wsToken, wsTokenOptions);
-   
-  try {
-    
-  const workspace = await db
-    .select({
-      title: workspaces.title,
-      description: workspaces.description,
-      projectManager: users.name})
-    .from(workspaces)
-    .where(eq(workspaces.workspaceID, workspaceID.wsID))
-    .innerJoin(users, eq(workspaces.projectManager , users.userID))
-    .limit(1);
 
-  let Members = await db
-    .select({
-       name: users.name,
-       role: members.role,
-    })
-    .from(members)
-    .where(eq(members.workspaceID, workspaceID.wsID))
-    .innerJoin(users, eq(members.memberID , users.userID))
+  try {
+    const workspace = await db
+      .select({
+        title: workspaces.title,
+        description: workspaces.description,
+        projectManager: users.name,
+      })
+      .from(workspaces)
+      .where(eq(workspaces.workspaceID, workspaceID.wsID))
+      .innerJoin(users, eq(workspaces.projectManager, users.userID))
+      .limit(1);
+
+    let Members = await db
+      .select({
+        name: users.name,
+        role: members.role,
+      })
+      .from(members)
+      .where(eq(members.workspaceID, workspaceID.wsID))
+      .innerJoin(users, eq(members.memberID, users.userID));
 
     console.log(JSON.stringify(workspace));
     console.log(JSON.stringify(Members));
@@ -206,14 +204,12 @@ export const getWorkspace = async (req: Request, res: Response) => {
 
     const wsDetails = JSON.stringify(workspace).concat(JSON.stringify(Members));
     res.json(wsDetails);
-    
-    
- 
   } catch (error) {
     console.log(error);
-    return res.status(500).send({ message: "Internal server error in workspace" });
+    return res
+      .status(500)
+      .send({ message: "Internal server error in workspace" });
   }
-
 };
 
 export const addMembersGet = async (req: Request, res: Response) => {

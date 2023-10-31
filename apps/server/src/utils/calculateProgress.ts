@@ -1,6 +1,7 @@
 import { tasks } from "../model/Task";
 import { db } from "../config/database";
 import { and, eq } from "drizzle-orm";
+import { workspaces } from "@server/model/Workspace";
 export const calculateProjectProgress = async (wsID: any) => {
   const tTask = await db
     .select()
@@ -8,16 +9,23 @@ export const calculateProjectProgress = async (wsID: any) => {
     .where(eq(tasks.workspaceID, wsID));
   const totalTasks = tTask.length;
 
+  var Progress;
+
   if (totalTasks === 0) {
-    return 0; // To avoid division by zero
+    Progress = 0; 
   }
-  
-  const cTask = await db
-    .select()
-    .from(tasks)
-    .where(and(eq(tasks.workspaceID, wsID), eq(tasks.status, "2")));
-  const completedTasks = cTask.length;
+  else{
+      const cTask = await db
+        .select()
+        .from(tasks)
+        .where(and(eq(tasks.workspaceID, wsID), eq(tasks.status,"Done")));
+      const completedTasks = cTask.length;
+
+      Progress = (completedTasks / totalTasks) * 100;
+  }
 
 
-  return (completedTasks / totalTasks) * 100;
+  await db.update(workspaces)
+     .set({ progress: Progress})
+     .where(eq(workspaces.workspaceID, wsID));
 };
