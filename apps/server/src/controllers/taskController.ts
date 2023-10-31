@@ -17,7 +17,7 @@ export const assignTaskGet = async (req: Request, res: Response) => {
 };
 
 export const assignTaskPost = async (req: Request, res: Response) => {
-  var { title, description, deadline, Assignees = [] } = req.body;
+  var { title, description, taskType, deadline, Assignees = [] } = req.body;
   const wsID = parseInt(req.params.wsID, 10);
 
   if (isNaN(wsID)) {
@@ -49,6 +49,7 @@ export const assignTaskPost = async (req: Request, res: Response) => {
       .values({
         title: title,
         description: description,
+        taskType : taskType,
         deadline: deadline,
         workspaceID: Workspace[0].workspaceID,
       })
