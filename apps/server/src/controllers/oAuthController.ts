@@ -31,7 +31,7 @@ export const googleoauthHandler = async (req: Request, res: Response) => {
         emailId: googleUser.email,
         isVerified: true,
       })
-      .returning({ id: users.id });
+      .returning({ id: users.userID });
 
     const session_id = id[0].id.toString();
 

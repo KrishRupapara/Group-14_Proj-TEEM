@@ -8,4 +8,5 @@ export default {
   dbCredentials: {
     connectionString: process.env.DATABASE_URI!,
   },
+  out: "./src/model",
 } satisfies Config;
