@@ -18,13 +18,10 @@ export const assignTaskGet = async (req: Request, res: Response) => {
 };
 
 export const assignTaskPost = async (req: Request, res: Response) => {
-<<<<<<< HEAD
-  var { title, description, deadline, Assignees = [] } = req.body;
-  const wsID = parseInt(req.params.wsid, 10);
-=======
+
   var { title, description, taskType, deadline, Assignees = [] } = req.body;
   const wsID = parseInt(req.params.wsID, 10);
->>>>>>> cb1eca2672eac794d97f3d1aa5c428397e9073c1
+
 
   if (isNaN(wsID)) {
     return res.status(400).send("Invalid wsID");
@@ -116,12 +113,10 @@ export const assignTaskPost = async (req: Request, res: Response) => {
     } else {
       res.send({ message: "Task assigned successfully", assignee });
     }
-<<<<<<< HEAD
 
-=======
     const updatedProgress = await updateProjectProgress(wsID);
     console.log({updated_progress : updatedProgress});
->>>>>>> cb1eca2672eac794d97f3d1aa5c428397e9073c1
+
     // await sendTask(Workspace[0].title, title, assignee); // send mail to assignees(only member)
   } catch (err) {
     console.log(err);
