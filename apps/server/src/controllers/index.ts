@@ -17,6 +17,10 @@ import { dashboardGet, profileGet } from "./dashboardController";
 import {
   assignTaskGet,
   assignTaskPost,
+  getTask,
+  editTaskDetails,
+  addTaskAssignees,
+  removeTaskAssignees,
 } from "./taskController"
 
 export { 
@@ -36,5 +40,9 @@ export {
   dashboardGet,
   assignTaskGet,
   assignTaskPost,
-  profileGet
+  getTask,
+  editTaskDetails,
+  addTaskAssignees,
+  removeTaskAssignees,
+  profileGet,
 };

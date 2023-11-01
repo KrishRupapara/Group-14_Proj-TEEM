@@ -37,7 +37,7 @@ export const createWorkspaceGet = async (req: Request, res: Response) => {
 
 export const createWorkspacePost = async (req: Request, res: Response) => {
   // res.send("<h1>You can create new workspace</h1>");
-  var { title, description, Members = [] } = req.body;
+  var { title, description, type, Members = [] } = req.body;
 
   if (!title) {
     return res.status(400).send({ error: "Tilte is required" });
@@ -84,10 +84,12 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
         });
       }
     }
-
+   
+    /*
     const wsToken = signJWT({ ...workspace_id[0] });
 
     res.cookie("wsToken", wsToken, wsTokenOptions);
+    */
 
     if (unregisteredMembers.length > 0) {
       res.status(201).send({
@@ -119,7 +121,7 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
 };
 
 export const getWorkspace = async (req: Request, res: Response) => {
- 
+ /*
   const workspaceID : {wsID:any} = {
     wsID: req.params.wsid
 };
@@ -131,7 +133,10 @@ export const getWorkspace = async (req: Request, res: Response) => {
   );
 
   res.cookie("wsToken", wsToken, wsTokenOptions);
-   
+   */
+
+
+ const  wsID:any =  req.params.wsid
   try {
     
   const workspace = await db
@@ -140,7 +145,7 @@ export const getWorkspace = async (req: Request, res: Response) => {
       description: workspaces.description,
       projectManager: users.name})
     .from(workspaces)
-    .where(eq(workspaces.workspaceID, workspaceID.wsID))
+    .where(eq(workspaces.workspaceID, wsID))
     .innerJoin(users, eq(workspaces.projectManager , users.userID))
     .limit(1);
 
@@ -150,7 +155,7 @@ export const getWorkspace = async (req: Request, res: Response) => {
        role: members.role,
     })
     .from(members)
-    .where(eq(members.workspaceID, workspaceID.wsID))
+    .where(eq(members.workspaceID, wsID))
     .innerJoin(users, eq(members.memberID , users.userID))
 
     console.log(JSON.stringify(workspace));
@@ -206,12 +211,17 @@ export const addMembersGet = async (req: Request, res: Response) => {
 };
 
 export const addMembersPost = async (req: Request, res: Response) => {
+  /*
   const ws_token = req.cookies.wsToken;
   const decodedWsToken = await getDecodedToken(ws_token);
   const wsID = decodedWsToken.workspace_id;
 
   const access_token = req.cookies.accessToken;
   const decodedAccessToken = await getDecodedToken(access_token);
+  */
+
+  const userID:any = res.locals.userid;
+  const wsID:any = req.params.wsid;
 
   const workspace = await db
     .select()
@@ -219,7 +229,6 @@ export const addMembersPost = async (req: Request, res: Response) => {
     .where(eq(workspaces.workspaceID, wsID))
     .limit(1);
 
-  if (workspace[0].projectManager == decodedAccessToken.userID) {
     var { Members } = req.body;
     const unregisteredMembers: string[] = [];
     const alreadyPresent: string[] = [];
@@ -257,7 +266,7 @@ export const addMembersPost = async (req: Request, res: Response) => {
 
             console.log("Inserting");
             await db.insert(members).values({
-              workspaceID: decodedWsToken.workspace_id,
+              workspaceID: wsID,
               memberID: User[0].userID,
               role: Role,
             });
@@ -265,13 +274,13 @@ export const addMembersPost = async (req: Request, res: Response) => {
             alreadyPresent.push(member_id);
           }
         }
-      }
+      
 
       if (unregisteredMembers.length > 0) {
         const projectManager = await db
           .select()
           .from(users)
-          .where(eq(users.userID, decodedAccessToken.userID))
+          .where(eq(users.userID, userID))
           .limit(1);
 
         res.status(201).send({
@@ -287,16 +296,14 @@ export const addMembersPost = async (req: Request, res: Response) => {
       } else {
         res.send({ message: "Members Added successfully" });
       }
+    }
     } catch (error) {
       console.log(error);
       return res
         .status(500)
         .send({ message: "Internal server error in workspace" });
     }
-  } else {
-    res.send("You can't add members!");
-  }
-};
+  };
 
 export const deleteWorkspacePost = async (req: Request, res: Response) => {
   try {

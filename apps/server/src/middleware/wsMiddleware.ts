@@ -21,7 +21,7 @@ export const authorizeManager = async (
   // };
 
   const workspaceID: { wsID: any } = {
-    wsID: req.params.wsID,
+    wsID: req.params.wsid,
   };
   const userID = res.locals.userid;
 
@@ -31,10 +31,6 @@ export const authorizeManager = async (
       .from(workspaces)
       .where(eq(workspaces.workspaceID, workspaceID.wsID))
       .limit(1);
-
-    console.log(isManager[0]);
-    console.log(workspaceID.wsID);
-    console.log(userID);
 
     if (isManager[0].projectManager === userID) next();
     else {

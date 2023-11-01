@@ -18,7 +18,7 @@ router.route("/createWorkspace")
 router.route("/getWorkspace/:wsid")
     .get(requireAuth, authorizeMember, getWorkspace);
 
-router.route("/addMembers")
+router.route("/addMembers/:wsid")
     .post(requireAuth, authorizeManager, addMembersPost); 
 
 router.route("/deleteWorkspace")
