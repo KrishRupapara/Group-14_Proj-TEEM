@@ -5,10 +5,14 @@ import { users } from "../model/User";
 import { and, eq } from "drizzle-orm";
 import { getDecodedToken } from "../services/sessionServies";
 import { sendInvitation } from "../services/sendInvitation";
+import { sendInvite} from "../services/sendInvite";
 import { signJWT } from "../utils/jwt";
 
 import { workspaces } from "../model/Workspace";
-import { members } from "../model/Member";
+import { members } from "../model/Workspace";
+
+import { tasks } from "../model/Task";
+
 import { wsTokenOptions } from "../services/workspaceServices";
 
 export const createWorkspaceGet = async (req: Request, res: Response) => {
@@ -33,18 +37,20 @@ export const createWorkspaceGet = async (req: Request, res: Response) => {
 //         "role": 2
 //       }
 //     ]
+//     "deadline" : "2023-10-30T14:30:00.000Z" // estimated deadline for completion of project
 //   }
 
 export const createWorkspacePost = async (req: Request, res: Response) => {
   // res.send("<h1>You can create new workspace</h1>");
-  var { title, description, type, Members = [] } = req.body;
+  var { title, description, Members = [] , type } = req.body;
 
   if (!title) {
     return res.status(400).send({ error: "Tilte is required" });
   }
 
   const unregisteredMembers: string[] = [];
-
+  const registeredMembers: string[] =[];
+  
   const ProjectManager = await db
     .select()
     .from(users)
@@ -56,12 +62,26 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
       .insert(workspaces)
       .values({
         title: title,
+        type : type,
         description: description,
-        projectManager: ProjectManager[0].userID,
+        projectManager: ProjectManager[0].userID
       })
       .returning({ workspace_id: workspaces.workspaceID });
 
     console.log(workspace_id[0].workspace_id);
+
+    // const task_id = await db
+    //   .insert(tasks)
+    //   .values({
+    //     title : "Workspace Completion",
+    //     description :"This Task represent the completion of the Workspace",
+    //     taskType : "Completion",
+    //     deadline : deadline,
+    //     status : "To Do",
+    //     workspaceID : workspace_id[0].workspace_id
+    //   }).returning({task_id : tasks.taskID});
+
+    // console.log(task_id[0].task_id);
 
     for (const Member of Members) {
       const { member_id, Role } = Member;
@@ -77,6 +97,7 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
         unregisteredMembers.push(member_id);
       } else {
         // Add registered members to the workspace
+        registeredMembers.push(member_id);
         await db.insert(members).values({
           workspaceID: workspace_id[0].workspace_id,
           memberID: User[0].userID,
@@ -94,14 +115,15 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
     if (unregisteredMembers.length > 0) {
       res.status(201).send({
         message: "Workspace Created with out Unregistered Members",
-        unregisteredMembers,
+        UnregisteredMember: unregisteredMembers,
+        RegisteredMember : registeredMembers,
       });
 
       await sendInvitation(ProjectManager[0].name, title, unregisteredMembers);
     } else {
       res.send({ message: "Workspace Created successfully" });
     }
-
+      await sendInvite(ProjectManager[0].name,title,registeredMembers);
     /*if (req.body.userChoice == "sendInvitation") {
 
       await sendInvitation(ProjectManager[0].name, title, unregisteredMembers);
@@ -111,7 +133,6 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
       res.status(200).send({ message: "Operation canceled" });
     }*/
 
-    // console.log(id[0].id);
   } catch (err) {
     console.log(err);
     return res
@@ -127,10 +148,8 @@ export const getWorkspace = async (req: Request, res: Response) => {
 };
  
   //console.log(workspaceID);
-  
-  const wsToken = signJWT(
-    { ...workspaceID},
-  );
+
+  const wsToken = signJWT({ ...workspaceID });
 
   res.cookie("wsToken", wsToken, wsTokenOptions);
    */
@@ -196,14 +215,12 @@ export const getWorkspace = async (req: Request, res: Response) => {
 
     const wsDetails = JSON.stringify(workspace).concat(JSON.stringify(Members));
     res.json(wsDetails);
-    
-    
- 
   } catch (error) {
     console.log(error);
-    return res.status(500).send({ message: "Internal server error in workspace" });
+    return res
+      .status(500)
+      .send({ message: "Internal server error in workspace" });
   }
-
 };
 
 export const addMembersGet = async (req: Request, res: Response) => {

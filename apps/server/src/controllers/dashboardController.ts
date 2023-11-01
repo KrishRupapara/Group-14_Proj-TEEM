@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 
 import { users } from "../model/User";
 import { workspaces } from "../model/Workspace";
+// import {updateProjectProgress} from "../utils/progress";
 
 
 export const dashboardGet = async (req: Request, res: Response) => {
@@ -16,13 +17,14 @@ export const dashboardGet = async (req: Request, res: Response) => {
     .limit(1);
 
   try {
+ 
     const Workspace = await db
-      .select({ Title: workspaces.title, Description: workspaces.description })
+      .select({ Title: workspaces.title, Description: workspaces.description , Progress : workspaces.progress })
       .from(workspaces)
       .where(eq(workspaces.projectManager, User[0].userID));
 
     console.log(Workspace);
-
+    
     res.json(Workspace);
     // res.send("<h1>Welcom to TEEM dashboard</h1>");
 

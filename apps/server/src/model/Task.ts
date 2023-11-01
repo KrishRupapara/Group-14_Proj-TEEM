@@ -1,27 +1,38 @@
 import {
-    pgTable,
-    primaryKey,
-    foreignKey,
-    AnyPgColumn,
-    serial,
-    varchar,
-    time,
-    timestamp,
-    text,
-    boolean,
-    integer,
-  } from "drizzle-orm/pg-core";
-
+  pgTable,
+  serial,
+  varchar,
+  timestamp,
+  integer,
+  pgEnum,
+  primaryKey,
+} from "drizzle-orm/pg-core";
 
 import { workspaces } from "./Workspace";
-  
-export const tasks = pgTable("tasks", {
-    taskID : serial("taskID").primaryKey(),
+
+export const statusEnum = pgEnum("status", ["To Do", "In Progress", "Done"]);
+
+export const tasks = pgTable(
+  "tasks",
+  {
+    taskID: serial("taskID").notNull(),
     title: varchar("title", { length: 50 }).notNull(),
     description: varchar("description", { length: 200 }),
-    deadline : timestamp("deadline", { withTimezone: true, mode: 'string' }),
-    status : varchar("status", { length: 40 }).default("To Do"),
-    workspaceID: integer("workspaceID").references(() => workspaces.workspaceID),
+    taskType: varchar("taskType", { length: 50 }),
+    deadline: timestamp("deadline", { withTimezone: true, mode: "string" }),
+    status: statusEnum("status").notNull().default("To Do"),
+    workspaceID: integer("workspaceID").references(
+      () => workspaces.workspaceID,
+      {
+        onUpdate: "cascade",
+        onDelete: "cascade",
+      }
+    ),
     createdAt: timestamp("created_at").notNull().defaultNow(),
-  });
-  
+  },
+  (table) => {
+    return {
+      pk: primaryKey(table.taskID),
+    };
+  }
+);
