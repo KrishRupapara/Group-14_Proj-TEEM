@@ -233,8 +233,9 @@ export const forgotPasswordPost = async (req : Request, res : Response) => {
           res.send("User not verified.");
       }
 
+      const salt = await bcrypt.genSalt();                
       const otp = randomInt(100000, 1000000).toString();
-      const otp_secure = await bcrypt.hash(otp, 10);
+      const otp_secure = await bcrypt.hash(otp, salt);
       
       sendOTP(user[0].name,email,otp);                    // sending otp
       redisClient.set(email, otp_secure, "EX", 60 * 5);   // storing that inside redisclient
@@ -330,8 +331,9 @@ export const resendOtp = async (req : Request, res : Response) => {
       //     res.send("User not verified.");
       // }
 
+      const salt = await bcrypt.genSalt();   
       const otp = randomInt(100000, 1000000).toString();
-      const otp_secure = await bcrypt.hash(otp, 10);
+      const otp_secure = await bcrypt.hash(otp, salt);
       
       sendOTP(user[0].name,email,otp);                    // sending otp
       redisClient.set(email, otp_secure, "EX", 60 * 5);   // storing that inside redisclient
