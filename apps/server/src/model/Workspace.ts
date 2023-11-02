@@ -44,7 +44,7 @@ export const members = pgTable(
   },
   (table) => {
     return {
-      pk: primaryKey(table.memberID),
+      pk: primaryKey(table.memberID,table.workspaceID),
     };
   }
 );

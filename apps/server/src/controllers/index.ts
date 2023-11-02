@@ -22,6 +22,7 @@ import { dashboardGet, profileGet } from "./dashboardController";
 
 import { scheduleMeetHandler } from "./meetController";
 import { assignTaskGet, assignTaskPost } from "./taskController";
+import { getPeople,getUpcoming,getYourWork} from "./wsDashboardcontroller";
 
 export {
   signUpHandler,
@@ -42,4 +43,7 @@ export {
   assignTaskPost,
   profileGet,
   scheduleMeetHandler,
+  getPeople,
+  getUpcoming,
+  getYourWork,
 };
