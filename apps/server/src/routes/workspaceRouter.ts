@@ -8,6 +8,7 @@ import {
     getPeople,
     getYourWork,
     getUpcoming,
+    getStream,
 } from "../controllers";
 
 import{requireAuth, authorizeManager, authorizeMember} from "../middleware" 
@@ -22,6 +23,8 @@ router.route("/createWorkspace")
 // router.route("/:wsid")
 //     .get(requireAuth, authorizeMember, getWorkspace);
 
+router.route("/:wsID/stream")
+    .get(requireAuth, authorizeMember, getStream);
 router.route("/:wsID/people")
     .get(requireAuth, authorizeMember, getPeople);
 router.route("/:wsID/yourWork")

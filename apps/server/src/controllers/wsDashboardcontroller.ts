@@ -13,9 +13,65 @@ import { wsTokenOptions } from "../services/workspaceServices";
 import { invitees } from "../model/MeetInvitee";
 import { meets } from "../model/Meet";
 
+export const getStream = async (req: Request, res: Response) => {
+  const wsID = parseInt(req.params.wsID, 10);
+  if (isNaN(wsID) || !Number.isInteger(wsID)) {
+    return res.status(400).send({ message: "Invalid workspace ID" });
+  }
+
+  try{
+    const taskStream = await db
+      .select()
+      .from(tasks)
+      .where(eq(tasks.workspaceID,wsID));
+    console.log(taskStream);
+    
+    const meetStream = await db
+      .select()
+      .from(meets)
+      .where(eq(meets.workspaceID,wsID));
+    console.log(meetStream);
+
+    interface CombinedObject {
+      objectID: number;
+      objectType: string; // Type can be "task" or "meet"
+      objectTitle: string;
+      objectTime: Date | null;
+      created_at: Date;
+    }
+
+  
+    const Stream : CombinedObject[] = [
+      ...taskStream.map((task) => ({
+        objectID : task.taskID,
+        objectType: "Task",
+        objectTitle: task.title,
+        objectTime: task.deadline ? new Date(task.deadline) : null,
+        created_at: task.createdAt,
+      })),
+      ...meetStream.map((meet) => ({
+        objectID : meet.meetID,
+        objectType: "Meet",
+        objectTitle: meet.title,
+        objectTime: meet.meetTime ? new Date(meet.meetTime) : null,
+        created_at: meet.createdAt,
+      })),
+    ];
+
+    Stream.sort((a, b) =>  b.created_at.getTime() - a.created_at.getTime());
+    console.log(Stream);
+
+    res.json(Stream);    
+
+  }catch(err){
+    console.log(err);
+    return res.status(500).send({ message: "Internal server error in people" });
+  }
+};
+
 export const getPeople = async (req: Request, res: Response) => {
   const wsID = parseInt(req.params.wsID, 10);
-  console.log(wsID);
+  // console.log(wsID);
   // const wsID = req.params.wsID;
   if (isNaN(wsID) || !Number.isInteger(wsID)) {
     return res.status(400).send({ message: "Invalid workspace ID" });
@@ -125,11 +181,11 @@ export const getUpcoming = async (req: Request, res: Response) => {
 
   const upcomingMeet = await db
     .select({
-      taskID: meets.meetID,
-      taskTitle: meets.title,
+      meetID: meets.meetID,
+      meetTitle: meets.title,
       //   taskStatus: meets.,
-      taskDeadline: meets.meetTime,
-      taskType: meets.duration,
+      meetTime: meets.meetTime,
+      meetDuration: meets.duration,
     })
     .from(meets)
     .innerJoin(invitees, eq(meets.meetID, invitees.meetID))
