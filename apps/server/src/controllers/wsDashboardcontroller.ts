@@ -36,7 +36,7 @@ export const getStream = async (req: Request, res: Response) => {
       objectID: number;
       objectType: string; // Type can be "task" or "meet"
       objectTitle: string;
-      objectTime: Date | null;
+      objectStatus: string | null;
       created_at: Date;
     }
 
@@ -46,14 +46,16 @@ export const getStream = async (req: Request, res: Response) => {
         objectID : task.taskID,
         objectType: "Task",
         objectTitle: task.title,
-        objectTime: task.deadline ? new Date(task.deadline) : null,
+        objectStatus : task.status ? task.status : null,
+        // objectTime: task.deadline ? new Date(task.deadline) : null,
         created_at: task.createdAt,
       })),
       ...meetStream.map((meet) => ({
         objectID : meet.meetID,
         objectType: "Meet",
         objectTitle: meet.title,
-        objectTime: meet.meetTime ? new Date(meet.meetTime) : null,
+        objectStatus : null,
+        // objectTime: meet.meetTime ? new Date(meet.meetTime) : null,
         created_at: meet.createdAt,
       })),
     ];
