@@ -7,6 +7,7 @@ import {
   logoutHandler,
   forgotPasswordPost,
   resetPasswordPost,
+  oauthHanlder,
 } from "../controllers";
 import { requireAuth } from "../middleware";
 
@@ -19,6 +20,7 @@ router.route("/login").post(loginHandler);
 router.route("/verify").post(verifyUserHandler);
 
 router.route("/auth/oauth/google").get(googleoauthHandler);
+router.route("/googleurl").get(oauthHanlder);
 
 router.route("/logout").get(requireAuth, logoutHandler);
 router.route("/forgotPassword").post(forgotPasswordPost);
