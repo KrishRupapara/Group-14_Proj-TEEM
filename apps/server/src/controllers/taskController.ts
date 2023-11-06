@@ -20,7 +20,7 @@ export const assignTaskGet = async (req: Request, res: Response) => {
 export const assignTaskPost = async (req: Request, res: Response) => {
 
   var { title, description, taskType, deadline, Assignees = [] } = req.body;
-  const wsID = parseInt(req.params.wsID, 10);
+  const wsID = parseInt(req.params.wsid, 10);
 
 
   if (isNaN(wsID)) {
@@ -165,6 +165,8 @@ export const editTaskDetails = async (req: Request, res: Response) => {
         .set({ deadline: deadline })
         .where(and(eq(tasks.workspaceID, wsID), eq(tasks.taskID, taskID)));
     }
+
+    res.status(200).send("Task Details Edited Successfully");
   } catch (error) {
     console.log(error);
     return res.status(500).send({ message: "Internal server error in task" });
@@ -177,6 +179,8 @@ export const addTaskAssignees = async (req: Request, res: Response) => {
 
   var { Assignees = [] } = req.body;
 
+  console.log(Assignees.length);
+
   if (Assignees.length === 0) 
      res.send({ message: "Please add assignees" });
 
@@ -188,6 +192,10 @@ export const addTaskAssignees = async (req: Request, res: Response) => {
     for (const Assignee of Assignees) {
       const { assignee_id } = Assignee;
 
+
+      if(assignee_id !== undefined)
+      {
+      console.log("Defined");
       const User = await db
         .select()
         .from(users)
@@ -223,7 +231,7 @@ export const addTaskAssignees = async (req: Request, res: Response) => {
       } else {
         unregisteredAssignee.push(assignee_id);
       }
-    }
+    
 
     if (nonmemberAssignee.length > 0 || unregisteredAssignee.length > 0) {
       res.status(201).send({
@@ -235,6 +243,12 @@ export const addTaskAssignees = async (req: Request, res: Response) => {
     } else {
       res.send({ message: "Assigned Members Added", assignee });
     }
+  }
+
+  else{
+    res.send("Can't Add Empty Assignee");
+  }
+  }
   } catch (error) {
     console.log(error);
     return res.status(500).send({ message: "Internal server error in task" });
@@ -277,10 +291,7 @@ export const removeTaskAssignees = async (req: Request, res: Response) => {
 
      }
 
-     
-
      res.send({message: "Assignees Deleted Succesfully"});
- 
  
   } catch (error) {
     console.log(error);

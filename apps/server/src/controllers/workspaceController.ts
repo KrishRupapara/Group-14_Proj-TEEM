@@ -301,7 +301,7 @@ export const addMembersPost = async (req: Request, res: Response) => {
           .limit(1);
 
         res.status(201).send({
-          message: "Unregistered Members Added",
+          message: "Unregistered Members Invited",
           unregisteredMembers,
         });
 
