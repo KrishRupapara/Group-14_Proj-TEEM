@@ -34,6 +34,8 @@ export {
   googleoauthHandler,
   forgotPasswordPost,
   resetPasswordPost,
+  forgotPasswordPost,
+  resetPasswordPost,
   logoutHandler,
   createWorkspaceGet,
   createWorkspacePost,
