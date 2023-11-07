@@ -30,7 +30,7 @@ export const requireAuth = (
           res.locals.userid = decodedToken.userID;
           // req.user = decodedToken;
           next();
-        }
+        } 
       }
     );
   } else {

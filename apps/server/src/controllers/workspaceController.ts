@@ -314,18 +314,15 @@ export const addMembersPost = async (req: Request, res: Response) => {
 };
 
 
-export const deleteWorkspacePost = async (req: Request, res: Response) => {
+export const deleteWorkspaceGet = async (req: Request, res: Response) => {
   try {
     // checking for requests
-    const wsID  = req.params.wsID;
-    if (!wsID) {
-      res.send({ message: "Please enter your workspaceID a" });
-    }
+    const wsID:any  = req.params.wsid;
 
     const currentWorkspace = await db
       .select()
       .from(workspaces)
-      .where(eq(workspaces.workspaceID, wsID as any))
+      .where(eq(workspaces.workspaceID, wsID))
       .limit(1);
 
       if (currentWorkspace.length<1) {
@@ -333,7 +330,7 @@ export const deleteWorkspacePost = async (req: Request, res: Response) => {
       }
 
 
-    const deletedWorkspace = await db.delete(workspaces).where(eq(wsID as any, workspaces.workspaceID));
+    await db.delete(workspaces).where(eq(wsID, workspaces.workspaceID));
 
     res.send("Workspace deleted successfully");
 

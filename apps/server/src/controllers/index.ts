@@ -16,7 +16,7 @@ import {
   getWorkspace,
   addMembersPost,
   addMembersGet,
-  deleteWorkspacePost,
+  deleteWorkspaceGet,
 } from "./workspaceController";
 
 import { dashboardGet, profileGet } from "./dashboardController";
@@ -38,7 +38,7 @@ export {
   getWorkspace,
   addMembersGet,
   addMembersPost,
-  deleteWorkspacePost,
+  deleteWorkspaceGet,
   dashboardGet,
   assignTaskGet,
   assignTaskPost,

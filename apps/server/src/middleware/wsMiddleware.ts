@@ -35,6 +35,7 @@ export const authorizeManager = async (
     console.log(isManager[0]);
     console.log(workspaceID.wsID);
     console.log(userID);
+    console.log(isManager);
 
     if (isManager[0].projectManager === userID as number) next();
     else {

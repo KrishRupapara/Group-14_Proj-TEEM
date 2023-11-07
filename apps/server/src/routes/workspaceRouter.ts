@@ -4,7 +4,7 @@ import {
     createWorkspacePost,
     getWorkspace,
     addMembersPost,
-    deleteWorkspacePost,
+    deleteWorkspaceGet,
 } from "../controllers";
 
 import{requireAuth, authorizeManager, authorizeMember} from "../middleware" 
@@ -21,7 +21,7 @@ router.route("/getWorkspace/:wsid")
 router.route("/addMembers")
     .post(requireAuth, authorizeManager, addMembersPost); 
 
-router.route("/deleteWorkspace/:wsID")
-    .post(requireAuth, authorizeManager, deleteWorkspacePost);
+router.route("/:wsid/delete")
+    .get(requireAuth, authorizeManager, deleteWorkspaceGet);
 
 export { router as workspaceRouter };
