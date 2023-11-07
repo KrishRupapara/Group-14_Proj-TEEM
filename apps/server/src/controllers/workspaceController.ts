@@ -113,11 +113,15 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
         RegisteredMember: registeredMembers,
       });
 
-      await sendInvitation(ProjectManager[0].name, title, unregisteredMembers);
+      // await sendInvitation(ProjectManager[0].name, title, unregisteredMembers);
     } else {
       res.send({ message: "Workspace Created successfully" });
     }
     await sendInvite(ProjectManager[0].name, title, registeredMembers);
+
+      // await sendInvite(ProjectManager[0].name,title,registeredMembers);
+
+      
     /*if (req.body.userChoice == "sendInvitation") {
 
       await sendInvitation(ProjectManager[0].name, title, unregisteredMembers);
