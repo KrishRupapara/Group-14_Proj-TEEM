@@ -1,11 +1,11 @@
-"use client"
-import React from 'react'
+"use client";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from 'react';
+import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useRouter, useSearchParams } from "next/navigation";
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from "react-hot-toast";
 
 export default function Invitation() {
 
@@ -60,9 +60,14 @@ export default function Invitation() {
                 <div className='flex flex-col mt-10'>
                     <p className='m-3 font-bold'>Workspace members</p>
 
-                    <div className='flex justify-content'>
-                        <form onSubmit={handleSubmit(onFormSubmit)}>
-                            <button className='border border-xl rounded-xl bg-blue-600 m-1 p-2' onClick={() => append({})}>Add member</button>
+          <div className="flex justify-content">
+            <form onSubmit={handleSubmit(onFormSubmit)}>
+              <button
+                className="border border-xl rounded-xl bg-blue-600 m-1 p-2"
+                onClick={() => append({})}
+              >
+                Add member
+              </button>
 
                             <div className='flex flex-col' >
                                 {fields.map(({ id }, index) => {

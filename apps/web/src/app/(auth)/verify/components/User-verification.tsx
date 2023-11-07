@@ -1,19 +1,17 @@
 "use client";
-import React, { FC, useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { useRouter,useSearchParams } from "next/navigation";
-import toast, { Toaster } from 'react-hot-toast';
-
+import { useRouter, useSearchParams } from "next/navigation";
+import toast, { Toaster } from "react-hot-toast";
 
 let currentOTPIndex: number = 0;
-export default function varification() {
+export default function Verification() {
   const router = useRouter();
-  const searchParams = useSearchParams()
-  const email = searchParams.get('email')
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email");
   const [otp, setotp] = useState<string[]>(new Array(6).fill(""));
   const [ActiveOTPIndex, setActiveOTPIndex] = useState<number>(0);
-  // const [status, setstatus] = useState("");
+  const [status, setstatus] = useState("");
 
   const inputRef = useRef<HTMLInputElement>(null);
   const handleOnChange = ({
@@ -40,43 +38,25 @@ export default function varification() {
     inputRef.current?.focus();
   }, [ActiveOTPIndex]);
 
-
-  
-
   async function onsubmit() {
     try {
+      const otp_val = otp.join("");
       const res = await fetch("http://localhost:3500/api/Verify", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({email,otp}),
+        body: JSON.stringify({ otp: otp_val, email }),
       }).then((res) => res.json());
-      console.log(res.message);
 
-      if (res.message == "User Verified") {
+      setotp(new Array(6).fill(""));
+
+      if (res.message == "User verified") {
+        toast.success("User Verified");
         router.push("/Profile");
       } else {
         toast.error(res.message);
-        // setstatus(res.message);
       }
-    } catch (err: any) {
-      console.log("Login failed", err.message);
-    }
-  }
-
-  async function onresend() {
-    try {
-      const res = await fetch("http://localhost:3500/api/resendOtp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(email),
-      }).then((res) => res.json());
-      console.log(res.message);
-      toast(res.message);
-
     } catch (err: any) {
       console.log("Login failed", err.message);
     }
@@ -92,15 +72,14 @@ export default function varification() {
           className="-z-30 absolute"
           fill
         />
-        {/* </div> */}
+
         <div className="w-1/4 mx-auto my-auto">
-          <img
-            src="/img/Logo_black.png"
-            style={{ width: "100%", height: "40%" }}
-            alt=""
-          />
+          <div className="relative w-full h-2/3">
+            <Image src="/img/Logo_black.png" className="absolute" alt="" fill />
+          </div>
+
           <h1 className="font-bold mb-4 mt-3">Verify your account</h1>
-          <p>Enter the OTP we've sent in your mailbox</p>
+          <p>Enter the OTP we have sent in your mailbox</p>
 
           <div className="flex justify-center items-center space-x-2">
             {otp.map((_, index) => {
@@ -127,31 +106,11 @@ export default function varification() {
             Verify
           </button>
           <div>
-            <button className="text-xs" onClick={onresend}>
+            <button className="text-xs" onClick={onsubmit}>
               Resend OTP
             </button>
           </div>
-          {/* <div>{status}</div> */}
-        </div>
-      </div>
-      <div className="h-[4rem] flex justify-center w-full bg-footer">
-        <div className="mt-3">
-          <a href="#">
-            <img
-              src="/img/insta.png"
-              style={{ width: "90%", height: "80%" }}
-              alt=""
-            />
-          </a>
-        </div>
-        <div className="mt-3 ml-2">
-          <a href="#">
-            <img
-              src="/img/E_mail.png"
-              style={{ width: "75%", height: "80%" }}
-              alt=""
-            />
-          </a>
+          <div>{status}</div>
         </div>
       </div>
     </div>
