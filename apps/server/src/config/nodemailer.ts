@@ -3,9 +3,11 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 export const transporter = createTransport({
-  service: "gmail",
+  host: "smtp.zoho.in",
+  port: 465,
+  secure: true,
   auth: {
-    user: process.env.EMAIL,
-    pass: process.env.EMAIL_PASSWORD,
+    user: process.env.ZOHO_USER,
+    pass: process.env.ZOHO_PASSWORD,
   },
 });

@@ -24,3 +24,9 @@
 .bg-dash{
     background: linear-gradient(178deg, #779FA1 29.88%, rgba(136, 73, 143, 0.68) 105.03%);
 }
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

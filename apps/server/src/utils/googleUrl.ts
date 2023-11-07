@@ -1,8 +1,8 @@
-function getGoogleUrl() {
+export function getGoogleUrl() {
   const rootUrl = "https://accounts.google.com/o/oauth2/v2/auth";
 
   const options = {
-    redirect_uri: process.env.GOOGLE_REDIRECT_URI!,
+    redirect_uri: "http://localhost:3500/api/auth/oauth/google",
     client_id: process.env.GOOGLE_CLIENT_ID!,
     access_type: "offline",
     response_type: "code",
@@ -10,6 +10,7 @@ function getGoogleUrl() {
     scope: [
       "https://www.googleapis.com/auth/userinfo.profile",
       "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/calendar",
     ].join(" "),
   };
 
@@ -17,5 +18,3 @@ function getGoogleUrl() {
 
   return `${rootUrl}?${qs.toString()}`;
 }
-
-export default getGoogleUrl;

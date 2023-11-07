@@ -7,7 +7,7 @@ import {
   resetPasswordPost,
 } from "./authController";
 
-import { googleoauthHandler } from "./oAuthController";
+import { googleoauthHandler, oauthHanlder } from "./oAuthController";
 
 import {
   createWorkspaceGet,
@@ -43,8 +43,10 @@ export {
   assignTaskPost,
   profileGet,
   scheduleMeetHandler,
+  oauthHanlder,
   getPeople,
   getUpcoming,
   getYourWork,
   getStream,
+
 };
