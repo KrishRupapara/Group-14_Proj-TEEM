@@ -13,7 +13,7 @@ export default function varification() {
   const email = searchParams.get('email')
   const [otp, setotp] = useState<string[]>(new Array(6).fill(""));
   const [ActiveOTPIndex, setActiveOTPIndex] = useState<number>(0);
-  const [status, setstatus] = useState("");
+  // const [status, setstatus] = useState("");
 
   const inputRef = useRef<HTMLInputElement>(null);
   const handleOnChange = ({
@@ -50,7 +50,7 @@ export default function varification() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({otp,email}),
+        body: JSON.stringify({email,otp}),
       }).then((res) => res.json());
       console.log(res.message);
 
@@ -60,25 +60,23 @@ export default function varification() {
         toast.error(res.message);
         // setstatus(res.message);
       }
+    } catch (err: any) {
+      console.log("Login failed", err.message);
+    }
+  }
 
-    // const res = await fetch("http://localhost:3500/api/Verify");
-      // const [email,otpres] = await res.json();
-      // console.log(email,otpres);
+  async function onresend() {
+    try {
+      const res = await fetch("http://localhost:3500/api/resendOtp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(email),
+      }).then((res) => res.json());
+      console.log(res.message);
+      toast(res.message);
 
-      // const filterItem = (category) => {
-      // const updatedList = res.filter((curElem) => {
-      //     return curElem.email === ;
-      //   });
-      // };
-
-    //   const ot = otp.join("");
-    //   if (ot == "123456") {
-    //     console.log(ot);
-
-    //     router.push("/Profile");
-    //   } else {
-    //     setstatus("Wrong otp");
-    //   }
     } catch (err: any) {
       console.log("Login failed", err.message);
     }
@@ -87,8 +85,6 @@ export default function varification() {
   return (
     <div>
       <div className="h-[calc(100vh-4rem)] flex flex-col text-center">
-        {/* <div className='flex flex-col justify-center text-center'> */}
-        {/* <div> */}
         <Toaster />
         <Image
           alt="Image Not Found"
@@ -131,16 +127,12 @@ export default function varification() {
             Verify
           </button>
           <div>
-            <button className="text-xs" onClick={onsubmit}>
+            <button className="text-xs" onClick={onresend}>
               Resend OTP
             </button>
-            {/* <Link href="#" className='text-xs'>Resend OTP</Link> */}
           </div>
-          <div>{status}</div>
-          
-          {/* <p className='text-xs'>Resend OTP</p> */}
+          {/* <div>{status}</div> */}
         </div>
-        {/* </div> */}
       </div>
       <div className="h-[4rem] flex justify-center w-full bg-footer">
         <div className="mt-3">
