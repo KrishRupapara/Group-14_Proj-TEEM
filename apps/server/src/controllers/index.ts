@@ -8,7 +8,7 @@ import {
   resendOtp,
 } from "./authController";
 
-import { googleoauthHandler } from "./oAuthController";
+import { googleoauthHandler, oauthHanlder } from "./oAuthController";
 
 import {
   createWorkspaceGet,
@@ -23,6 +23,7 @@ import { dashboardGet, profileGet } from "./dashboardController";
 
 import { scheduleMeetHandler } from "./meetController";
 import { assignTaskGet, assignTaskPost } from "./taskController";
+import { getPeople,getUpcoming,getYourWork,getStream} from "./wsDashboardcontroller";
 
 export {
   signUpHandler,
@@ -44,4 +45,10 @@ export {
   assignTaskPost,
   profileGet,
   scheduleMeetHandler,
+  oauthHanlder,
+  getPeople,
+  getUpcoming,
+  getYourWork,
+  getStream,
+
 };

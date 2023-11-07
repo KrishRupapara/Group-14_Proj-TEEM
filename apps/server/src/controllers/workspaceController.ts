@@ -5,13 +5,12 @@ import { users } from "../model/User";
 import { and, eq } from "drizzle-orm";
 import { getDecodedToken } from "../services/sessionServies";
 import { sendInvitation } from "../services/sendInvitation";
-import { sendInvite} from "../services/sendInvite";
+import { sendInvite } from "../services/sendInvite";
 import { signJWT } from "../utils/jwt";
 
-import { workspaces } from "../model/Workspace";
-import { members } from "../model/Workspace";
-
 import { tasks } from "../model/Task";
+
+import { workspaces, members } from "../model/Workspace";
 
 import { wsTokenOptions } from "../services/workspaceServices";
 import { serial } from "drizzle-orm/mysql-core";
@@ -44,15 +43,15 @@ export const createWorkspaceGet = async (req: Request, res: Response) => {
 
 export const createWorkspacePost = async (req: Request, res: Response) => {
   // res.send("<h1>You can create new workspace</h1>");
-  var { title, description, Members = [] , type } = req.body;
+  var { title, description, Members = [], type } = req.body;
 
   if (!title) {
     return res.status(400).send({ error: "Tilte is required" });
   }
 
   const unregisteredMembers: string[] = [];
-  const registeredMembers: string[] =[];
-  
+  const registeredMembers: string[] = [];
+
   const ProjectManager = await db
     .select()
     .from(users)
@@ -64,9 +63,10 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
       .insert(workspaces)
       .values({
         title: title,
-        type : type,
+
+        type: "Personal",
         description: description,
-        projectManager: ProjectManager[0].userID
+        projectManager: ProjectManager[0].userID,
       })
       .returning({ workspace_id: workspaces.workspaceID });
 
@@ -108,19 +108,22 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
       }
     }
 
-  
     if (unregisteredMembers.length > 0) {
       res.status(201).send({
-        message: "Workspace Created with out Unregistered Members",
+        message: "Workspace Created with Unregistered Members",
         UnregisteredMember: unregisteredMembers,
-        RegisteredMember : registeredMembers,
+        RegisteredMember: registeredMembers,
       });
 
-      await sendInvitation(ProjectManager[0].name, title, unregisteredMembers);
+      // await sendInvitation(ProjectManager[0].name, title, unregisteredMembers);
     } else {
       res.send({ message: "Workspace Created successfully" });
     }
-      await sendInvite(ProjectManager[0].name,title,registeredMembers);
+    await sendInvite(ProjectManager[0].name, title, registeredMembers);
+
+      // await sendInvite(ProjectManager[0].name,title,registeredMembers);
+
+      
     /*if (req.body.userChoice == "sendInvitation") {
 
       await sendInvitation(ProjectManager[0].name, title, unregisteredMembers);
@@ -129,7 +132,6 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
     } else if (req.body.userChoice == "cancel") {
       res.status(200).send({ message: "Operation canceled" });
     }*/
-
   } catch (err) {
     console.log(err);
     return res
