@@ -6,6 +6,7 @@ import {
   timestamp,
   integer,
   primaryKey,
+  foreignKey,
 } from "drizzle-orm/pg-core";
 
 import { workspaces, members } from "./Workspace";
@@ -19,20 +20,17 @@ export const meets = pgTable(
     description: varchar("description", { length: 200 }),
     meetTime: timestamp("meetTime", { precision: 6, withTimezone: true }),
     duration: time("duration"),
-    workspaceID: integer("workspaceID")
-      .references(() => workspaces.workspaceID, {
-        onDelete: "cascade",
-        onUpdate: "cascade",
-      })
-      .notNull(),
-    organizerID: integer("organizerID").references(() => members.memberID, {
-      onDelete: "cascade",
-      onUpdate: "cascade",
-    }),
+    workspaceID: integer("workspaceID").notNull(),
+    organizerID: integer("organizerID").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
   },
   (table) => {
     return {
+      fk: foreignKey({
+        columns: [table.workspaceID, table.organizerID],
+        foreignColumns: [members.workspaceID, members.memberID]
+      }).onDelete("cascade").onUpdate("cascade"),
+
       pk: primaryKey(table.meetID, table.workspaceID, table.organizerID),
     };
   }

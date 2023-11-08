@@ -11,4 +11,5 @@ const router: Router = Router();
 router.route("/dashboard").get(requireAuth, dashboardGet);
 router.route("/profile").get(requireAuth, profileGet);
 
+
 export { router as dashboardRouter };

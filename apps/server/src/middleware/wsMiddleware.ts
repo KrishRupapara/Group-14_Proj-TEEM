@@ -50,7 +50,7 @@ export const authorizeMember = async (
   next: NextFunction
 ) => {
   const workspaceID: { wsID: any } = {
-    wsID: req.params.wsid,
+    wsID: req.params.wsID,
   };
 
   const userID = res.locals.userid;
@@ -91,6 +91,6 @@ export const authorizeMember = async (
     console.log(error);
     return res
       .status(500)
-      .send({ message: "Internal server error in workspace" });
+      .send({ message: "Internal server error in middleware authMember" });
   }
 };
