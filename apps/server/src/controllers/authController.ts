@@ -159,14 +159,12 @@ export const logoutHandler = async (req: Request, res: Response) => {
   try {
     // res.clearCookie("jwtToken");
 
-    const token = req.cookies.accessToken;
-    const decodedToken = await getDecodedToken(token);
 
-    //console.log("In logout");
-    console.log(decodedToken.session);
-    deleteSession(decodedToken.session);
-
-    res.cookie("accessToken", "logout", {
+   const userID: string = res.locals.userid
+    deleteSession(userID);
+    
+    
+    res.cookie('accessToken', 'logout', {
       httpOnly: true,
       expires: new Date(Date.now()),
     });
