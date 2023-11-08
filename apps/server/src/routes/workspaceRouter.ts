@@ -29,8 +29,8 @@ router.route("/:wsID/people")
     .get(requireAuth, authorizeMember, getPeople);
 router.route("/:wsID/yourWork")
     .get(requireAuth, authorizeMember, getYourWork);
-// router.route("/:wsid/upcoming")
-//     .get(requireAuth, authorizeMember, getUpcoming);
+router.route("/:wsID/upcoming")
+    .get(requireAuth, authorizeMember, getUpcoming);
 
 router.route("/addMembers")
     .post(requireAuth, authorizeManager, addMembersPost); 

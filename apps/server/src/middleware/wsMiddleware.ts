@@ -23,7 +23,7 @@ export const authorizeManager = async (
   const workspaceID: { wsID: any } = {
     wsID: req.params.wsID,
   };
-  const userID = res.locals.userid;
+  const userID = req.user.userID;
 
   try {
     const isManager = await db
@@ -57,7 +57,7 @@ export const authorizeMember = async (
     wsID: req.params.wsID,
   };
 
-  const userID = res.locals.userid;
+  const userID = req.user.userID;
 
   try {
     const isManager = await db
