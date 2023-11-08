@@ -12,7 +12,6 @@ import {
 } from "../controllers";
 
 import{requireAuth, authorizeManager, authorizeMember} from "../middleware" 
-import{requireAuth, authorizeManager, authorizeMember} from "../middleware" 
 
 const router: Router = Router();
 
@@ -37,6 +36,6 @@ router.route("/addMembers/:wsid")
     .post(requireAuth, authorizeManager, addMembersPost); 
 
 router.route("/deleteWorkspace/:wsID")
-    .post(requireAuth, authorizeManager, deleteWorkspacePost);
+    .get(requireAuth, authorizeManager, deleteWorkspaceGet);
 
 export { router as workspaceRouter };
