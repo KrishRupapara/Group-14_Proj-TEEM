@@ -5,7 +5,6 @@ import {
   timestamp,
   integer,
   primaryKey,
-  time,
 } from "drizzle-orm/pg-core";
 
 import { users } from "./User";
@@ -44,7 +43,7 @@ export const members = pgTable(
   },
   (table) => {
     return {
-      pk: primaryKey(table.memberID),
+      pk: primaryKey(table.memberID,table.workspaceID),
     };
   }
 );

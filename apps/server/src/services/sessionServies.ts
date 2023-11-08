@@ -4,30 +4,32 @@ import { CookieOptions } from "express";
 import jwt from "jsonwebtoken";
 
 export const accessTokenCookieOptions: CookieOptions = {
-  maxAge: 86400,
   httpOnly: true,
   domain: "localhost",
   path: "/",
   sameSite: "lax",
   secure: false,
+  expires: new Date(Date.now() + 86400 * 1000),
 };
 
 export const refreshTokenCookieOptions: CookieOptions = {
   ...accessTokenCookieOptions,
-  maxAge: 86400 * 30,
+  expires: new Date(Date.now() + 30 * 86400 * 1000),
 };
 
 export const createSession = async (
   id: string,
   refresh_token: string,
   userAgent: string,
-  isVerified?: boolean
+  isVerified: boolean,
+  ip: string
 ) => {
   const session: SessionType = {
     id,
     refresh_token,
     userAgent,
-    isVerified: isVerified && true,
+    isVerified,
+    ip,
   };
 
   redisClient.set(id, JSON.stringify(session), "EX", 60 * 60 * 24 * 30);
@@ -44,31 +46,26 @@ export const findSessions = async (userId: string) => {
   return val;
 };
 
-export const getDecodedToken = async(token: string) => {
-   
-  var dToken:any;
+export const getDecodedToken = async (token: string) => {
+  var dToken: any;
 
-  jwt.verify(
-    token,
-    process.env.JWT_SECRET!,
-    (err: any, decodedToken: any) => {
-      if (err) {
-        console.log(err.meesage);
-        console.log(err);
-        throw Error(err.message);
-        // res.redirect('/login');
-      } 
-      else {
-        console.log(decodedToken);
-        dToken = decodedToken;
-        
-        // req.user = decodedToken;   
-      }  
-    });
+  jwt.verify(token, process.env.JWT_SECRET!, (err: any, decodedToken: any) => {
+    if (err) {
+      console.log(err.meesage);
+      console.log(err);
+      throw Error(err.message);
+      // res.redirect('/login');
+    } else {
+      console.log(decodedToken);
+      dToken = decodedToken;
 
-    return dToken;
-}
+      // req.user = decodedToken;
+    }
+  });
 
-export const deleteSession = async(session_id: string) =>{
-        redisClient.del(session_id);
-  };
+  return dToken;
+};
+
+export const deleteSession = async (session_id: string) => {
+  redisClient.del(session_id);
+};

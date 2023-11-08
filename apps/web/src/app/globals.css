@@ -24,3 +24,17 @@
 .bg-dash{
     background: linear-gradient(178deg, #779FA1 29.88%, rgba(136, 73, 143, 0.68) 105.03%);
 }
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.Invitationbg{
+    background: radial-gradient(56.02% 56% at 50.84% 50%, rgba(170, 89, 142, 0.77) 0%, rgba(224, 203, 168, 0.77) 100%);
+}
+
+.bg-footer{
+    background: linear-gradient(224deg, #002ABD 4.54%, #4F66B7 14.52%, rgba(79, 102, 183, 0.56) 29.9%, rgba(79, 102, 183, 0.26) 52.71%, rgba(170, 89, 142, 0.87) 73.01%);
+}
