@@ -37,7 +37,7 @@ router.route("/:wsID/upcoming")
 router.route("/addMembers/:wsid")
     .post(requireAuth, authorizeManager, addMembersPost); 
 
-router.route("/deleteWorkspace")
+router.route("/deleteWorkspace/:wsID")
     .post(requireAuth, authorizeManager, deleteWorkspacePost);
 router.route("/deleteWorkspace")
     .post(requireAuth, authorizeManager, deleteWorkspacePost);

@@ -32,7 +32,13 @@ export const authorizeManager = async (
       .where(eq(workspaces.workspaceID, workspaceID.wsID))
       .limit(1);
 
-    if (isManager[0].projectManager === userID) next();
+
+    console.log(isManager[0]);
+    console.log(workspaceID.wsID);
+    console.log(userID);
+
+    if (isManager[0].projectManager === userID as number) next();
+
     else {
       res.send("You do not own the workspace");
     }

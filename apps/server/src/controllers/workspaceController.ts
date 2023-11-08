@@ -13,6 +13,8 @@ import { signJWT } from "../utils/jwt";
 import { workspaces, members } from "../model/Workspace";
 
 import { wsTokenOptions } from "../services/workspaceServices";
+import { serial } from "drizzle-orm/mysql-core";
+import { Serializable } from "child_process";
 
 export const createWorkspaceGet = async (req: Request, res: Response) => {
   res.send("<h1>You can create new workspace</h1>");
@@ -333,39 +335,69 @@ export const addMembersPost = async (req: Request, res: Response) => {
     }
   };
 
+
 export const deleteWorkspacePost = async (req: Request, res: Response) => {
   try {
     // checking for requests
-    const { workspaceID } = req.body;
-    if (!workspaceID) {
+    const wsID  = req.params.wsID;
+    if (!wsID) {
       res.send({ message: "Please enter your workspaceID a" });
     }
 
-    const toDelete = workspaceID;
-
-    // Finding the workspace inside database.
     const currentWorkspace = await db
       .select()
       .from(workspaces)
-      .where(eq(workspaces.workspaceID, toDelete))
+      .where(eq(workspaces.workspaceID, wsID as any))
       .limit(1);
 
+      if (currentWorkspace.length<1) {
+        return res.status(400).send({ error: "No such Workspace found" });
+      }
+    
     // check if the user requesting the deletion is the manager of that workspace.
     if ((req.user.userID as number) !== currentWorkspace[0].projectManager) {
       res.send({ message: "You are not Project Manager" });
     }
 
-    //  deletion from database.
-    await db.delete(workspaces).where(eq(toDelete, workspaces.workspaceID));
 
-    res.send("deleted successfully");
+    const deletedWorkspace = await db.delete(workspaces).where(eq(wsID as any, workspaces.workspaceID));
 
-    // still there is a problem in which the entry is not deleted
-    //from all the tables where workspace ID is a value
+    res.send("Workspace deleted successfully");
+
   } catch (err) {
     console.log(err);
     return res
       .status(500)
       .send({ message: "Internal server error in workspace" });
+  }
+};
+
+
+export const deleteMembers = async (req: Request, res: Response) => {
+  try {
+
+    // const { workspaceID , memberID } = req.body;
+    // if (!workspaceID || !memberID) {
+    //   res.send({ message: "Please enter workspaceID and memberID" });
+    // }
+
+    // const toDeletemember = memberID;
+    // const toDeletews = workspaceID;
+
+    // const currentMember = await db
+    //   .select()
+    //   .from(members)
+    //   .where(eq(members.workspaceID, toDeletews) && eq(toDeletemember,members.memberID))
+    //   .limit(1);
+
+    // await db.delete(members).where(eq(members.workspaceID, toDeletews) && eq(toDeletemember,members.memberID));
+
+    res.send("Member deleted successfully");
+
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(500)
+      .send({ message: "Internal server error in member" });
   }
 };

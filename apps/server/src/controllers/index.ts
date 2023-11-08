@@ -5,6 +5,7 @@ import {
   logoutHandler,
   forgotPasswordPost,
   resetPasswordPost,
+  resendOtp,
 } from "./authController";
 
 import { googleoauthHandler, oauthHanlder } from "./oAuthController";
@@ -38,8 +39,7 @@ export {
   googleoauthHandler,
   forgotPasswordPost,
   resetPasswordPost,
-  forgotPasswordPost,
-  resetPasswordPost,
+  resendOtp,
   logoutHandler,
   createWorkspaceGet,
   createWorkspacePost,
