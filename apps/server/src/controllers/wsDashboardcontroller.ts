@@ -67,7 +67,7 @@ export const getStream = async (req: Request, res: Response) => {
     res.json(Stream);
   } catch (err) {
     console.log(err);
-    return res.status(500).send({ message: "Internal server error in people" });
+    return res.status(500).send({ message: "Internal server error in stream" });
   }
 };
 

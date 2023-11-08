@@ -8,7 +8,7 @@ import { sendInvitation } from "../services/sendInvitation";
 import { sendInvite } from "../services/sendInvite";
 import { signJWT } from "../utils/jwt";
 
-import { tasks } from "../model/Task";
+// import { tasks } from "../model/Task";
 
 import { workspaces, members } from "../model/Workspace";
 
@@ -78,7 +78,7 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
         role: 4,
       })
       .returning({ projectmanger_id: members.memberID });
-      
+
     // const task_id = await db
     //   .insert(tasks)
     //   .values({
@@ -126,7 +126,7 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
     } else {
       res.send({ message: "Workspace Created successfully" });
     }
-    await sendInvite(ProjectManager[0].name, title, registeredMembers);
+    // await sendInvite(ProjectManager[0].name, title, registeredMembers);
 
     // await sendInvite(ProjectManager[0].name,title,registeredMembers);
 

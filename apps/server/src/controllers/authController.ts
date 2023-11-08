@@ -19,7 +19,7 @@ import {
 import { signJWT } from "../utils/jwt";
 
 export const signUpHandler = async (req: Request, res: Response) => {
-  var { email, name, password } = req.body;
+  var { email, name, password, organization, jobTitle, country } = req.body;
 
   if (!email || !name || !password) {
     console.log("Username and password required");
@@ -46,12 +46,15 @@ export const signUpHandler = async (req: Request, res: Response) => {
 
     redisClient.set(email, otp_secure, "EX", 60 * 5);
 
-    await sendOTP(name, email, otp); //do not remove this comment as it is for sending the email!!!
+    // await sendOTP(name, email, otp); //do not remove this comment as it is for sending the email!!!
 
     const id = await db.insert(users).values({
       name,
       emailId: email,
       password: password,
+      organization: organization,
+      jobTitle: jobTitle,
+      country: country,
     });
 
     res.status(200).send({ message: "Signup successful" });
@@ -217,7 +220,7 @@ export const forgotPasswordPost = async (req: Request, res: Response) => {
     const otp = randomInt(100000, 1000000).toString();
     const otp_secure = await bcrypt.hash(otp, 10);
 
-    sendOTP(user[0].name, email, otp); // sending otp
+    // sendOTP(user[0].name, email, otp); // sending otp
     redisClient.set(email, otp_secure, "EX", 60 * 5); // storing that inside redisclient
 
     res.send("OTP sent successfully");
