@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import { db } from "../config/database";
-import { users } from "../model/User";
+// import { users } from "../model/User";
 import { workspaces } from "../model/Workspace";
 import { members } from "../model/Workspace";
 import { and, eq } from "drizzle-orm";
@@ -21,9 +21,9 @@ export const authorizeManager = async (
   // };
 
   const workspaceID: { wsID: any } = {
-    wsID: req.params.wsID,
+    wsID: req.params.wsid,
   };
-  const userID = res.locals.userid;
+  const userID = req.user.userID;
 
   try {
     const isManager = await db
@@ -32,12 +32,14 @@ export const authorizeManager = async (
       .where(eq(workspaces.workspaceID, workspaceID.wsID))
       .limit(1);
 
+
     console.log(isManager[0]);
     console.log(workspaceID.wsID);
     console.log(userID);
     console.log(isManager);
 
     if (isManager[0].projectManager === userID as number) next();
+
     else {
       res.send("You do not own the workspace");
     }
@@ -58,7 +60,7 @@ export const authorizeMember = async (
     wsID: req.params.wsID,
   };
 
-  const userID = res.locals.userid;
+  const userID = req.user.userID;
 
   try {
     const isManager = await db

@@ -8,7 +8,7 @@ import { accessTokenCookieOptions } from "../services/sessionServies";
 
 interface payload {
   tokenUser: {
-    userID: string;
+    userID: number;
     name: string;
     isVerified: boolean;
   };
@@ -33,7 +33,7 @@ export const requireAuth = (
       ) as payload;
 
       req.user = payload.tokenUser;
-
+        console.log(req.user);
       return next();
     }
 

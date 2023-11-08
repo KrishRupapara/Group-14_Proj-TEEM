@@ -12,7 +12,7 @@ export const dashboardGet = async (req: Request, res: Response) => {
     const User = await db
       .select()
       .from(users)
-      .where(eq(users.userID, res.locals.userid))
+      .where(eq(users.userID, req.user.userID))
       .limit(1);
 
     console.log(User[0].userID);
@@ -25,7 +25,7 @@ export const dashboardGet = async (req: Request, res: Response) => {
       })
       .from(workspaces)
       .innerJoin(members,eq(members.workspaceID,workspaces.workspaceID))
-      .where(eq(members.memberID, res.locals.userid));
+      .where(eq(members.memberID, req.user.userID));
 
     console.log(Workspace);
 
@@ -45,7 +45,7 @@ export const profileGet = async (req: Request, res: Response) => {
     const User = await db
       .select({ Name: users.name, Email: users.emailId })
       .from(users)
-      .where(eq(users.userID, res.locals.userid))
+      .where(eq(users.userID, req.user.userID))
       .limit(1);
 
     console.log(User);
