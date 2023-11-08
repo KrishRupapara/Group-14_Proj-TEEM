@@ -18,7 +18,7 @@ import {
   deleteWorkspacePost,
 } from "./workspaceController";
 
-import { dashboardGet, profileGet } from "./dashboardController";
+import { dashboardGet, profileGet, profilePost } from "./dashboardController";
 
 import { scheduleMeetHandler } from "./meetController";
 import { assignTaskGet, assignTaskPost } from "./taskController";
@@ -48,5 +48,5 @@ export {
   getUpcoming,
   getYourWork,
   getStream,
-
+  profilePost
 };
