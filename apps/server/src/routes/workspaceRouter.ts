@@ -35,7 +35,7 @@ router.route("/:wsID/yourWork")
 router.route("/addMembers")
     .post(requireAuth, authorizeManager, addMembersPost); 
 
-router.route("/:wsid/delete")
+router.route("/:wsid/deleteWorkspace")
     .get(requireAuth, authorizeManager, deleteWorkspaceGet);
 
 export { router as workspaceRouter };
