@@ -22,7 +22,7 @@
     mix-blend-mode: darken;
 }
 .bg-dash{
-    background: linear-gradient(178deg, #779FA1 29.88%, rgba(136, 73, 143, 0.68) 105.03%);
+    background: linear-gradient(179deg, #BDDDFF 1.09%, rgba(255, 255, 255, 0.68) 105.47%);
 }
 
 input::-webkit-outer-spin-button,
@@ -30,3 +30,10 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+.progress-ring__circle {
+    stroke-dasharray: 400, 400;
+    transition: stroke-dashoffset 0.35s;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+  }
+
