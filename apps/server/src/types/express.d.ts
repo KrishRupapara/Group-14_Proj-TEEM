@@ -1,7 +1,7 @@
 declare namespace Express {
   export interface Request {
     user: {
-      userID: string;
+      userID: number;
       name: string;
       isVerified: boolean;
     };

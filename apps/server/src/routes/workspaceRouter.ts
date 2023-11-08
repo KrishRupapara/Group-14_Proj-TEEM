@@ -32,8 +32,8 @@ router.route("/:wsID/people")
     
 router.route("/:wsID/yourWork")
     .get(requireAuth, authorizeMember, getYourWork);
-// router.route("/:wsid/upcoming")
-//     .get(requireAuth, authorizeMember, getUpcoming);
+router.route("/:wsID/upcoming")
+    .get(requireAuth, authorizeMember, getUpcoming);
 
 router.route("/:wsid/settings")
     .get(requireAuth, authorizeManager, settingsWSGet)
@@ -42,7 +42,7 @@ router.route("/:wsid/settings")
 router.route("/addMembers/:wsid")
     .post(requireAuth, authorizeManager, addMembersPost); 
 
-router.route("/deleteWorkspace")
+router.route("/deleteWorkspace/:wsID")
     .post(requireAuth, authorizeManager, deleteWorkspacePost);
 router.route("/deleteWorkspace")
     .post(requireAuth, authorizeManager, deleteWorkspacePost);
