@@ -8,7 +8,7 @@ import { sendInvitation } from "../services/sendInvitation";
 import { sendInvite } from "../services/sendInvite";
 import { signJWT } from "../utils/jwt";
 
-import { tasks } from "../model/Task";
+// import { tasks } from "../model/Task";
 
 import { workspaces, members } from "../model/Workspace";
 
@@ -53,7 +53,7 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
   const ProjectManager = await db
     .select()
     .from(users)
-    .where(eq(users.userID, res.locals.userid))
+    .where(eq(users.userID, req.user.userID))
     .limit(1);
 
   try {
@@ -69,6 +69,15 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
       .returning({ workspace_id: workspaces.workspaceID });
 
     console.log(workspace_id[0].workspace_id);
+
+    const projectmanger_id = await db
+      .insert(members)
+      .values({
+        workspaceID: workspace_id[0].workspace_id,
+        memberID: ProjectManager[0].userID,
+        role: 4,
+      })
+      .returning({ projectmanger_id: members.memberID });
 
     // const task_id = await db
     //   .insert(tasks)
@@ -123,11 +132,10 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
     } else {
       res.send({ message: "Workspace Created successfully" });
     }
-    await sendInvite(ProjectManager[0].name, title, registeredMembers);
+    // await sendInvite(ProjectManager[0].name, title, registeredMembers);
 
-      // await sendInvite(ProjectManager[0].name,title,registeredMembers);
+    // await sendInvite(ProjectManager[0].name,title,registeredMembers);
 
-      
     /*if (req.body.userChoice == "sendInvitation") {
 
       await sendInvitation(ProjectManager[0].name, title, unregisteredMembers);
@@ -343,7 +351,7 @@ export const deleteWorkspacePost = async (req: Request, res: Response) => {
       .limit(1);
 
     // check if the user requesting the deletion is the manager of that workspace.
-    if ((res.locals.userid as number) !== currentWorkspace[0].projectManager) {
+    if ((req.user.userID as number) !== currentWorkspace[0].projectManager) {
       res.send({ message: "You are not Project Manager" });
     }
 

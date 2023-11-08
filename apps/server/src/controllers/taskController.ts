@@ -26,7 +26,7 @@ export const assignTaskPost = async (req: Request, res: Response) => {
   if (isNaN(wsID)) {
     return res.status(400).send("Invalid wsID");
   }
-  // const user_id = res.locals.userid;
+  // const user_id = req.user.userID;
   const Workspace = await db
     .select()
     .from(workspaces)
@@ -53,7 +53,7 @@ export const assignTaskPost = async (req: Request, res: Response) => {
         title: title,
         description: description,
         taskType : taskType,
-        deadline: deadline,
+        deadline: new Date(deadline) as any,
         workspaceID: Workspace[0].workspaceID,
       })
       .returning({ task_id: tasks.taskID });

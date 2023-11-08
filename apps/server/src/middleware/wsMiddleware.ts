@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import { db } from "../config/database";
-import { users } from "../model/User";
+// import { users } from "../model/User";
 import { workspaces } from "../model/Workspace";
 import { members } from "../model/Workspace";
 import { and, eq } from "drizzle-orm";
@@ -23,7 +23,7 @@ export const authorizeManager = async (
   const workspaceID: { wsID: any } = {
     wsID: req.params.wsid,
   };
-  const userID = res.locals.userid;
+  const userID = req.user.userID;
 
   try {
     const isManager = await db
@@ -53,7 +53,7 @@ export const authorizeMember = async (
     wsID: req.params.wsID,
   };
 
-  const userID = res.locals.userid;
+  const userID = req.user.userID;
 
   try {
     const isManager = await db
