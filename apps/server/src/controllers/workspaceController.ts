@@ -471,7 +471,7 @@ export const deleteWorkspacePost = async (req: Request, res: Response) => {
       res.send({ message: "Please enter your workspaceID a" });
     }
 
-    const toDelete = workspaceID;
+    const toDelete = wsID;
     const userID:any = req.user.userID
 
     // Finding the workspace inside database.
