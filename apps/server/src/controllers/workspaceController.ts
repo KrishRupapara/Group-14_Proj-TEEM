@@ -47,13 +47,16 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
     return res.status(400).send({ error: "Tilte is required" });
   }
 
+  const userID:any = req.user.userID;
+  console.log(userID);
+
   const unregisteredMembers: string[] = [];
   const registeredMembers: string[] = [];
 
   const ProjectManager = await db
     .select()
     .from(users)
-    .where(eq(users.userID, res.locals.userid))
+    .where(eq(users.userID, userID))
     .limit(1);
 
   try {
@@ -121,7 +124,7 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
 
       // await sendInvitation(ProjectManager[0].name, title, unregisteredMembers);
     } else {
-      res.send({ message: "Workspace Created successfully" });
+      res.status(201).send({ message: "Workspace Created successfully" });
     }
     await sendInvite(ProjectManager[0].name, title, registeredMembers);
 
@@ -226,6 +229,130 @@ export const getWorkspace = async (req: Request, res: Response) => {
   }
 };
 
+export const settingsWSGet = async(req: Request, res: Response) =>{
+    
+  const wsID:any = req.params.wsid;
+
+  try {
+    
+   const Workspace = await db
+   .select( {
+     title: workspaces.title,
+     description: workspaces.description,
+     type: workspaces.type})
+   .from(workspaces)
+   .where(eq(workspaces.workspaceID, wsID))
+   .limit(1);
+
+ const Members = await db
+   .select({
+      name: users.name,
+      role: members.role,
+   })
+   .from(members)
+   .where(eq(members.workspaceID, wsID))
+   .innerJoin(users, eq(members.memberID , users.userID))
+
+
+   res.status(200).send({
+     Title: Workspace[0].title,
+     Description: Workspace[0].description,
+     Type: Workspace[0].type,
+
+     Members: Members
+   })
+
+
+
+
+  } catch (error) {
+   console.log(error);
+   return res
+     .status(500)
+     .send({ message: "Internal server error in workspace" });
+ }
+  };
+
+
+export const settingsWSPost = async(req: Request, res: Response) =>{
+  
+ const wsID:any = req.params.wsid;
+ const userID:any = req.user.userID;
+ const {title, description, type, Members = []} = req.body;
+ const unregisteredMembers: string[] = [];
+
+ try{
+ await db
+   .update(workspaces)
+   .set({
+     title: title,
+     description:description,
+     type: type
+   })
+   .where(eq(workspaces.workspaceID, wsID));
+
+   await db
+     .delete(members)
+     .where(eq(members.workspaceID, wsID))
+   
+     for (const Member of Members) {
+       const { member_id, Role } = Member;
+
+       const User = await db
+         .select()
+         .from(users)
+         .where(eq(users.emailId, member_id))
+         .limit(1);
+
+       if (User.length === 0) {
+         // Handle unregistered team members
+         unregisteredMembers.push(member_id);
+       } 
+       else {
+       
+           console.log("Inserting");
+           await db.insert(members).values({
+             workspaceID: wsID,
+             memberID: User[0].userID,
+             role: Role,
+           });
+         
+         }
+       }
+     
+     if (unregisteredMembers.length > 0) {
+       const projectManager = await db
+         .select()
+         .from(users)
+         .where(eq(users.userID, userID))
+         .limit(1);
+
+      
+
+       await sendInvitation(
+         projectManager[0].name,
+         title,
+         unregisteredMembers
+       );
+
+       res.status(201).send({
+         message: " Settings Saved With Unregistered Members Invited",
+         unregisteredMembers,
+       });
+
+     } else {
+       res.send({ message: "Settings Saved" });
+     }
+   }
+   
+ catch(error){
+   console.log(error);
+   return res
+     .status(500)
+     .send({ message: "Internal server error in workspace" });
+ }
+};
+
 export const addMembersGet = async (req: Request, res: Response) => {
   res.send("You can add members");
 };
@@ -240,7 +367,7 @@ export const addMembersPost = async (req: Request, res: Response) => {
   const decodedAccessToken = await getDecodedToken(access_token);
   */
 
-  const userID:any = res.locals.userid;
+  const userID:any = req.user.userID;
   const wsID:any = req.params.wsid;
 
   const workspace = await db
@@ -334,6 +461,7 @@ export const deleteWorkspacePost = async (req: Request, res: Response) => {
     }
 
     const toDelete = workspaceID;
+    const userID:any = req.user.userID
 
     // Finding the workspace inside database.
     const currentWorkspace = await db
@@ -343,7 +471,7 @@ export const deleteWorkspacePost = async (req: Request, res: Response) => {
       .limit(1);
 
     // check if the user requesting the deletion is the manager of that workspace.
-    if ((res.locals.userid as number) !== currentWorkspace[0].projectManager) {
+    if ((userID) !== currentWorkspace[0].projectManager) {
       res.send({ message: "You are not Project Manager" });
     }
 

@@ -3,7 +3,8 @@ import {
     createWorkspaceGet,
     createWorkspacePost,
     getWorkspace,
-    getWorkspace,
+    settingsWSGet,
+    settingsWSPost,
     addMembersPost,
     deleteWorkspacePost,
     getPeople,
@@ -13,8 +14,6 @@ import {
 } from "../controllers";
 
 import{requireAuth, authorizeManager, authorizeMember} from "../middleware" 
-import{requireAuth, authorizeManager, authorizeMember} from "../middleware" 
-
 const router: Router = Router();
 
 router.route("/createWorkspace")
@@ -27,12 +26,18 @@ router.route("/createWorkspace")
 
 router.route("/:wsID/stream")
     .get(requireAuth, authorizeMember, getStream);
+
 router.route("/:wsID/people")
     .get(requireAuth, authorizeMember, getPeople);
+    
 router.route("/:wsID/yourWork")
     .get(requireAuth, authorizeMember, getYourWork);
 // router.route("/:wsid/upcoming")
 //     .get(requireAuth, authorizeMember, getUpcoming);
+
+router.route("/:wsid/settings")
+    .get(requireAuth, authorizeManager, settingsWSGet)
+    .post(requireAuth, authorizeManager, settingsWSPost);
 
 router.route("/addMembers/:wsid")
     .post(requireAuth, authorizeManager, addMembersPost); 
