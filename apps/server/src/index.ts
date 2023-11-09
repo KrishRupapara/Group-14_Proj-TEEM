@@ -32,6 +32,7 @@ import helmet from "helmet";
 import { rateLimit } from "express-rate-limit";
 import { client as redisClient } from "./config/redisConnect";
 import morgan from "morgan";
+import { dashboardGet } from "./controllers";
 
 app.set("trust proxy", 1);
 app.use(
@@ -54,9 +55,7 @@ app.use("/api", dashboardRouter);
 app.use("/api", taskRouter);
 app.use("/api", meetRouter);
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
+app.get("/", requireAuth, dashboardGet);
 
 redisClient.on("error", (err) => {
   throw new Error("Redis not connected!!");

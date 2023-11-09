@@ -3,17 +3,21 @@ import {
     createWorkspaceGet,
     createWorkspacePost,
     getWorkspace,
-    settingsWSGet,
-    settingsWSPost,
-    addMembersPost,
+    //settingsWSGet,
+    //settingsWSPost,
+    //addMembersPost,
     deleteWorkspacePost,
     getPeople,
     getYourWork,
     getUpcoming,
     getStream,
+    editWSDetailsGet,
+    editWsDetailsPost,
+    editWSMembersGet,
+    editWSMembersPost
 } from "../controllers";
 
-import{requireAuth, authorizeManager, authorizeMember} from "../middleware" 
+import{requireAuth, wsExist, authorizeManager, authorizeMember} from "../middleware" 
 const router: Router = Router();
 
 router.route("/createWorkspace")
@@ -25,26 +29,38 @@ router.route("/createWorkspace")
 //     .get(requireAuth, authorizeMember, getWorkspace);
 
 router.route("/:wsID/stream")
-    .get(requireAuth, authorizeMember, getStream);
+    .get(requireAuth, wsExist, authorizeMember, getStream);
 
 router.route("/:wsID/people")
-    .get(requireAuth, authorizeMember, getPeople);
+    .get(requireAuth, wsExist, authorizeMember, getPeople);
     
 router.route("/:wsID/yourWork")
-    .get(requireAuth, authorizeMember, getYourWork);
+    .get(requireAuth, wsExist, authorizeMember, getYourWork);
+
 router.route("/:wsID/upcoming")
-    .get(requireAuth, authorizeMember, getUpcoming);
+    .get(requireAuth, wsExist, authorizeMember, getUpcoming);
 
-router.route("/:wsid/settings")
-    .get(requireAuth, authorizeManager, settingsWSGet)
-    .post(requireAuth, authorizeManager, settingsWSPost);
+router.route("/:wsID/editWSDetails/:action")
+    .get(requireAuth, wsExist, authorizeManager, editWSDetailsGet)
+    .post(requireAuth, wsExist, authorizeManager, editWsDetailsPost)
 
-router.route("/addMembers/:wsid")
-    .post(requireAuth, authorizeManager, addMembersPost); 
+router.route("/:wsID/editWSMembers")
+    .get(requireAuth, wsExist, authorizeManager, editWSMembersGet)
+    .post(requireAuth, wsExist, authorizeManager, editWSMembersPost)
+
+/*
+router.route("/:wsID/settings/:toDo")
+    .get(requireAuth, wsExist, authorizeManager, settingsWSGet)
+    .post(requireAuth, wsExist, authorizeManager, settingsWSPost);
+
+router.route("/addMembers/:wsID")
+    .post(requireAuth, wsExist, authorizeManager, addMembersPost); 
 
 router.route("/deleteWorkspace/:wsID")
-    .post(requireAuth, authorizeManager, deleteWorkspacePost);
+    .post(requireAuth, wsExist, authorizeManager, deleteWorkspacePost);
+
 router.route("/deleteWorkspace")
     .post(requireAuth, authorizeManager, deleteWorkspacePost);
+*/
 
 export { router as workspaceRouter };
