@@ -63,9 +63,9 @@ export default function Loginpage() {
                 <Image src="/img/butterfly.png" alt="Image Not found" width={80} height={80}/>
         </div>
         <div className='h-[calc(100vh-6rem)] flex flex-row'>
-        <div className="h-full w-1/3 flex flex-col justify-end place-items-start">
+        {/* <div className="h-full w-1/3 flex flex-col justify-end place-items-start">
                       <Image src="/img/doodleleft.png" alt="Image Not found" width={300} height={250}/>
-                    </div>
+                    </div> */}
             <div className='h-full w-1/2 mx-auto p-4'>
                 {/* card */}
                 <form action="" onSubmit={onSubmit} className=" mx-auto h-full flex flex-col justify-center">
@@ -135,9 +135,9 @@ export default function Loginpage() {
                 {/* {JSON.stringify(user)} */}
                 </form>
             </div>
-            <div className="h-full w-1/4 flex flex-col justify-end place-items-end">
+            {/* <div className="h-full w-1/4 flex flex-col justify-end place-items-end">
                 <Image src="/img/doodleright.png" alt="Image Not found" width={180} height={230}/>
-                </div>
+                </div> */}
             {/* <div className='h-full w-1/2 signup-right flex flex-col items-center justify-center'>
                 <Image src="/img/signup1.png" alt="image not found" width={500} height={500} />
             </div> */}
