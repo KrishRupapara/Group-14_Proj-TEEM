@@ -54,7 +54,7 @@ export const scheduleMeetHandler = async (req: Request, res: Response) => {
       title: title,
       agenda: agenda,
       description: description,
-      meetTime: meetTime,
+      meetTime: new Date(meetTime) as any,
       duration: duration,
       workspaceID: parseInt(workspaceID),
       organizerID: parseInt(userID),
