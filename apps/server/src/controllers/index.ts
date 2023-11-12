@@ -14,8 +14,14 @@ import {
   createWorkspaceGet,
   createWorkspacePost,
   getWorkspace,
-  addMembersPost,
-  addMembersGet,
+  editWSDetailsGet,
+  editWsDetailsPost,
+  editWSMembersGet,
+  editWSMembersPost,
+  //settingsWSGet,
+  //settingsWSPost,
+  //addMembersPost,
+  //addMembersGet,
   deleteWorkspacePost,
 } from "./workspaceController";
 
@@ -24,12 +30,21 @@ import { dashboardGet, profileGet } from "./dashboardController";
 import { scheduleMeetHandler } from "./meetController";
 
 import { assignTaskGet, assignTaskPost,   getTask,
-  editTaskDetails,
-  addTaskAssignees,
-  removeTaskAssignees,
+  //editTaskDetails,
+  showAssignees,
+  editTaskDetailsGet,
+  editTaskDetailsPost,
+  editTaskAssigneesGet,
+  editTaskAssigneesPost,
+  //settingsTaskGet,
+  //settingTasksPost,
+  //addTaskAssignees,
+  //removeTaskAssignees,
 } from "./taskController";
 
 import { getPeople,getUpcoming,getYourWork,getStream} from "./wsDashboardcontroller";
+
+import { showInvitees } from "./meetController";
 
 
 export {
@@ -44,16 +59,21 @@ export {
   createWorkspaceGet,
   createWorkspacePost,
   getWorkspace,
-  addMembersGet,
-  addMembersPost,
+  //addMembersGet,
+  //addMembersPost,
+  //settingsWSGet,
+  //settingsWSPost,
   deleteWorkspacePost,
   dashboardGet,
   assignTaskGet,
   assignTaskPost,
   getTask,
-  editTaskDetails,
-  addTaskAssignees,
-  removeTaskAssignees,
+  showAssignees,
+  //settingsTaskGet,
+  //settingTasksPost,
+  //editTaskDetails,
+  //addTaskAssignees,
+  //removeTaskAssignees,
   profileGet,
   scheduleMeetHandler,
   oauthHanlder,
@@ -61,5 +81,13 @@ export {
   getUpcoming,
   getYourWork,
   getStream,
-
+  editWSDetailsGet,
+  editWsDetailsPost,
+  editWSMembersGet,
+  editWSMembersPost,
+  showInvitees,
+  editTaskDetailsGet,
+  editTaskDetailsPost, 
+  editTaskAssigneesGet,
+  editTaskAssigneesPost
 };
