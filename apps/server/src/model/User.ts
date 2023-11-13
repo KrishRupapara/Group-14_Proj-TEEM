@@ -17,4 +17,5 @@ export const users = pgTable("users", {
   country: varchar("country", { length: 200 }),
   createdAt: timestamp("createdAt").notNull().defaultNow(),
   isVerified: boolean("isVerified").notNull().default(false),
+  isConnectedToGoogle: boolean("isConnectedToGoogle").notNull().default(false),
 });

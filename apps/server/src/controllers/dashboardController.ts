@@ -9,25 +9,28 @@ import { members, workspaces } from "../model/Workspace";
 
 export const dashboardGet = async (req: Request, res: Response) => {
   try {
-    const User = await db
-      .select()
-      .from(users)
-      .where(eq(users.userID, req.user.userID))
-      .limit(1);
+    // const User = await db
+    //   .select()
+    //   .from(users)
+    //   .where(eq(users.userID, req.user.userID))
+    //   .limit(1);
 
-    console.log(User[0].userID);
+    // console.log(User[0].userID);
 
     const Workspace = await db
       .select({
-        Title: workspaces.title,
-        Description: workspaces.description,
-        Progress: workspaces.progress,
+        title: workspaces.title,
+        description: workspaces.description,
+        progress: workspaces.progress,
+        manager : users.name,
+        type : workspaces.type,
       })
       .from(workspaces)
       .innerJoin(members, eq(members.workspaceID, workspaces.workspaceID))
+      .innerJoin(users, eq(workspaces.projectManager,users.userID))
       .where(eq(members.memberID, req.user.userID));
 
-    console.log(Workspace);
+    // console.log(Workspace);
 
     res.json(Workspace);
     // res.send("<h1>Welcom to TEEM dashboard</h1>");
@@ -65,7 +68,7 @@ export const profileGet = async (req: Request, res: Response) => {
   }
 };
 
-export const profilePost = async (req: Request, res: Response) => {
+export const profilePATCH = async (req: Request, res: Response) => {
   try {
     var { UserName, Email, Organization, JobTitle, Country } = req.body;
 
@@ -110,7 +113,7 @@ export const profilePost = async (req: Request, res: Response) => {
         .update(users)
         .set(updatedFields)
         .where(eq(users.userID, req.user.userID));
-        
+
       // console.log(updatedUser);
 
       return res.send({ message: "Profile updated successfully" });
@@ -123,4 +126,8 @@ export const profilePost = async (req: Request, res: Response) => {
       .status(500)
       .send({ message: "Internal server error in Profile" });
   }
+};
+
+export const profileDELETE = async (req: Request, res: Response) => {
+  
 };

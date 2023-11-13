@@ -81,48 +81,66 @@ export const getPeople = async (req: Request, res: Response) => {
 
   // const user_id = req.user.userID;
   try {
+    const Workspace = await db 
+    .select({
+      title: workspaces.title,
+      description : workspaces.description,
+      progress: workspaces.progress,
+      projectManage: users.name,
+      type : workspaces.title,
+      created_at : workspaces.createdAt,
+    })
+    .from(workspaces)
+    .innerJoin(users,eq(workspaces.projectManager,users.userID))
+    .where(eq(workspaces.workspaceID,wsID));
+    
     const Manager = await db
       .select({
         userID: users.userID,
+        userName : users.name,
         emailID: users.emailId,
+        role: members.role,
       })
-      .from(workspaces)
-      .innerJoin(users, eq(workspaces.projectManager, users.userID))
-      .where(eq(workspaces.workspaceID, wsID));
-    console.log(Manager);
+      .from(members)
+      .innerJoin(users, eq(members.memberID, users.userID))
+      .where(and(eq(members.workspaceID, wsID), eq(members.role, 4)));
+    // console.log(Manager);
 
     const Teammate = await db
       .select({
         userID: members.memberID,
+        userName : users.name,
         emailID: users.emailId,
         role: members.role,
       })
       .from(members)
       .innerJoin(users, eq(members.memberID, users.userID))
       .where(and(eq(members.workspaceID, wsID), eq(members.role, 0)));
-    console.log(Teammate);
+    // console.log(Teammate);
 
     const Client = await db
       .select({
         userID: members.memberID,
+        userName : users.name,
         emailID: users.emailId,
         role: members.role,
       })
       .from(members)
       .innerJoin(users, eq(members.memberID, users.userID))
       .where(and(eq(members.workspaceID, wsID), eq(members.role, 2)));
-    console.log(Teammate);
+    // console.log(Teammate);
 
     const Collaborator = await db
       .select({
         userID: members.memberID,
+        userName : users.name,
         emailID: users.emailId,
         role: members.role,
       })
       .from(members)
       .innerJoin(users, eq(members.memberID, users.userID))
       .where(and(eq(members.workspaceID, wsID), eq(members.role, 1)));
-    console.log(Teammate);
+    // console.log(Teammate);
 
     const People = {
       Manager: Manager,
@@ -130,9 +148,9 @@ export const getPeople = async (req: Request, res: Response) => {
       Collaborator: Collaborator,
       Client: Client,
     };
-    console.log(People);
+    // console.log(People);
 
-    return res.json(People);
+    return res.json({Workspace : Workspace[0],People : People});
   } catch (err) {
     console.log(err);
     return res.status(500).send({ message: "Internal server error in people" });
@@ -197,7 +215,7 @@ export const getUpcoming = async (req: Request, res: Response) => {
       );
     // .orderBy(tasks.deadline);
 
-    console.log(upcomingTask);
+    // console.log(upcomingTask);
 
     const upcomingMeet = await db
       .select({
@@ -224,7 +242,7 @@ export const getUpcoming = async (req: Request, res: Response) => {
       );
     // .orderBy(new Date(meets.meetTime).getTime());
 
-    console.log(upcomingMeet);
+    // console.log(upcomingMeet);
 
     const Upcomig = {
       upcomingMeet: upcomingMeet,
