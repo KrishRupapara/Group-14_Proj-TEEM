@@ -8,13 +8,16 @@ import { sendInvitation } from "../services/sendInvitation";
 import { sendInvite } from "../services/sendInvite";
 import { signJWT } from "../utils/jwt";
 
-// import { tasks } from "../model/Task";
+import { tasks } from "../model/Task";
+import { assignees } from "../model/TaskAssignee";
 
 import { workspaces, members } from "../model/Workspace";
 
 import { wsTokenOptions } from "../services/workspaceServices";
 import { serial } from "drizzle-orm/mysql-core";
 import { Serializable } from "child_process";
+import { meets } from "../model/Meet";
+import { invitees } from "../model/MeetInvitee";
 
 export const createWorkspaceGet = async (req: Request, res: Response) => {
   res.send("<h1>You can create new workspace</h1>");
@@ -356,8 +359,24 @@ export const deleteWorkspaceGet = async (req: Request, res: Response) => {
       res.send({ message: "You are not Project Manager" });
     }
 
-
+    // delete workspace from workspace table
     await db.delete(workspaces).where(eq(wsID, workspaces.workspaceID));
+
+    // delete workspace from members table
+    await db.delete(members).where(eq(wsID, members.workspaceID));
+
+    //delete workspace from tasks table
+    await db.delete(tasks).where(eq(wsID,tasks.workspaceID));
+
+    //delete workspace from meet  table
+    await db.delete(meets).where(eq(wsID,meets.workspaceID));
+
+    //delete workspace from meetInvites table
+    await db.delete(invitees).where(eq(wsID,invitees.workspaceID));
+
+    //delete workspace from taskassignees table
+    await db.delete(assignees).where(eq(wsID,assignees.workspaceID));
+
 
     res.send("Workspace deleted successfully");
 
