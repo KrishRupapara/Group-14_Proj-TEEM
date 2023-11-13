@@ -57,9 +57,9 @@ export const profileGet = async (req: Request, res: Response) => {
       .where(eq(users.userID, req.user.userID))
       .limit(1);
 
-    console.log(User);
+    console.log(User[0]);
 
-    res.json(User);
+    res.json(User[0]);
   } catch (err) {
     console.log(err);
     return res
