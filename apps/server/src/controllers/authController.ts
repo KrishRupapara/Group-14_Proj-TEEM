@@ -358,4 +358,52 @@ export const deleteUser = async (req : Request, res : Response) => {
 };
 
 
+export const changepassword = async (req : Request, res : Response) => {
+
+  try{
+
+    const userID  : any = req.user.userID;    // get userID from req.user
+    const { oldPassword, newPassword , confirmPassword } = req.body;
+    
+    // find user from database
+    const userToChangePaasword = await db
+        .select()
+        .from(users)
+        .where(eq(users.userID, userID))
+        .limit(1);
+  
+      if (userToChangePaasword.length<1) {
+        return res.status(400).send({ error: "Invalid Credentials" });
+      }
+
+      const isSame = await bcrypt.compare(oldPassword, userToChangePaasword[0].password!);
+      if (isSame) {
+        res.send("New Password is same as current password.");
+      }
+
+
+    
+      if(newPassword !== confirmPassword){
+        res.send("New Password and Confirm Password are not same.");
+      }
+
+      const salt = await bcrypt.genSalt(); // adding salt
+      const password = await bcrypt.hash(newPassword, salt);
+
+      await db // update the password inside database.
+        .update(users)
+        .set({ password: password })
+        .where(eq(users.userID, userID));
+
+      return res.send({ message: "Password Changed Successfully" });
+
+  }catch (err) {
+    console.log(err);
+    return res.status(500).send({ message: "Internal server error" });
+  }
+
+
+}
+
+
 
