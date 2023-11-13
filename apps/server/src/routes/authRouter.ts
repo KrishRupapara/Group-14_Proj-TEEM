@@ -9,8 +9,6 @@ import {
   resetPasswordPost,
   resendOtp,
   oauthHanlder,
-  deleteUser,
-  changepassword,
 } from "../controllers";
 import { requireAuth } from "../middleware";
 
@@ -30,7 +28,7 @@ router.route("/forgotPassword").post(forgotPasswordPost);
 
 router.route("/resetPassword").post(resetPasswordPost);
 router.route("/resendOtp").post(resendOtp);
-router.route("/deleteUser").get(requireAuth, deleteUser);
-router.route("/changePassword").post(requireAuth, changepassword);
+
+
 
 export { router as authRouter };

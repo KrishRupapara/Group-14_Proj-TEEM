@@ -6,8 +6,7 @@ import {
   forgotPasswordPost,
   resetPasswordPost,
   resendOtp,
-  deleteUser,
-  changepassword,
+  changePassword,
 } from "./authController";
 
 import { googleoauthHandler, oauthHanlder } from "./oAuthController";
@@ -16,25 +15,53 @@ import {
   createWorkspaceGet,
   createWorkspacePost,
   getWorkspace,
-  addMembersPost,
-  addMembersGet,
-  deleteWorkspaceGet,
+
+  //settingsWSGet,
+  //settingsWSPost,
+  //addMembersPost,
+  //addMembersGet,
 } from "./workspaceController";
 
-import { dashboardGet, profileGet } from "./dashboardController";
+import {
+  dashboardGet,
+  profileGet,
+  profileDELETE,
+  profilePATCH,
+} from "./dashboardController";
 
 import { scheduleMeetHandler , deleteMeet} from "./meetController";
 
-import { assignTaskGet, assignTaskPost,   getTask,
-  editTaskDetails,
-  addTaskAssignees,
-  removeTaskAssignees,
+import {
+  assignTaskGet,
+  assignTaskPost,
+  getTask,
+  //editTaskDetails,
+  showAssignees,
+  editTaskDetailsGet,
+  editTaskDetailsPATCH,
+  editTaskAssigneesGet,
+  editTaskAssigneesPATCH,
   deleteTask,
-
+  //settingsTaskGet,
+  //settingTasksPost,
+  //addTaskAssignees,
+  //removeTaskAssignees,
 } from "./taskController";
 
-import { getPeople,getUpcoming,getYourWork,getStream} from "./wsDashboardcontroller";
+import {
+  getPeople,
+  getUpcoming,
+  getYourWork,
+  getStream,
+  editWSDetailsGet,
+  editWsDetailsPATCH,
+  editWSMembersGet,
+  editWSMembersPATCH,
+  deleteWorkspaceDELETE,
 
+} from "./wsDashboardcontroller";
+
+import { showInvitees } from "./meetController";
 
 export {
   signUpHandler,
@@ -44,23 +71,26 @@ export {
   forgotPasswordPost,
   resetPasswordPost,
   resendOtp,
-  deleteUser,
-  changepassword,
+  changePassword,
   logoutHandler,
   createWorkspaceGet,
   createWorkspacePost,
   getWorkspace,
-  addMembersGet,
-  addMembersPost,
-  deleteWorkspaceGet,
+  //addMembersGet,
+  //addMembersPost,
+  //settingsWSGet,
+  //settingsWSPost,
+  deleteWorkspaceDELETE,
   dashboardGet,
   assignTaskGet,
   assignTaskPost,
   getTask,
-  deleteTask,
-  editTaskDetails,
-  addTaskAssignees,
-  removeTaskAssignees,
+  showAssignees,
+  //settingsTaskGet,
+  //settingTasksPost,
+  //editTaskDetails,
+  //addTaskAssignees,
+  //removeTaskAssignees,
   profileGet,
   scheduleMeetHandler,
   oauthHanlder,
@@ -69,5 +99,16 @@ export {
   getYourWork,
   getStream,
   deleteMeet,
-
+  editWSDetailsGet,
+  editWsDetailsPATCH,
+  editWSMembersGet,
+  editWSMembersPATCH,
+  showInvitees,
+  editTaskDetailsGet,
+  editTaskDetailsPATCH,
+  editTaskAssigneesGet,
+  editTaskAssigneesPATCH,
+  profilePATCH,
+  profileDELETE,
+  deleteTask
 };

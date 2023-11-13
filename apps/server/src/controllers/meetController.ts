@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { db } from "../config/database";
 import { meets } from "../model/Meet";
 import { users } from "../model/User";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { invitees } from "../model/MeetInvitee";
 import { members } from "../model/Workspace";
 import { client as redisClient } from "../config/redisConnect";
@@ -146,4 +146,25 @@ export const deleteMeet = async (req: Request, res: Response) => {
     .send({ message: "Internal server error in Meet" });
 }
 
+};
+
+export const showInvitees = async(req: Request, res: Response) =>{
+  const wsID:any = req.params.wsID;
+  const meetID:any = req.params.meetID;
+
+  try {
+    
+    const Invitees = await db
+      .select({
+        name:users.name
+     })
+      .from(invitees)
+      .where(and(eq(invitees.workspaceID, wsID), eq(invitees.meetID, meetID)))
+      .innerJoin(users, eq(users.userID, invitees.inviteeID));
+
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({ message: "Internal server error in task" });
+  }
 };

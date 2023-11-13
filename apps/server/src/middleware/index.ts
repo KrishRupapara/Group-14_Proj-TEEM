@@ -1,10 +1,12 @@
 import { requireAuth } from "./authMiddleware";
-import { authorizeManager, authorizeMember } from "./wsMiddleware";
-import { getTaskDetails } from "./taskMiddleware";
+import { wsExist, authorizeManager, authorizeMember } from "./wsMiddleware";
+import { taskExist, getTaskDetails } from "./taskMiddleware";
 
 export {
     requireAuth,
+    wsExist,
     authorizeManager,
     authorizeMember,
+    taskExist,
     getTaskDetails
 };
