@@ -4,6 +4,9 @@ import { db } from "../config/database";
 import { users } from "../model/User";
 import { and, or, eq, gte, sql } from "drizzle-orm";
 
+import { sendInvitation } from "../services/sendInvitation";
+
+
 import { workspaces } from "../model/Workspace";
 import { members } from "../model/Workspace";
 import { assignees } from "../model/TaskAssignee";
@@ -81,48 +84,66 @@ export const getPeople = async (req: Request, res: Response) => {
 
   // const user_id = req.user.userID;
   try {
+    const Workspace = await db 
+    .select({
+      title: workspaces.title,
+      description : workspaces.description,
+      progress: workspaces.progress,
+      projectManage: users.name,
+      type : workspaces.title,
+      created_at : workspaces.createdAt,
+    })
+    .from(workspaces)
+    .innerJoin(users,eq(workspaces.projectManager,users.userID))
+    .where(eq(workspaces.workspaceID,wsID));
+    
     const Manager = await db
       .select({
         userID: users.userID,
+        userName : users.name,
         emailID: users.emailId,
+        role: members.role,
       })
-      .from(workspaces)
-      .innerJoin(users, eq(workspaces.projectManager, users.userID))
-      .where(eq(workspaces.workspaceID, wsID));
-    console.log(Manager);
+      .from(members)
+      .innerJoin(users, eq(members.memberID, users.userID))
+      .where(and(eq(members.workspaceID, wsID), eq(members.role, 4)));
+    // console.log(Manager);
 
     const Teammate = await db
       .select({
         userID: members.memberID,
+        userName : users.name,
         emailID: users.emailId,
         role: members.role,
       })
       .from(members)
       .innerJoin(users, eq(members.memberID, users.userID))
       .where(and(eq(members.workspaceID, wsID), eq(members.role, 0)));
-    console.log(Teammate);
+    // console.log(Teammate);
 
     const Client = await db
       .select({
         userID: members.memberID,
+        userName : users.name,
         emailID: users.emailId,
         role: members.role,
       })
       .from(members)
       .innerJoin(users, eq(members.memberID, users.userID))
       .where(and(eq(members.workspaceID, wsID), eq(members.role, 2)));
-    console.log(Teammate);
+    // console.log(Teammate);
 
     const Collaborator = await db
       .select({
         userID: members.memberID,
+        userName : users.name,
         emailID: users.emailId,
         role: members.role,
       })
       .from(members)
       .innerJoin(users, eq(members.memberID, users.userID))
       .where(and(eq(members.workspaceID, wsID), eq(members.role, 1)));
-    console.log(Teammate);
+    // console.log(Teammate);
 
     const People = {
       Manager: Manager,
@@ -130,9 +151,9 @@ export const getPeople = async (req: Request, res: Response) => {
       Collaborator: Collaborator,
       Client: Client,
     };
-    console.log(People);
+    // console.log(People);
 
-    return res.json(People);
+    return res.json({Workspace : Workspace[0],People : People});
   } catch (err) {
     console.log(err);
     return res.status(500).send({ message: "Internal server error in people" });
@@ -197,7 +218,7 @@ export const getUpcoming = async (req: Request, res: Response) => {
       );
     // .orderBy(tasks.deadline);
 
-    console.log(upcomingTask);
+    // console.log(upcomingTask);
 
     const upcomingMeet = await db
       .select({
@@ -224,7 +245,7 @@ export const getUpcoming = async (req: Request, res: Response) => {
       );
     // .orderBy(new Date(meets.meetTime).getTime());
 
-    console.log(upcomingMeet);
+    // console.log(upcomingMeet);
 
     const Upcomig = {
       upcomingMeet: upcomingMeet,
@@ -236,5 +257,243 @@ export const getUpcoming = async (req: Request, res: Response) => {
     return res
       .status(500)
       .send({ message: "Internal server error in upcoming" });
+  }
+};
+
+export const editWSDetailsGet = async(req:Request, res:Response) =>{
+  const wsID:any = req.params.wsID;
+ 
+  try {
+    const Workspace = await db
+    .select( {
+      title: workspaces.title,
+      description: workspaces.description,
+      type: workspaces.type})
+    .from(workspaces)
+    .where(eq(workspaces.workspaceID, wsID))
+    .limit(1);
+
+    res.json(Workspace);
+
+
+  } catch (error) {
+    console.log(error);
+   return res
+     .status(500)
+     .send({ message: "Internal server error in workspace" });
+  }
+}
+
+export const editWsDetailsPATCH = async(req:Request, res:Response) => {
+  const wsID:any = req.params.wsID;
+  const userID:any = req.user.userID;
+  // const toDo:any = req.params.action;
+
+ 
+
+ const {title, description, type} = req.body;
+
+
+ try{
+ await db
+   .update(workspaces)
+   .set({
+     title: title,
+     description:description,
+     type: type
+   })
+   .where(eq(workspaces.workspaceID, wsID));
+
+    res.send({ message: "Settings Saved" });
+     
+   }
+   
+ catch(error){
+   console.log(error);
+   return res
+     .status(500)
+     .send({ message: "Internal server error in workspace" });
+ }
+}
+
+export const editWSMembersGet = async(req: Request, res: Response) =>{
+ const wsID:any = req.params.wsID;
+
+ 
+try {
+  const Members = await db
+  .select({
+    Name: users.name,
+    Role: members.role
+  })
+  .from(members)
+  .where(eq(members.workspaceID, wsID))
+  .innerJoin(users, eq(users.userID, members.memberID));
+
+  res.status(200).send({Members: Members});
+} catch (error) {
+  console.log(error);
+  return res
+    .status(500)
+    .send({ message: "Internal server error in workspace" });
+}
+
+}
+
+export const editWSMembersPATCH = async(req: Request, res: Response) =>{
+  const wsID:any = req.params.wsID;
+  const userID:any = req.user.userID;
+  const {Members = []} = req.body;
+  const unregisteredMembers: string[] = [];
+  try {
+    
+    const Workspace = await db
+    .select( {
+      title: workspaces.title,
+      description: workspaces.description,
+      type: workspaces.type})
+    .from(workspaces)
+    .where(eq(workspaces.workspaceID, wsID))
+    .limit(1);
+
+    await db
+     .delete(members)
+     .where(eq(members.workspaceID, wsID))
+    
+    await db
+      .insert(members)
+      .values({
+        workspaceID: wsID,
+        memberID: userID,
+        role: 4
+      })
+   
+     for (const Member of Members) {
+       const { member_id, Role } = Member;
+
+       const User = await db
+         .select()
+         .from(users)
+         .where(eq(users.emailId, member_id))
+         .limit(1);
+
+       if (User.length === 0) {
+         // Handle unregistered team members
+         unregisteredMembers.push(member_id);
+       } 
+       else {
+       
+           console.log("Inserting");
+           await db.insert(members).values({
+             workspaceID: wsID,
+             memberID: User[0].userID,
+             role: Role,
+           });
+         
+         }
+       }
+     
+     if (unregisteredMembers.length > 0) {
+       const projectManager = await db
+         .select()
+         .from(users)
+         .where(eq(users.userID, userID))
+         .limit(1);
+
+      
+
+      //  await sendInvitation(
+      //    projectManager[0].name,
+      //    Workspace[0].title,
+      //    unregisteredMembers
+      //  );
+
+       res.status(201).send({
+         message: " Settings Saved With Unregistered Members Invited",
+         unregisteredMembers,
+       });
+
+     } else {
+       res.send({ message: "Settings Saved" });
+     }
+
+
+
+
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .send({ message: "Internal server error in workspace" });
+  }
+}
+
+export const deleteWorkspaceDELETE = async (req: Request, res: Response) => {
+  try {
+    // checking for requests
+    const wsID  = req.params.wsID;
+    if (!wsID) {
+      res.send({ message: "Please enter your workspaceID a" });
+    }
+
+    const toDelete = wsID;
+    const userID:any = req.user.userID
+
+    // Finding the workspace inside database.
+    const currentWorkspace = await db
+      .select()
+      .from(workspaces)
+      .where(eq(workspaces.workspaceID, wsID as any))
+      .limit(1);
+
+      if (currentWorkspace.length<1) {
+        return res.status(400).send({ error: "No such Workspace found" });
+      }
+    
+    // check if the user requesting the deletion is the manager of that workspace.
+    if ((userID) !== currentWorkspace[0].projectManager) {
+      res.send({ message: "You are not Project Manager" });
+    }
+
+
+    const deletedWorkspace = await db.delete(workspaces).where(eq(wsID as any, workspaces.workspaceID));
+
+    res.send("Workspace deleted successfully");
+
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(500)
+      .send({ message: "Internal server error in workspace" });
+  }
+};
+
+
+export const deleteMembers = async (req: Request, res: Response) => {
+  try {
+
+    // const { workspaceID , memberID } = req.body;
+    // if (!workspaceID || !memberID) {
+    //   res.send({ message: "Please enter workspaceID and memberID" });
+    // }
+
+    // const toDeletemember = memberID;
+    // const toDeletews = workspaceID;
+
+    // const currentMember = await db
+    //   .select()
+    //   .from(members)
+    //   .where(eq(members.workspaceID, toDeletews) && eq(toDeletemember,members.memberID))
+    //   .limit(1);
+
+    // await db.delete(members).where(eq(members.workspaceID, toDeletews) && eq(toDeletemember,members.memberID));
+
+    res.send("Member deleted successfully");
+
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(500)
+      .send({ message: "Internal server error in member" });
   }
 };

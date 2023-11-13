@@ -6,9 +6,10 @@ import {
   getTask,
   showAssignees,
   editTaskDetailsGet,
-  editTaskDetailsPost,
+  editTaskDetailsPATCH,
   editTaskAssigneesGet,
-  editTaskAssigneesPost
+  editTaskAssigneesPATCH,
+  deleteTask,
   //settingsTaskGet,
   //settingTasksPost,
   //editTaskDetails,
@@ -38,14 +39,17 @@ router.route("/:wsID/:taskID/getTask")
 router.route("/:wsID/:taskID/showAssignees")
   .get(requireAuth, wsExist, authorizeMember,  taskExist, getTaskDetails, showAssignees );
 
-router.route("/:wsID/:taskID/editTaskDetails/:action")
+router.route("/:wsID/:taskID/editTaskDetails")
     .get(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, editTaskDetailsGet)
-    .post(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, editTaskDetailsPost);
+    .patch(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, editTaskDetailsPATCH);
 
 router.route("/:wsID/:taskID/editTaskAssignees")
     .get(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, editTaskAssigneesGet)
-    .post(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, editTaskAssigneesPost);
+    .post(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, editTaskAssigneesPATCH);
 
+    router.route("/:wsID/:taskID/editTaskDetails")
+    // .get(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, editTaskAssigneesGet)
+    .delete(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, deleteTask);
   /*
 router.route("/:wsID/:taskID/settingsTask/:toDo")
   .get(requireAuth, wsExist, authorizeManager, getTaskDetails, settingsTaskGet)
