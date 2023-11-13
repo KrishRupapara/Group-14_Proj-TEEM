@@ -162,14 +162,12 @@ export const logoutHandler = async (req: Request, res: Response) => {
   try {
     // res.clearCookie("jwtToken");
 
-    const token = req.cookies.accessToken;
-    const decodedToken = await getDecodedToken(token);
 
-    //console.log("In logout");
-    console.log(decodedToken.session);
-    deleteSession(decodedToken.session);
-
-    res.cookie("accessToken", "logout", {
+   const userID: string = res.locals.userid
+    deleteSession(userID);
+    
+    
+    res.cookie('accessToken', 'logout', {
       httpOnly: true,
       expires: new Date(Date.now()),
     });
@@ -209,19 +207,24 @@ export const forgotPasswordPost = async (req: Request, res: Response) => {
     if (user.length < 1) {
       return res.status(400).send({ error: "Invalid Credentials" });
     }
-
-    console.log(user[0]); // just for testing
-
+    
     if (!user[0].isVerified) {
       // check for verification
       res.send("User not verified.");
     }
 
-    const otp = randomInt(100000, 1000000).toString();
-    const otp_secure = await bcrypt.hash(otp, 10);
 
-    // sendOTP(user[0].name, email, otp); // sending otp
-    redisClient.set(email, otp_secure, "EX", 60 * 5); // storing that inside redisclient
+      const salt = await bcrypt.genSalt();                
+      const otp = randomInt(100000, 1000000).toString();
+      const otp_secure = await bcrypt.hash(otp, salt);
+      
+      sendOTP(user[0].name,email,otp);                    // sending otp
+      redisClient.set(email, otp_secure, "EX", 60 * 5);   // storing that inside redisclient
+
+    console.log(user[0]); // just for testing
+
+
+    
 
     res.send("OTP sent successfully");
   } catch (err) {
@@ -282,3 +285,46 @@ export const resetPasswordPost = async (req: Request, res: Response) => {
     return res.status(500).send({ message: "Internal server error" });
   }
 };
+
+export const resendOtp = async (req : Request, res : Response) => {
+  let { email} = req.body;
+  if (!email ) {
+    return res.status(400).send({ error: "Enter email" });
+  }
+  try {
+
+    const user = await db
+        .select()
+        .from(users)
+        .where(eq(users.emailId, email))
+        .limit(1);
+  
+      if (user.length<1) {
+        return res.status(400).send({ error: "Invalid Credentials" });
+      }
+
+      console.log(user[0]);     // just for testing 
+
+
+      // if(!user[0].isVerified){        // check for verification
+      //     res.send("User not verified.");
+      // }
+
+      const salt = await bcrypt.genSalt();   
+      const otp = randomInt(100000, 1000000).toString();
+      const otp_secure = await bcrypt.hash(otp, salt);
+      
+      sendOTP(user[0].name,email,otp);                    // sending otp
+      redisClient.set(email, otp_secure, "EX", 60 * 5);   // storing that inside redisclient
+
+      res.send("OTP re-sent successfully");
+    
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send({ message: "Internal server error" });
+  }
+
+
+};
+
+
