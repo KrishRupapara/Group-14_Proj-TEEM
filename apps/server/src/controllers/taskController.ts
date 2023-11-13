@@ -298,3 +298,31 @@ export const removeTaskAssignees = async (req: Request, res: Response) => {
     return res.status(500).send({ message: "Internal server error in task" });
   }
 };
+
+
+// delete task controller
+export const deleteTask = async (req: Request, res: Response) => {
+  try {
+
+    // getting taskID from params
+    const taskIDToDelete : any = req.params.taskID;
+    //getting workspaceID from params
+    const wsID : any = req.params.wsID;
+
+    //delete task from task table
+    await db.delete(tasks).where(eq(tasks.taskID,taskIDToDelete) && eq(tasks.workspaceID,wsID));
+
+    //delete task from taskassignees table
+    await db.delete(assignees).where(eq(assignees.taskID,taskIDToDelete)&& eq(assignees.workspaceID,wsID));
+
+
+    res.json({ message: "Task deleted successfully"  , "EXPECTED" : "task must be deleted from taskassignees table also"});
+
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(500)
+      .send({ message: "Internal server error in task" });
+  }
+};
+

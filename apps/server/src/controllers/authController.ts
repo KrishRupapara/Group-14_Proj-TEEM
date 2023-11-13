@@ -387,7 +387,7 @@ export const deleteUser = async (req : Request, res : Response) => {
       // //delete user from sessions table
       // deleteSession(userID);
 
-      res.send({"message" : `User with email : ${userToDel[0].emailId} deleted successfully` ,
+      res.json({"message" : `User with email : ${userToDel[0].emailId} deleted successfully` ,
                 "NOTE" : "User is not deleted from redisclient and sessions table",
                 "CHECK FOR" : "User and it's workspace, meetings, tasks, invites, assignees, members are deleted from database"});
 

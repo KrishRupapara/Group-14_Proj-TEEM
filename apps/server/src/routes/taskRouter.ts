@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import {assignTaskGet , assignTaskPost, getTask, editTaskDetails, addTaskAssignees, removeTaskAssignees} from "../controllers"
+import {assignTaskGet , assignTaskPost, getTask, editTaskDetails, addTaskAssignees, removeTaskAssignees, deleteTask} from "../controllers"
 import {requireAuth , authorizeManager, authorizeMember, getTaskDetails} from "../middleware"
 
 const router : Router = Router();
@@ -21,5 +21,7 @@ router.route("/addTaskAssignees/:wsid/:taskid")
 
 router.route("/removeTaskAssignees/:wsid/:taskid")
     .post(requireAuth, authorizeManager, getTaskDetails, removeTaskAssignees);
+
+router.route("/deleteTask/:wsid/:taskid").get(requireAuth, authorizeManager, deleteTask);
 
 export {router as taskRouter};

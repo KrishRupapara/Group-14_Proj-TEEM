@@ -23,12 +23,14 @@ import {
 
 import { dashboardGet, profileGet } from "./dashboardController";
 
-import { scheduleMeetHandler } from "./meetController";
+import { scheduleMeetHandler , deleteMeet} from "./meetController";
 
 import { assignTaskGet, assignTaskPost,   getTask,
   editTaskDetails,
   addTaskAssignees,
   removeTaskAssignees,
+  deleteTask,
+
 } from "./taskController";
 
 import { getPeople,getUpcoming,getYourWork,getStream} from "./wsDashboardcontroller";
@@ -55,6 +57,7 @@ export {
   assignTaskGet,
   assignTaskPost,
   getTask,
+  deleteTask,
   editTaskDetails,
   addTaskAssignees,
   removeTaskAssignees,
@@ -65,5 +68,6 @@ export {
   getUpcoming,
   getYourWork,
   getStream,
+  deleteMeet,
 
 };

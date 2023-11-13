@@ -417,3 +417,9 @@ export const deleteMembers = async (req: Request, res: Response) => {
       .send({ message: "Internal server error in member" });
   }
 };
+
+
+
+
+
+
