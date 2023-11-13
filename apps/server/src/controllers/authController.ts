@@ -2,6 +2,11 @@ import { Request, Response } from "express";
 
 import { db } from "../config/database";
 import { users } from "../model/User";
+import { meets } from "../model/Meet";
+import { invitees } from "../model/MeetInvitee";
+import { members } from "../model/Workspace";
+import { tasks } from "../model/Task";
+import { assignees } from "../model/TaskAssignee";
 import { eq } from "drizzle-orm";
 import { sendOTP } from "../services/sendOTP";
 import bcrypt from "bcrypt";
@@ -17,6 +22,7 @@ import {
   deleteSession,
 } from "../services/sessionServies";
 import { signJWT } from "../utils/jwt";
+import { workspaces } from "../model/Workspace";
 
 export const signUpHandler = async (req: Request, res: Response) => {
   var { email, name, password, organization, jobTitle, country } = req.body;
@@ -106,13 +112,13 @@ export const loginHandler = async (req: Request, res: Response) => {
       .where(eq(users.emailId, email))
       .limit(1);
 
+      
+    if (User.length < 1) {
+        return res.status(400).send({ error: "Invalid Credentials" });
+    }
     const { userID, name, isVerified } = User[0];
 
     const tokenUser = { userID, name, isVerified };
-
-    if (User.length < 1) {
-      return res.status(400).send({ error: "Invalid Credentials" });
-    }
 
     const isPasswordCorrect = await bcrypt.compare(password, User[0].password!);
 
@@ -326,5 +332,59 @@ export const resendOtp = async (req : Request, res : Response) => {
 
 
 };
+
+
+export const changePassword = async (req : Request, res : Response) => {
+
+  try{
+
+    const userID  : any = req.user.userID;    // get userID from req.user
+    const { oldPassword, newPassword , confirmPassword } = req.body;
+    
+    // find user from database
+    const userToChangePaasword = await db
+        .select()
+        .from(users)
+        .where(eq(users.userID, userID))
+        .limit(1);
+  
+      if (userToChangePaasword.length<1) {
+        return res.status(400).send({ error: "Invalid Credentials" });
+      }
+
+      const isSame = await bcrypt.compare(oldPassword, userToChangePaasword[0].password!);
+      if (isSame) {
+        res.send("New Password is same as current password.");
+      }
+
+
+    
+      if(newPassword !== confirmPassword){
+        res.send("New Password and Confirm Password are not same.");
+      }
+
+      const salt = await bcrypt.genSalt(); // adding salt
+      const password = await bcrypt.hash(newPassword, salt);
+
+      await db // update the password inside database.
+        .update(users)
+        .set({ password: password })
+        .where(eq(users.userID, userID));
+
+      return res.send({ message: "Password Changed Successfully" });
+
+  }catch (err) {
+    console.log(err);
+    return res.status(500).send({ message: "Internal server error" });
+  }
+
+
+}
+
+
+
+
+
+
 
 

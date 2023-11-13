@@ -74,6 +74,7 @@ router.route("/addMembers/:wsID")
     .post(requireAuth, wsExist, authorizeManager, addMembersPost); 
 
 router.route("/deleteWorkspace/:wsID")
+    .get(requireAuth, authorizeManager, deleteWorkspaceGet);
     .post(requireAuth, wsExist, authorizeManager, deleteWorkspacePost);
 
 router.route("/deleteWorkspace")

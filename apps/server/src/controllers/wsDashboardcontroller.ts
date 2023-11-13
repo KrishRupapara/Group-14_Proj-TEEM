@@ -430,20 +430,13 @@ export const editWSMembersPATCH = async(req: Request, res: Response) =>{
 
 export const deleteWorkspaceDELETE = async (req: Request, res: Response) => {
   try {
-    // checking for requests
-    const wsID  = req.params.wsID;
-    if (!wsID) {
-      res.send({ message: "Please enter your workspaceID a" });
-    }
+    // checking for params
+    const wsID:any  = req.params.wsID;
 
-    const toDelete = wsID;
-    const userID:any = req.user.userID
-
-    // Finding the workspace inside database.
     const currentWorkspace = await db
       .select()
       .from(workspaces)
-      .where(eq(workspaces.workspaceID, wsID as any))
+      .where(eq(workspaces.workspaceID, wsID))
       .limit(1);
 
       if (currentWorkspace.length<1) {
@@ -451,12 +444,28 @@ export const deleteWorkspaceDELETE = async (req: Request, res: Response) => {
       }
     
     // check if the user requesting the deletion is the manager of that workspace.
-    if ((userID) !== currentWorkspace[0].projectManager) {
+    if ((req.user.userID as number) !== currentWorkspace[0].projectManager) {
       res.send({ message: "You are not Project Manager" });
     }
 
+    // delete workspace from workspace table
+    await db.delete(workspaces).where(eq(wsID, workspaces.workspaceID));
 
-    const deletedWorkspace = await db.delete(workspaces).where(eq(wsID as any, workspaces.workspaceID));
+    // delete workspace from members table
+    await db.delete(members).where(eq(wsID, members.workspaceID));
+
+    //delete workspace from tasks table
+    await db.delete(tasks).where(eq(wsID,tasks.workspaceID));
+
+    //delete workspace from meet  table
+    await db.delete(meets).where(eq(wsID,meets.workspaceID));
+
+    //delete workspace from meetInvites table
+    await db.delete(invitees).where(eq(wsID,invitees.workspaceID));
+
+    //delete workspace from taskassignees table
+    await db.delete(assignees).where(eq(wsID,assignees.workspaceID));
+
 
     res.send("Workspace deleted successfully");
 
@@ -469,31 +478,31 @@ export const deleteWorkspaceDELETE = async (req: Request, res: Response) => {
 };
 
 
-export const deleteMembers = async (req: Request, res: Response) => {
-  try {
+// export const deleteMembers = async (req: Request, res: Response) => {
+//   try {
 
-    // const { workspaceID , memberID } = req.body;
-    // if (!workspaceID || !memberID) {
-    //   res.send({ message: "Please enter workspaceID and memberID" });
-    // }
+//     // const { workspaceID , memberID } = req.body;
+//     // if (!workspaceID || !memberID) {
+//     //   res.send({ message: "Please enter workspaceID and memberID" });
+//     // }
 
-    // const toDeletemember = memberID;
-    // const toDeletews = workspaceID;
+//     // const toDeletemember = memberID;
+//     // const toDeletews = workspaceID;
 
-    // const currentMember = await db
-    //   .select()
-    //   .from(members)
-    //   .where(eq(members.workspaceID, toDeletews) && eq(toDeletemember,members.memberID))
-    //   .limit(1);
+//     // const currentMember = await db
+//     //   .select()
+//     //   .from(members)
+//     //   .where(eq(members.workspaceID, toDeletews) && eq(toDeletemember,members.memberID))
+//     //   .limit(1);
 
-    // await db.delete(members).where(eq(members.workspaceID, toDeletews) && eq(toDeletemember,members.memberID));
+//     // await db.delete(members).where(eq(members.workspaceID, toDeletews) && eq(toDeletemember,members.memberID));
 
-    res.send("Member deleted successfully");
+//     res.send("Member deleted successfully");
 
-  } catch (err) {
-    console.log(err);
-    return res
-      .status(500)
-      .send({ message: "Internal server error in member" });
-  }
-};
+//   } catch (err) {
+//     console.log(err);
+//     return res
+//       .status(500)
+//       .send({ message: "Internal server error in member" });
+//   }
+// };

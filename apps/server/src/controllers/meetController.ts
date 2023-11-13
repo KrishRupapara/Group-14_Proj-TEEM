@@ -120,6 +120,34 @@ export const getCalendarEvents = async (req: Request, res: Response) => {
 };
 
 
+
+
+// delete meet controller
+export const deleteMeet = async (req: Request, res: Response) => {
+  try {
+
+    // getting meetID from params
+    const meetIDToDelete : any = req.params.meetID;
+    //getting workspaceID from params
+    const wsID : any = req.params.wsID;
+
+    //delete meet from meet table
+    await db.delete(meets).where(eq(meets.meetID,meetIDToDelete) && eq(meets.workspaceID,wsID));
+
+    //delete meet from meetinvitees table
+    await db.delete(invitees).where(eq(invitees.meetID,meetIDToDelete)&& eq(invitees.workspaceID,wsID));
+
+  res.json({ message: "meet deleted successfully"  , "EXPECTED" : "tMeet must be deleted from meetinvitees table also"});
+
+} catch (err) {
+  console.log(err);
+  return res
+    .status(500)
+    .send({ message: "Internal server error in Meet" });
+}
+
+};
+
 export const showInvitees = async(req: Request, res: Response) =>{
   const wsID:any = req.params.wsID;
   const meetID:any = req.params.meetID;
