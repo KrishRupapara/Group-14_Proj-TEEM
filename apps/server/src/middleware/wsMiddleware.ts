@@ -20,21 +20,19 @@ export const authorizeManager = async (
   //   wsID: wsID,
   // };
 
-  const workspaceID: { wsID: any } = {
-    wsID: req.params.wsid,
-  };
+  const wsID:any = req.params.wsID;
   const userID = req.user.userID;
 
   try {
     const isManager = await db
       .select()
       .from(workspaces)
-      .where(eq(workspaces.workspaceID, workspaceID.wsID))
+      .where(eq(workspaces.workspaceID, wsID))
       .limit(1);
 
 
     console.log(isManager[0]);
-    console.log(workspaceID.wsID);
+    console.log(wsID);
     console.log(userID);
     console.log(isManager);
 

@@ -338,8 +338,8 @@ export const addMembersPost = async (req: Request, res: Response) => {
 
 export const deleteWorkspaceGet = async (req: Request, res: Response) => {
   try {
-    // checking for requests
-    const wsID:any  = req.params.wsid;
+    // checking for params
+    const wsID:any  = req.params.wsID;
 
     const currentWorkspace = await db
       .select()

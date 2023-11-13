@@ -328,3 +328,34 @@ export const resendOtp = async (req : Request, res : Response) => {
 };
 
 
+export const deleteUser = async (req : Request, res : Response) => {
+
+  try{
+
+    const userID  : any = req.user.userID;    // get userID from req.user
+    
+    // find user from database
+    const userToDel = await db
+        .select()
+        .from(users)
+        .where(eq(users.userID, userID))
+        .limit(1);
+  
+      if (userToDel.length<1) {
+        return res.status(400).send({ error: "Invalid Credentials" });
+      }
+      await db.delete(users).where(eq(userID, users.userID));
+
+      res.send(`User with email : ${userToDel[0].emailId} deleted successfully `);
+
+
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send({ message: "Internal server error" });
+  }
+
+
+};
+
+
+
