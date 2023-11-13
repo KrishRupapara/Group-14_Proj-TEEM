@@ -2,6 +2,11 @@ import { Request, Response } from "express";
 
 import { db } from "../config/database";
 import { users } from "../model/User";
+import { meets } from "../model/Meet";
+import { invitees } from "../model/MeetInvitee";
+import { members } from "../model/Workspace";
+import { tasks } from "../model/Task";
+import { assignees } from "../model/TaskAssignee";
 import { eq } from "drizzle-orm";
 import { sendOTP } from "../services/sendOTP";
 import bcrypt from "bcrypt";
@@ -17,6 +22,7 @@ import {
   deleteSession,
 } from "../services/sessionServies";
 import { signJWT } from "../utils/jwt";
+import { workspaces } from "../model/Workspace";
 
 export const signUpHandler = async (req: Request, res: Response) => {
   var { email, name, password, organization, jobTitle, country } = req.body;
@@ -344,9 +350,46 @@ export const deleteUser = async (req : Request, res : Response) => {
       if (userToDel.length<1) {
         return res.status(400).send({ error: "Invalid Credentials" });
       }
+
+      // delete user from users table
       await db.delete(users).where(eq(userID, users.userID));
 
-      res.send(`User with email : ${userToDel[0].emailId} deleted successfully `);
+      // delete user from workspace table
+      await db.delete(workspaces).where(eq(userID, workspaces.projectManager));
+
+      // find workspaces of user
+      const workspacesOfUser = await db
+        .select()
+        .from(workspaces)
+        .where(eq(workspaces.projectManager, userID));
+
+      // delete all the workspaces of user
+      for(let i=0;i<workspacesOfUser.length;i++){
+        await db.delete(workspaces).where(eq(workspaces.workspaceID, workspacesOfUser[i].workspaceID));
+      }
+
+      //delete user from meetings table
+      await db.delete(meets).where(eq(userID, meets.organizerID));
+
+      //delete user from assignees table
+      await db.delete(assignees).where(eq(userID, assignees.assigneeID));
+
+      //delete user from invites table
+      await db.delete(invitees).where(eq(userID, invitees.inviteeID));
+
+      //delete user from members table
+      await db.delete(members).where(eq(userID, members.memberID));
+      
+
+      // // delete user from redisclient
+      // redisClient.del(userToDel[0].emailId);
+
+      // //delete user from sessions table
+      // deleteSession(userID);
+
+      res.send({"message" : `User with email : ${userToDel[0].emailId} deleted successfully` ,
+                "NOTE" : "User is not deleted from redisclient and sessions table",
+                "CHECK FOR" : "User and it's workspace, meetings, tasks, invites, assignees, members are deleted from database"});
 
 
   } catch (err) {
@@ -404,6 +447,8 @@ export const changepassword = async (req : Request, res : Response) => {
 
 
 }
+
+
 
 
 
