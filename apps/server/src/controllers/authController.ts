@@ -112,13 +112,13 @@ export const loginHandler = async (req: Request, res: Response) => {
       .where(eq(users.emailId, email))
       .limit(1);
 
+      
+    if (User.length < 1) {
+        return res.status(400).send({ error: "Invalid Credentials" });
+    }
     const { userID, name, isVerified } = User[0];
 
     const tokenUser = { userID, name, isVerified };
-
-    if (User.length < 1) {
-      return res.status(400).send({ error: "Invalid Credentials" });
-    }
 
     const isPasswordCorrect = await bcrypt.compare(password, User[0].password!);
 
