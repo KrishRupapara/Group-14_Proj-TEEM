@@ -1,6 +1,7 @@
 import type { SessionType } from "../model/Session";
 import { client as redisClient } from "../config/redisConnect";
 import { CookieOptions } from "express";
+import jwt from "jsonwebtoken";
 
 export const accessTokenCookieOptions: CookieOptions = {
   maxAge: 86400,
@@ -42,3 +43,32 @@ export const findSessions = async (userId: string) => {
   });
   return val;
 };
+
+export const getDecodedToken = async(token: string) => {
+   
+  var dToken:any;
+
+  jwt.verify(
+    token,
+    process.env.JWT_SECRET!,
+    (err: any, decodedToken: any) => {
+      if (err) {
+        console.log(err.meesage);
+        console.log(err);
+        throw Error(err.message);
+        // res.redirect('/login');
+      } 
+      else {
+        console.log(decodedToken);
+        dToken = decodedToken;
+        
+        // req.user = decodedToken;   
+      }  
+    });
+
+    return dToken;
+}
+
+export const deleteSession = async(session_id: string) =>{
+        redisClient.del(session_id);
+  };

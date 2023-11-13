@@ -1,37 +1,29 @@
-import {
-    pgTable,
-    primaryKey,
-    foreignKey,
-    AnyPgColumn,
-    serial,
-    varchar,
-    time,
-    timestamp,
-    text,
-    boolean,
-    integer,
-  } from "drizzle-orm/pg-core";
+import { pgTable, primaryKey, foreignKey, integer } from "drizzle-orm/pg-core";
 
-import { members } from "./Member";
+// import {  } from "./Member";
 import { tasks } from "./Task";
-export const meets = pgTable("meets", {
-    taskID : serial("taskID"),
+import { workspaces, members } from "./Workspace";
+export const assignees = pgTable(
+  "assignees",
+  {
+    taskID: integer("taskID"),
     workspaceID: integer("workspaceID"),
     assigneeID: integer("assigneeID"),
     // createdAt: timestamp("created_at").notNull().defaultNow(),
-  }, (table) => {
+  },
+  (table) => {
     return {
-        pk: primaryKey(table.taskID, table.workspaceID, table.assigneeID),
+      pk: primaryKey(table.taskID, table.workspaceID, table.assigneeID),
 
-        meetReference: foreignKey({
-            columns: [table.taskID],
-            foreignColumns: [tasks.taskID]
-        }),
+      meetReference: foreignKey({
+        columns: [table.taskID],
+        foreignColumns: [tasks.taskID],
+      }),
 
-        inviteeReference: foreignKey({
-            columns: [table.workspaceID, table.assigneeID],
-            foreignColumns: [members.workspaceID, members.memberID]
-        })
+      inviteeReference: foreignKey({
+        columns: [table.workspaceID, table.assigneeID],
+        foreignColumns: [workspaces.workspaceID, members.memberID],
+      }),
     };
-  });
-  
+  }
+);

@@ -1,35 +1,39 @@
 import {
-    pgTable,
-    primaryKey,
-    foreignKey,
-    AnyPgColumn,
-    serial,
-    varchar,
-    time,
-    timestamp,
-    text,
-    boolean,
-    integer,
-  } from "drizzle-orm/pg-core";
+  pgTable,
+  serial,
+  varchar,
+  time,
+  timestamp,
+  integer,
+  primaryKey,
+} from "drizzle-orm/pg-core";
 
-import { members } from "./Member";
-  
-export const meets = pgTable("meets", {
-    meetID : serial("meetID").primaryKey(),
+import { workspaces, members } from "./Workspace";
+
+export const meets = pgTable(
+  "meets",
+  {
+    meetID: serial("meetID"),
     title: varchar("title", { length: 50 }).notNull(),
     agenda: varchar("agenda", { length: 200 }),
     description: varchar("description", { length: 200 }),
-    meetTime : timestamp("meetTime", { precision: 6, withTimezone: true }),
-    duration : time("duration", { precision: 6} ),
-    workspaceID: integer("workspaceID"),
-    organizerID: integer("organizerID"),
+    meetTime: timestamp("meetTime", { precision: 6, withTimezone: true }),
+    duration: time("duration"),
+    workspaceID: integer("workspaceID")
+      .references(() => workspaces.workspaceID, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      })
+      .notNull(),
+    organizerID: integer("organizerID").references(() => members.memberID, {
+      onDelete: "cascade",
+      onUpdate: "cascade",
+    }),
     createdAt: timestamp("created_at").notNull().defaultNow(),
-  }, (table) => {
+  },
+  (table) => {
     return {
-        meetReference: foreignKey({
-            columns: [table.workspaceID, table.organizerID],
-            foreignColumns: [members.workspaceID, members.memberID]
-          })
+      pk: primaryKey(table.meetID, table.workspaceID, table.organizerID),
     };
-  });
-  
+  }
+);
