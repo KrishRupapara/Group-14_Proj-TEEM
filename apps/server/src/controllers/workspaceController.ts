@@ -43,7 +43,7 @@ export const createWorkspaceGet = async (req: Request, res: Response) => {
 
 export const createWorkspacePost = async (req: Request, res: Response) => {
   // res.send("<h1>You can create new workspace</h1>");
-  var { title, description, Members = [], type } = req.body;
+  var { title,type, description, Members = [] } = req.body;
 
   if (!title) {
     return res.status(400).send({ error: "Tilte is required" });
@@ -66,8 +66,7 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
       .insert(workspaces)
       .values({
         title: title,
-
-        type: "Personal",
+        type: type,
         description: description,
         projectManager: ProjectManager[0].userID,
       })
@@ -80,7 +79,7 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
       .values({
         workspaceID: workspace_id[0].workspace_id,
         memberID: ProjectManager[0].userID,
-        role: 4,
+        role: "Manager",
       })
       .returning({ projectmanger_id: members.memberID });
 
