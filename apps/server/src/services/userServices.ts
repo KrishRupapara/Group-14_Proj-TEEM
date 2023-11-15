@@ -1,7 +1,6 @@
 import qs from "querystring";
 import axios from "axios";
 import dotenv from "dotenv";
-
 dotenv.config();
 
 interface GoogleTokenResult {
@@ -27,8 +26,11 @@ export const getGoogleOAuthToken = async ({ code }: { code: string }) => {
     const res = await axios.post<GoogleTokenResult>(url, qs.stringify(values), {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
+        scope: "https://www.googleapis.com/auth/calendar.events",
       },
     });
+
+    console.log("result from google is", res.data);
     return res.data;
   } catch (err: any) {
     console.error(err.respones.data.error);

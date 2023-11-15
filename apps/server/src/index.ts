@@ -4,6 +4,15 @@ dotenv.config();
 import express from "express";
 const app = express();
 
+import https from "https";
+import fs from "fs";
+
+// const cert = fs.readFileSync("../server.key");
+// const key = fs.readFileSync("../server.cert");
+
+// create an HTTPS server with the self-signed certificate and private key
+// const server = https.createServer({ key: key, cert: cert }, app);
+
 //routers
 import {
   authRouter,
@@ -22,7 +31,8 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import { rateLimit } from "express-rate-limit";
 import { client as redisClient } from "./config/redisConnect";
-// import { findSessions } from "./services/sessionServies";
+import morgan from "morgan";
+import { dashboardGet } from "./controllers";
 
 app.set("trust proxy", 1);
 app.use(
@@ -31,13 +41,13 @@ app.use(
     max: 100, // limit each IP to 100 requests per windowMs
   })
 );
-
 app.use(cors());
 app.use(helmet());
 app.use(compression());
 
 app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET));
+app.use(morgan("dev"));
 
 app.use("/api", authRouter);
 app.use("/api", workspaceRouter);
@@ -45,9 +55,7 @@ app.use("/api", dashboardRouter);
 app.use("/api", taskRouter);
 app.use("/api", meetRouter);
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
+app.get("/", requireAuth, dashboardGet);
 
 redisClient.on("error", (err) => {
   throw new Error("Redis not connected!!");

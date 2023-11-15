@@ -1,11 +1,38 @@
 import { NextFunction, Request, Response } from "express";
 
 import { db } from "../config/database";
-import { users } from "../model/User";
+// import { users } from "../model/User";
 import { workspaces } from "../model/Workspace";
 import { members } from "../model/Workspace";
 import { and, eq } from "drizzle-orm";
 import { getDecodedToken } from "../services/sessionServies";
+
+export const wsExist = async(req: Request, res: Response, next: NextFunction) =>{
+  const wsID:any = req.params.wsID;
+
+  try {
+    const Workspace = await db
+      .select()
+      .from(workspaces)
+      .where(eq(workspaces.workspaceID, wsID))
+      .limit(1);
+
+      console.log(Workspace);
+
+      if(Workspace.length !== 0)
+      {
+       res.locals.workspace = Workspace;
+       console.log(res.locals.workspace);
+        next()
+      }
+       else{
+        res.status(404).send({Message: "Workspace Doesn't Exist"})
+       }
+
+  } catch (error) {
+    
+  }
+}
 
 export const authorizeManager = async (
   req: Request,
@@ -20,23 +47,13 @@ export const authorizeManager = async (
   //   wsID: wsID,
   // };
 
-  const workspaceID: { wsID: any } = {
-    wsID: req.params.wsID,
-  };
-  const userID = res.locals.userid;
+  const wsID:any = req.params.wsID;
+  const userID:any = req.user.userID;
 
   try {
-    const isManager = await db
-      .select()
-      .from(workspaces)
-      .where(eq(workspaces.workspaceID, workspaceID.wsID))
-      .limit(1);
 
-    console.log(isManager[0]);
-    console.log(workspaceID.wsID);
-    console.log(userID);
+    if (res.locals.workspace[0].projectManager === userID) next();
 
-    if (isManager[0].projectManager === userID) next();
     else {
       res.send("You do not own the workspace");
     }
@@ -44,7 +61,7 @@ export const authorizeManager = async (
     console.log(error);
     return res
       .status(500)
-      .send({ message: "Internal server error in workspace" });
+      .send({ message: "Internal server error in middleware authManager" });
   }
 };
 
@@ -53,31 +70,20 @@ export const authorizeMember = async (
   res: Response,
   next: NextFunction
 ) => {
-  const workspaceID: { wsID: any } = {
-    wsID: req.params.wsid,
-  };
-
-  const userID = res.locals.userid;
+  
+  const wsID:any = req.params.wsID;
+  const userID:any = req.user.userID;
 
   try {
-    const isManager = await db
-      .select()
-      .from(workspaces)
-      .where(eq(workspaces.workspaceID, workspaceID.wsID))
-      .limit(1);
 
-    console.log(isManager[0]);
-    console.log(userID);
-
-    if (isManager.length == 0) res.send("Workspace doesn't exist");
-
-    if (isManager[0].projectManager !== userID) {
+    
+    if (res.locals.workspace[0].projectManager !== userID) {
       const isMemeber = await db
         .select()
         .from(members)
         .where(
           and(
-            eq(members.workspaceID, workspaceID.wsID),
+            eq(members.workspaceID, wsID),
             eq(members.memberID, userID)
           )
         )
@@ -95,6 +101,6 @@ export const authorizeMember = async (
     console.log(error);
     return res
       .status(500)
-      .send({ message: "Internal server error in workspace" });
+      .send({ message: "Internal server error in middleware authMember" });
   }
 };
