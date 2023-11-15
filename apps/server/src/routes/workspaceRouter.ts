@@ -25,6 +25,7 @@ import {
 } from "../middleware";
 const router: Router = Router();
 
+
 router
   .route("/createWorkspace")
   .get(requireAuth, createWorkspaceGet)
@@ -59,11 +60,6 @@ router
   .route("/:wsID/editWSMembers")
   .get(requireAuth, wsExist, authorizeManager, editWSMembersGet)
   .patch(requireAuth, wsExist, authorizeManager, editWSMembersPATCH);
-
-router
-  .route("/:wsID/editWSDetails")
-//   .get(requireAuth, wsExist, authorizeManager, editWSDetailsGet)
-  .delete(requireAuth, wsExist, authorizeManager, deleteWorkspaceDELETE);
 
 /*
 router.route("/:wsID/settings/:toDo")
