@@ -7,8 +7,7 @@ import { and, or, eq, gte, sql } from "drizzle-orm";
 import { sendInvitation } from "../services/sendInvitation";
 
 
-import { workspaces } from "../model/Workspace";
-import { members } from "../model/Workspace";
+import { workspaces,members } from "../model/Workspace";
 import { assignees } from "../model/TaskAssignee";
 import { tasks } from "../model/Task";
 
@@ -106,7 +105,7 @@ export const getPeople = async (req: Request, res: Response) => {
       })
       .from(members)
       .innerJoin(users, eq(members.memberID, users.userID))
-      .where(and(eq(members.workspaceID, wsID), eq(members.role, 4)));
+      .where(and(eq(members.workspaceID, wsID), eq(members.role, "Manager")));
     // console.log(Manager);
 
     const Teammate = await db
@@ -118,7 +117,7 @@ export const getPeople = async (req: Request, res: Response) => {
       })
       .from(members)
       .innerJoin(users, eq(members.memberID, users.userID))
-      .where(and(eq(members.workspaceID, wsID), eq(members.role, 0)));
+      .where(and(eq(members.workspaceID, wsID), eq(members.role, "TeamMate")));
     // console.log(Teammate);
 
     const Client = await db
@@ -130,7 +129,7 @@ export const getPeople = async (req: Request, res: Response) => {
       })
       .from(members)
       .innerJoin(users, eq(members.memberID, users.userID))
-      .where(and(eq(members.workspaceID, wsID), eq(members.role, 2)));
+      .where(and(eq(members.workspaceID, wsID), eq(members.role, "collaborator")));
     // console.log(Teammate);
 
     const Collaborator = await db
@@ -142,7 +141,7 @@ export const getPeople = async (req: Request, res: Response) => {
       })
       .from(members)
       .innerJoin(users, eq(members.memberID, users.userID))
-      .where(and(eq(members.workspaceID, wsID), eq(members.role, 1)));
+      .where(and(eq(members.workspaceID, wsID), eq(members.role, "Client")));
     // console.log(Teammate);
 
     const People = {
@@ -365,7 +364,7 @@ export const editWSMembersPATCH = async(req: Request, res: Response) =>{
       .values({
         workspaceID: wsID,
         memberID: userID,
-        role: 4
+        role: "Manager"
       })
    
      for (const Member of Members) {

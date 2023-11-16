@@ -5,9 +5,13 @@ import {
   timestamp,
   integer,
   primaryKey,
+  pgEnum,
 } from "drizzle-orm/pg-core";
 
 import { users } from "./User";
+
+export const roleEnum = pgEnum("role", ["Manager", "TeamMate", "collaborator","Client"]);
+
 
 export const workspaces = pgTable("workspaces", {
   workspaceID: serial("workspaceID").primaryKey(),
@@ -39,7 +43,7 @@ export const members = pgTable(
         onDelete: "cascade",
       })
       .notNull(),
-    role: integer("role").notNull(),
+    role: roleEnum("role").notNull(),
   },
   (table) => {
     return {

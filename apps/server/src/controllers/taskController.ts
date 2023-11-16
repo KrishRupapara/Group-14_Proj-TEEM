@@ -7,8 +7,8 @@ import { sendTask } from "../services/sendTask";
 import { signJWT } from "../utils/jwt";
 
 import { tasks } from "../model/Task";
-import { workspaces } from "../model/Workspace";
-import { members } from "../model/Workspace";
+import { workspaces ,members} from "../model/Workspace";
+
 import { assignees } from "../model/TaskAssignee";
 import { timestamp } from "drizzle-orm/pg-core";
 import { updateProjectProgress } from "../utils/progress";
