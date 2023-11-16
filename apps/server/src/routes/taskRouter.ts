@@ -45,7 +45,7 @@ router.route("/:wsID/:taskID/editTaskDetails")
 
 router.route("/:wsID/:taskID/editTaskAssignees")
     .get(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, editTaskAssigneesGet)
-    .post(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, editTaskAssigneesPATCH);
+    .patch(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, editTaskAssigneesPATCH);
 
     router.route("/:wsID/:taskID/editTaskDetails")
     // .get(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, editTaskAssigneesGet)

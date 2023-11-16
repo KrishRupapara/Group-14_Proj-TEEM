@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from "express";
 
 import { db } from "../config/database";
 import { users } from "../model/User";
-import { workspaces } from "../model/Workspace";
 import { tasks } from "../model/Task";
 import { assignees } from "../model/TaskAssignee";
 import { and, eq } from "drizzle-orm";

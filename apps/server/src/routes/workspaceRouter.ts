@@ -40,12 +40,16 @@ router
 
 router
   .route("/:wsID/people")
-  .get(requireAuth, wsExist, authorizeMember, getPeople);
+  // .get(requireAuth, wsExist, authorizeMember, getPeople);
+  .get(getPeople);
 
 router
   .route("/:wsID/yourWork")
   .get(requireAuth, wsExist, authorizeMember, getYourWork);
 
+router
+  .route("/:wsID/upcoming")
+  .get(requireAuth, wsExist, authorizeMember, getUpcoming);
 router
   .route("/:wsID/upcoming")
   .get(requireAuth, wsExist, authorizeMember, getUpcoming);
@@ -59,11 +63,6 @@ router
   .route("/:wsID/editWSMembers")
   .get(requireAuth, wsExist, authorizeManager, editWSMembersGet)
   .patch(requireAuth, wsExist, authorizeManager, editWSMembersPATCH);
-
-router
-  .route("/:wsID/editWSDetails")
-//   .get(requireAuth, wsExist, authorizeManager, editWSDetailsGet)
-  .delete(requireAuth, wsExist, authorizeManager, deleteWorkspaceDELETE);
 
 /*
 router.route("/:wsID/settings/:toDo")
