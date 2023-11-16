@@ -14,11 +14,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "drizzle-orm": "^0.28.6"
-  },
-  "devDependencies": {
-    "daisyui": "^3.9.4",
-    "drizzle-kit": "^0.19.13"
-  }
+  "dependencies": {},
+  "devDependencies": {}
 }
