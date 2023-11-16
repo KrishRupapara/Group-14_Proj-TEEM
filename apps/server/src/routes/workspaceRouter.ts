@@ -25,7 +25,6 @@ import {
 } from "../middleware";
 const router: Router = Router();
 
-
 router
   .route("/createWorkspace")
   .get(requireAuth, createWorkspaceGet)
@@ -41,12 +40,16 @@ router
 
 router
   .route("/:wsID/people")
-  .get(requireAuth, wsExist, authorizeMember, getPeople);
+  // .get(requireAuth, wsExist, authorizeMember, getPeople);
+  .get(getPeople);
 
 router
   .route("/:wsID/yourWork")
   .get(requireAuth, wsExist, authorizeMember, getYourWork);
 
+router
+  .route("/:wsID/upcoming")
+  .get(requireAuth, wsExist, authorizeMember, getUpcoming);
 router
   .route("/:wsID/upcoming")
   .get(requireAuth, wsExist, authorizeMember, getUpcoming);

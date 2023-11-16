@@ -1,75 +1,47 @@
-import React from "react";
 import Image from "next/image";
-const Navbar = () => {
+import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faUser,
+  faBell,
+  faCalendar,
+} from "@fortawesome/free-regular-svg-icons";
+import { TaskDialog } from "./ui/task-dialog";
+
+export default function NavComponent() {
   return (
-    <div className="bg-white  h-[4rem] flex px-5 border-gray-700/30 border-b">
-      <div className="flex basis-1/4">
+    <div className="h-[5rem] w-4/5 mx-auto flex flex-row items-center justify-between">
+      <div>
         <Image
           src="/img/logoblack.png"
           alt="Image Not found"
-          width={150}
+          width={140}
           height={150}
         />
       </div>
-
-      <div className="flex basis-3/4 justify-end items-center">
-        <div className="px-2 rounded-full font-medium hover:font-semibold hover:bg-[#eef6ff] ">
-          <a href="">
-            <p>Your Work</p>
-          </a>
-        </div>
-        <div className="px-2 rounded-full font-medium hover:font-semibold hover:bg-[#eef6ff] ">
-          <a href="">
-            <p>Dashboard</p>
-          </a>
-        </div>
-        <div className="px-3">
-          <a href="">
-            <img
-              title="Add Workspace"
-              src="/img/addicon.png"
-              alt="Not Found"
-              width={30}
-              className="hover:bg-[#eef6ff]  hover:scale-110"
-            />
-          </a>
-        </div>
-        <div className="px-3">
-          <a href="">
-            <img
-              title="Calendar"
-              src="/img/calendar.png"
-              alt="Not Found"
-              width={30}
-              className="hover:bg-[#eef6ff]  hover:scale-110"
-            />
-          </a>
-        </div>
-        <div className="px-3">
-          <a href="">
-            <img
-              title="Notifications"
-              src="/img/notification.png"
-              alt="Not Found"
-              width={30}
-              className="hover:bg-[#eef6ff]  hover:scale-110"
-            />
-          </a>
-        </div>
-        <div className="px-3">
-          <a href="">
-            <img
-              title="Profile"
-              src="/img/usericon.png"
-              alt="Not Found"
-              width={23}
-              className="hover:bg-[#eef6ff]  hover:scale-110"
-            />
-          </a>
-        </div>
-      </div>
+      <ul className="flex gap-6 whitespace-nowrap justify-around items-center text-2xl">
+        <li>
+          <Link href="">Dashboard</Link>
+        </li>
+        <li>
+          <Link href="">
+            <FontAwesomeIcon icon={faCalendar} height={28} />
+          </Link>
+        </li>
+        <li>
+          <TaskDialog />
+        </li>
+        <li>
+          <Link href="">
+            <FontAwesomeIcon icon={faBell} height={28} />
+          </Link>
+        </li>
+        <li>
+          <Link href="">
+            <FontAwesomeIcon icon={faUser} height={28} />
+          </Link>
+        </li>
+      </ul>
     </div>
   );
-};
-
-export default Navbar;
+}
