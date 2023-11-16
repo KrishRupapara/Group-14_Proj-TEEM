@@ -582,10 +582,10 @@ export const deleteTask = async (req: Request, res: Response) => {
     const wsID : any = req.params.wsID;
 
     //delete task from task table
-    await db.delete(tasks).where(eq(tasks.taskID,taskIDToDelete) && eq(tasks.workspaceID,wsID));
+    await db.delete(tasks).where(eq(tasks.taskID,taskIDToDelete));
 
     //delete task from taskassignees table
-    await db.delete(assignees).where(eq(assignees.taskID,taskIDToDelete)&& eq(assignees.workspaceID,wsID));
+    await db.delete(assignees).where(eq(assignees.taskID,taskIDToDelete));
 
 
     res.json({ message: "Task deleted successfully"  , "EXPECTED" : "task must be deleted from taskassignees table also"});
