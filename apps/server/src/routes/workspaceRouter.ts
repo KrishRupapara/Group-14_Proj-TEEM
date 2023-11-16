@@ -57,7 +57,8 @@ router
 router
   .route("/:wsID/editWSDetails")
   .get(requireAuth, wsExist, authorizeManager, editWSDetailsGet)
-  .patch(requireAuth, wsExist, authorizeManager, editWsDetailsPATCH);
+  .patch(requireAuth, wsExist, authorizeManager, editWsDetailsPATCH)
+  .delete(requireAuth, wsExist, authorizeManager, deleteWorkspaceDELETE);
 
 router
   .route("/:wsID/editWSMembers")
