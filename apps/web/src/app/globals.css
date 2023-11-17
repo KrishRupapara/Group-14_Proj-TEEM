@@ -38,3 +38,15 @@ input::-webkit-inner-spin-button {
 .bg-footer{
     background: linear-gradient(224deg, #002ABD 4.54%, #4F66B7 14.52%, rgba(79, 102, 183, 0.56) 29.9%, rgba(79, 102, 183, 0.26) 52.71%, rgba(170, 89, 142, 0.87) 73.01%);
 }
+
+.Projectbg{
+    background: linear-gradient(180deg, #BDDDFF 0%, #FFF 100%);
+}
+
+
+.progress-ring__circle {
+    stroke-dasharray: 400, 400;
+    transition: stroke-dashoffset 0.35s;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+  }
