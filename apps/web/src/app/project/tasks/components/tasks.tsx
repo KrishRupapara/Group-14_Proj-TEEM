@@ -13,11 +13,11 @@ export default function Tasks() {
           alt="Picture of the author"
         />
       </div>
-      <div className='col-start-2'>
+      <div className='col-start-2 flex flex-col justify-center'>
         <p className='font-bold'>Title</p>
         <p>Date</p>
       </div>
-      <div className='col-end-13'>
+      <div className='col-end-13  flex flex-col justify-center'>
         <button className='border rounded-xl p-2 bg-[#295BE7] m-2'>STATUS</button>
       </div>
     </div>
