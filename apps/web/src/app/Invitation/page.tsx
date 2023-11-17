@@ -49,6 +49,7 @@ export default function Invitation() {
                 className="-z-10 absolute"
                 fill
             />
+            
             <img
                 src="/img/Logo_black.png"
                 style={{ width: "10%", height: "10%" }}

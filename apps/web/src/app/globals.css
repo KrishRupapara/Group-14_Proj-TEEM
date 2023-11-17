@@ -71,3 +71,7 @@ input::-webkit-inner-spin-button {
     rgba(170, 89, 142, 0.87) 73.01%
   );
 }
+
+.Projectbg{
+    background: linear-gradient(180deg, #BDDDFF 0%, #FFF 100%);
+}
