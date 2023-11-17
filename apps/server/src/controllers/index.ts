@@ -50,7 +50,7 @@ import {
 
 import {
   getPeople,
-  getUpcoming,
+  getYourMeet,
   getYourWork,
   getStream,
   editWSDetailsGet,
@@ -95,8 +95,8 @@ export {
   scheduleMeetHandler,
   oauthHanlder,
   getPeople,
-  getUpcoming,
   getYourWork,
+  getYourMeet,
   getStream,
   deleteMeet,
   editWSDetailsGet,

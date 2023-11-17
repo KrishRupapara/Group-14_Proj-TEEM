@@ -7,8 +7,11 @@ import { and, eq } from "drizzle-orm";
 import { getDecodedToken } from "../services/sessionServies";
 
 export const wsExist = async(req: Request, res: Response, next: NextFunction) =>{
-  const wsID:any = req.params.wsID;
+  const wsID = parseInt(req.params.wsID, 10);
 
+  if (isNaN(wsID)) {
+    return res.status(400).send("Invalid wsID");
+  }
   try {
     const Workspace = await db
       .select()
@@ -46,8 +49,12 @@ export const authorizeManager = async (
   //   wsID: wsID,
   // };
 
-  const wsID:any = req.params.wsID;
   const userID:any = req.user.userID;
+  const wsID = parseInt(req.params.wsID, 10);
+
+  if (isNaN(wsID)) {
+    return res.status(400).send("Invalid wsID");
+  }
 
   try {
 
@@ -70,8 +77,12 @@ export const authorizeMember = async (
   next: NextFunction
 ) => {
   
-  const wsID:any = req.params.wsID;
   const userID:any = req.user.userID;
+  const wsID = parseInt(req.params.wsID, 10);
+
+  if (isNaN(wsID)) {
+    return res.status(400).send("Invalid wsID");
+  }
 
   try {
 

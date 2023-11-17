@@ -39,7 +39,7 @@ export const assignTaskPost = async (req: Request, res: Response) => {
     return res.status(400).send({ error: "Title is required" });
   }
 
-  console.log(deadline);
+  // console.log(deadline);
   const nonmemberAssignee: string[] = []; //users which are not part of workspace
   const assignee: string[] = []; //users which are part of workspace
   const unregisteredAssignee: string[] = []; //users which are part of workspace
@@ -57,9 +57,11 @@ export const assignTaskPost = async (req: Request, res: Response) => {
       .returning({ task_id: tasks.taskID });
 
     console.log(task_id[0].task_id);
-
-    for (const Assignee of Assignees) {
-      const { assignee_id } = Assignee;
+    console.log(Assignees);
+    console.log(Assignees.length);
+    for (const assignee_id of Assignees) {
+      
+      // const { assignee_id} = Assignee;
 
       const User = await db
         .select()
@@ -67,7 +69,7 @@ export const assignTaskPost = async (req: Request, res: Response) => {
         .where(eq(users.emailId, assignee_id))
         .limit(1);
 
-      console.log(assignee_id);
+      console.log({assignee_id: assignee_id});
       console.log(User[0]);
 
       if (User.length > 0) {
