@@ -1,14 +1,19 @@
 import { Router } from "express";
 import { scheduleMeetHandler } from "../controllers";
-import { requireAuth } from "../middleware";
-import { getCalendarEvents } from "../controllers/meetController";
+import { deleteMeet, getCalendarEvents } from "../controllers/meetController";
+import { requireAuth, authorizeMember } from "../middleware";
+import {showInvitees } from "../controllers/meetController";
 
 const router: Router = Router();
 
 router
   .route("/scheduleMeet/:userID/:workspaceID")
-  .post(requireAuth, scheduleMeetHandler);
+  .post(requireAuth, authorizeMember, scheduleMeetHandler);
 
 router.route("/events").get(getCalendarEvents);
+
+router.route("/deleteMeet/:meetID").get(requireAuth,deleteMeet);
+router.route("/:wsID/:meetID/showInvitees")
+  .get(requireAuth, authorizeMember, showInvitees);
 
 export { router as meetRouter };

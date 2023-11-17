@@ -2,6 +2,11 @@ import { Request, Response } from "express";
 
 import { db } from "../config/database";
 import { users } from "../model/User";
+import { meets } from "../model/Meet";
+import { invitees } from "../model/MeetInvitee";
+import { members } from "../model/Workspace";
+import { tasks } from "../model/Task";
+import { assignees } from "../model/TaskAssignee";
 import { eq } from "drizzle-orm";
 import { sendOTP } from "../services/sendOTP";
 import bcrypt from "bcrypt";
@@ -17,9 +22,10 @@ import {
   deleteSession,
 } from "../services/sessionServies";
 import { signJWT } from "../utils/jwt";
+import { workspaces } from "../model/Workspace";
 
 export const signUpHandler = async (req: Request, res: Response) => {
-  var { email, name, password } = req.body;
+  var { email, name, password, organization, jobTitle, country } = req.body;
 
   if (!email || !name || !password) {
     console.log("Username and password required");
@@ -46,12 +52,15 @@ export const signUpHandler = async (req: Request, res: Response) => {
 
     redisClient.set(email, otp_secure, "EX", 60 * 5);
 
-    await sendOTP(name, email, otp); //do not remove this comment as it is for sending the email!!!
+    // await sendOTP(name, email, otp); //do not remove this comment as it is for sending the email!!!
 
     const id = await db.insert(users).values({
       name,
       emailId: email,
       password: password,
+      organization: organization,
+      jobTitle: jobTitle,
+      country: country,
     });
 
     res.status(200).send({ message: "Signup successful" });
@@ -103,13 +112,13 @@ export const loginHandler = async (req: Request, res: Response) => {
       .where(eq(users.emailId, email))
       .limit(1);
 
+      
+    if (User.length < 1) {
+        return res.status(400).send({ error: "Invalid Credentials" });
+    }
     const { userID, name, isVerified } = User[0];
 
     const tokenUser = { userID, name, isVerified };
-
-    if (User.length < 1) {
-      return res.status(400).send({ error: "Invalid Credentials" });
-    }
 
     const isPasswordCorrect = await bcrypt.compare(password, User[0].password!);
 
@@ -159,14 +168,12 @@ export const logoutHandler = async (req: Request, res: Response) => {
   try {
     // res.clearCookie("jwtToken");
 
-    const token = req.cookies.accessToken;
-    const decodedToken = await getDecodedToken(token);
 
-    //console.log("In logout");
-    console.log(decodedToken.session);
-    deleteSession(decodedToken.session);
-
-    res.cookie("accessToken", "logout", {
+   const userID: string = res.locals.userid
+    deleteSession(userID);
+    
+    
+    res.cookie('accessToken', 'logout', {
       httpOnly: true,
       expires: new Date(Date.now()),
     });
@@ -206,19 +213,24 @@ export const forgotPasswordPost = async (req: Request, res: Response) => {
     if (user.length < 1) {
       return res.status(400).send({ error: "Invalid Credentials" });
     }
-
-    console.log(user[0]); // just for testing
-
+    
     if (!user[0].isVerified) {
       // check for verification
       res.send("User not verified.");
     }
 
-    const otp = randomInt(100000, 1000000).toString();
-    const otp_secure = await bcrypt.hash(otp, 10);
 
-    sendOTP(user[0].name, email, otp); // sending otp
-    redisClient.set(email, otp_secure, "EX", 60 * 5); // storing that inside redisclient
+      const salt = await bcrypt.genSalt();                
+      const otp = randomInt(100000, 1000000).toString();
+      const otp_secure = await bcrypt.hash(otp, salt);
+      
+      sendOTP(user[0].name,email,otp);                    // sending otp
+      redisClient.set(email, otp_secure, "EX", 60 * 5);   // storing that inside redisclient
+
+    console.log(user[0]); // just for testing
+
+
+    
 
     res.send("OTP sent successfully");
   } catch (err) {
@@ -279,3 +291,100 @@ export const resetPasswordPost = async (req: Request, res: Response) => {
     return res.status(500).send({ message: "Internal server error" });
   }
 };
+
+export const resendOtp = async (req : Request, res : Response) => {
+  let { email} = req.body;
+  if (!email ) {
+    return res.status(400).send({ error: "Enter email" });
+  }
+  try {
+
+    const user = await db
+        .select()
+        .from(users)
+        .where(eq(users.emailId, email))
+        .limit(1);
+  
+      if (user.length<1) {
+        return res.status(400).send({ error: "Invalid Credentials" });
+      }
+
+      console.log(user[0]);     // just for testing 
+
+
+      // if(!user[0].isVerified){        // check for verification
+      //     res.send("User not verified.");
+      // }
+
+      const salt = await bcrypt.genSalt();   
+      const otp = randomInt(100000, 1000000).toString();
+      const otp_secure = await bcrypt.hash(otp, salt);
+      
+      sendOTP(user[0].name,email,otp);                    // sending otp
+      redisClient.set(email, otp_secure, "EX", 60 * 5);   // storing that inside redisclient
+
+      res.send("OTP re-sent successfully");
+    
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send({ message: "Internal server error" });
+  }
+
+
+};
+
+
+export const changePassword = async (req : Request, res : Response) => {
+
+  try{
+
+    const userID  : any = req.user.userID;    // get userID from req.user
+    const { oldPassword, newPassword , confirmPassword } = req.body;
+    
+    // find user from database
+    const userToChangePaasword = await db
+        .select()
+        .from(users)
+        .where(eq(users.userID, userID))
+        .limit(1);
+  
+      if (userToChangePaasword.length<1) {
+        return res.status(400).send({ error: "Invalid Credentials" });
+      }
+
+      const isSame = await bcrypt.compare(oldPassword, userToChangePaasword[0].password!);
+      if (isSame) {
+        res.send("New Password is same as current password.");
+      }
+
+
+    
+      if(newPassword !== confirmPassword){
+        res.send("New Password and Confirm Password are not same.");
+      }
+
+      const salt = await bcrypt.genSalt(); // adding salt
+      const password = await bcrypt.hash(newPassword, salt);
+
+      await db // update the password inside database.
+        .update(users)
+        .set({ password: password })
+        .where(eq(users.userID, userID));
+
+      return res.send({ message: "Password Changed Successfully" });
+
+  }catch (err) {
+    console.log(err);
+    return res.status(500).send({ message: "Internal server error" });
+  }
+
+
+}
+
+
+
+
+
+
+
+
