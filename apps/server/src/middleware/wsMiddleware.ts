@@ -2,11 +2,15 @@ import { NextFunction, Request, Response } from "express";
 
 import { db } from "../config/database";
 // import { users } from "../model/User";
-import { workspaces,members } from "../model/Workspace";
+import { workspaces, members } from "../model/Workspace";
 import { and, eq } from "drizzle-orm";
 import { getDecodedToken } from "../services/sessionServies";
 
-export const wsExist = async(req: Request, res: Response, next: NextFunction) =>{
+export const wsExist = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const wsID = parseInt(req.params.wsID, 10);
 
   if (isNaN(wsID)) {
@@ -14,27 +18,31 @@ export const wsExist = async(req: Request, res: Response, next: NextFunction) =>
   }
   try {
     const Workspace = await db
-      .select()
+      .select({
+        workspaceID: workspaces.workspaceID,
+        title: workspaces.title,
+        projectManager: workspaces.projectManager,
+      })
       .from(workspaces)
       .where(eq(workspaces.workspaceID, wsID))
       .limit(1);
 
-      console.log(Workspace);
+    // console.log(Workspace[0]);
 
-      if(Workspace.length !== 0)
-      {
-       res.locals.workspace = Workspace;
-       console.log(res.locals.workspace);
-        next()
-      }
-       else{
-        res.status(404).send({Message: "Workspace Doesn't Exist"})
-       }
-
-  } catch (error) {
-    
+    if (Workspace.length > 0) {
+      req.workspace = Workspace[0];
+      console.log(req.workspace);
+      next();
+    } else {
+      res.status(404).send({ Message: "Workspace Doesn't Exist" });
+    }
+  } catch (err) {
+    console.log(err);
+    res
+      .status(500)
+      .send({ message: "Internal server error in wsExist middleware" });
   }
-}
+};
 
 export const authorizeManager = async (
   req: Request,
@@ -49,19 +57,12 @@ export const authorizeManager = async (
   //   wsID: wsID,
   // };
 
-  const userID:any = req.user.userID;
-  const wsID = parseInt(req.params.wsID, 10);
-
-  if (isNaN(wsID)) {
-    return res.status(400).send("Invalid wsID");
-  }
+  const userID: any = req.user.userID;
 
   try {
-
-    if (res.locals.workspace[0].projectManager === userID) next();
-
+    if (req.workspace.projectManager === userID) next();
     else {
-      res.send("You do not own the workspace");
+      res.status(401).send("You do not own the workspace");
     }
   } catch (error) {
     console.log(error);
@@ -71,32 +72,21 @@ export const authorizeManager = async (
   }
 };
 
+// authoeizeMember allowed manager
 export const authorizeMember = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  
-  const userID:any = req.user.userID;
-  const wsID = parseInt(req.params.wsID, 10);
-
-  if (isNaN(wsID)) {
-    return res.status(400).send("Invalid wsID");
-  }
+  const userID: any = req.user.userID;
+  const wsID = req.workspace.workspaceID;
 
   try {
-
-    
-    if (res.locals.workspace[0].projectManager !== userID) {
+    if (req.workspace.projectManager !== userID) {
       const isMemeber = await db
         .select()
         .from(members)
-        .where(
-          and(
-            eq(members.workspaceID, wsID),
-            eq(members.memberID, userID)
-          )
-        )
+        .where(and(eq(members.workspaceID, wsID), eq(members.memberID, userID)))
         .limit(1);
 
       if (isMemeber.length === 0) {

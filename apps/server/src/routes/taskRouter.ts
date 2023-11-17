@@ -10,6 +10,7 @@ import {
   editTaskAssigneesGet,
   editTaskAssigneesPATCH,
   deleteTask,
+  taskDashboard,
   //settingsTaskGet,
   //settingTasksPost,
   //editTaskDetails,
@@ -23,6 +24,7 @@ import {
   authorizeMember,
   taskExist,
   getTaskDetails,
+  authorizeAssignee,
 } from "../middleware";
 
 const router: Router = Router();
@@ -35,7 +37,9 @@ router
 router.route("/:wsID/:taskID/getTask")
   .get( requireAuth, wsExist,  authorizeMember,  taskExist, getTaskDetails, getTask);
 
-
+router.route("/:wsID/:taskID/taskDashboard")
+  .get(requireAuth, wsExist, authorizeMember,  taskExist, authorizeAssignee, taskDashboard );
+  
 router.route("/:wsID/:taskID/showAssignees")
   .get(requireAuth, wsExist, authorizeMember,  taskExist, getTaskDetails, showAssignees );
 

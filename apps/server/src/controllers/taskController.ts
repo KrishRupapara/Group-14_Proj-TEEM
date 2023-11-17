@@ -7,7 +7,7 @@ import { sendTask } from "../services/sendTask";
 import { signJWT } from "../utils/jwt";
 
 import { tasks } from "../model/Task";
-import { workspaces ,members} from "../model/Workspace";
+import { workspaces, members } from "../model/Workspace";
 
 import { assignees } from "../model/TaskAssignee";
 import { timestamp } from "drizzle-orm/pg-core";
@@ -19,21 +19,7 @@ export const assignTaskGet = async (req: Request, res: Response) => {
 
 export const assignTaskPost = async (req: Request, res: Response) => {
   var { title, description, taskType, deadline, Assignees = [] } = req.body;
-  const wsID = parseInt(req.params.wsID, 10);
-
-  if (isNaN(wsID)) {
-    return res.status(400).send("Invalid wsID");
-  }
-  // const user_id = req.user.userID;
-  const Workspace = await db
-    .select()
-    .from(workspaces)
-    .where(eq(workspaces.workspaceID, wsID))
-    .limit(1);
-
-  if (Workspace.length == 0) {
-    return res.status(400).send({ error: "Workspace doen't exist" });
-  }
+  const wsID = req.workspace.workspaceID;
 
   if (!(title && deadline)) {
     return res.status(400).send({ error: "Title is required" });
@@ -52,25 +38,21 @@ export const assignTaskPost = async (req: Request, res: Response) => {
         description: description,
         taskType: taskType,
         deadline: new Date(deadline) as any,
-        workspaceID: Workspace[0].workspaceID,
+        workspaceID: wsID,
       })
       .returning({ task_id: tasks.taskID });
 
     console.log(task_id[0].task_id);
-    console.log(Assignees);
-    console.log(Assignees.length);
-    for (const assignee_id of Assignees) {
-      
-      // const { assignee_id} = Assignee;
 
+    for (const assignee_id of Assignees) {
       const User = await db
         .select()
         .from(users)
         .where(eq(users.emailId, assignee_id))
         .limit(1);
 
-      console.log({assignee_id: assignee_id});
-      console.log(User[0]);
+      // console.log({ assignee_id: assignee_id });
+      // console.log(User[0]);
 
       if (User.length > 0) {
         const member = await db
@@ -78,13 +60,13 @@ export const assignTaskPost = async (req: Request, res: Response) => {
           .from(members)
           .where(
             and(
-              eq(members.workspaceID, Workspace[0].workspaceID),
+              eq(members.workspaceID, wsID),
               eq(members.memberID, User[0].userID)
             )
           )
           .limit(1);
 
-        console.log(member[0]);
+        // console.log(member[0]);
 
         if (member.length === 0) {
           // Handle unregistered team members
@@ -94,7 +76,7 @@ export const assignTaskPost = async (req: Request, res: Response) => {
           // Add registered members to the workspace
           await db.insert(assignees).values({
             taskID: task_id[0].task_id,
-            workspaceID: Workspace[0].workspaceID,
+            workspaceID: wsID,
             assigneeID: member[0].memberID,
           });
         }
@@ -115,7 +97,7 @@ export const assignTaskPost = async (req: Request, res: Response) => {
     }
 
     const updatedProgress = await updateProjectProgress(wsID);
-    console.log({ updated_progress: updatedProgress });
+    // console.log({ updated_progress: updatedProgress });
 
     // await sendTask(Workspace[0].title, title, assignee); // send mail to assignees(only member)
   } catch (err) {
@@ -148,7 +130,6 @@ export const showAssignees = async (req: Request, res: Response) => {
     return res.status(500).send({ message: "Internal server error in task" });
   }
 };
-
 
 export const editTaskDetailsGet = async (req: Request, res: Response) => {
   res.status(200).send({
@@ -420,8 +401,6 @@ export const getTask = async (
   });
 };
 
-
-
 export const editTaskDetails = async (req: Request, res: Response) => {
   const wsID: any = req.params.wsID;
   const taskID: any = req.params.taskID;
@@ -573,31 +552,26 @@ export const removeTaskAssignees = async (req: Request, res: Response) => {
   }
 };
 
-
 // delete task controller
 export const deleteTask = async (req: Request, res: Response) => {
   try {
-
     // getting taskID from params
-    const taskIDToDelete : any = req.params.taskID;
+    const taskIDToDelete: any = req.params.taskID;
     //getting workspaceID from params
-    const wsID : any = req.params.wsID;
+    const wsID: any = req.params.wsID;
 
     //delete task from task table
-    await db.delete(tasks).where(eq(tasks.taskID,taskIDToDelete));
+    await db.delete(tasks).where(eq(tasks.taskID, taskIDToDelete));
 
     //delete task from taskassignees table
-    await db.delete(assignees).where(eq(assignees.taskID,taskIDToDelete));
+    await db.delete(assignees).where(eq(assignees.taskID, taskIDToDelete));
 
-
-    res.json({ message: "Task deleted successfully"  , "EXPECTED" : "task must be deleted from taskassignees table also"});
-
+    res.json({
+      message: "Task deleted successfully",
+      EXPECTED: "task must be deleted from taskassignees table also",
+    });
   } catch (err) {
     console.log(err);
-    return res
-      .status(500)
-      .send({ message: "Internal server error in task" });
+    return res.status(500).send({ message: "Internal server error in task" });
   }
 };
-
-
