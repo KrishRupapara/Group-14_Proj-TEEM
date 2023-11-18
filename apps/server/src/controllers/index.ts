@@ -29,7 +29,7 @@ import {
   profilePATCH,
 } from "./dashboardController";
 
-import { scheduleMeetHandler , deleteMeet} from "./meetController";
+import { scheduleMeetHandler, deleteMeet } from "./meetController";
 
 import {
   assignTaskGet,
@@ -48,9 +48,12 @@ import {
   //removeTaskAssignees,
 } from "./taskController";
 
+import { taskDashboard } from "./taskDashboard";
+import { meetDashboard } from "./meetDashboard";
+
 import {
   getPeople,
-  getUpcoming,
+  getYourMeet,
   getYourWork,
   getStream,
   editWSDetailsGet,
@@ -58,7 +61,6 @@ import {
   editWSMembersGet,
   editWSMembersPATCH,
   deleteWorkspaceDELETE,
-
 } from "./wsDashboardcontroller";
 
 import { showInvitees } from "./meetController";
@@ -95,8 +97,8 @@ export {
   scheduleMeetHandler,
   oauthHanlder,
   getPeople,
-  getUpcoming,
   getYourWork,
+  getYourMeet,
   getStream,
   deleteMeet,
   editWSDetailsGet,
@@ -110,5 +112,7 @@ export {
   editTaskAssigneesPATCH,
   profilePATCH,
   profileDELETE,
-  deleteTask
+  deleteTask,
+  taskDashboard,
+  meetDashboard
 };
