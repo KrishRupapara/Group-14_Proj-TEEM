@@ -1,4 +1,5 @@
 "use client";
+import { mont } from "@/utils/fonts";
 import { cn } from "@/lib/utils";
 import { Input } from "./ui/input";
 
@@ -11,7 +12,6 @@ import {
 } from "./ui/select";
 import { Textarea } from "./ui/textarea";
 
-import { Montserrat } from "next/font/google";
 import {
   Form,
   FormControl,
@@ -26,11 +26,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "./ui/button";
 // import { toast } from "./ui/use-toast";
-
-const montserrat = Montserrat({
-  subsets: ["latin-ext"],
-  weight: ["400", "700"],
-});
 
 const FormSchema = z.object({
   summary: z
@@ -84,7 +79,7 @@ export default function Task() {
     <div
       className={cn(
         "w-full h-full bg-[#E5F2FF] flex items-center justify-center",
-        montserrat.className
+        mont.className
       )}
     >
       <div className="h-4/5 w-4/5 flex flex-col justify-evenly">

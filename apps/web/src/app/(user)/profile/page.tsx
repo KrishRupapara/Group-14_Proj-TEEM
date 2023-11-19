@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 
-import NavComponent from "@/components/navbar";
+import NavComponent from "@/components/Navbar";
 import UserProfile from "../components/user-profile";
 
 export default function Profilepage() {

@@ -1,23 +1,21 @@
-import './globals.css'
-import type { Metadata } from 'next'
-import { Montserrat } from 'next/font/google'
+import "./globals.css";
+import type { Metadata } from "next";
 
-const inter = Montserrat({ subsets: ['latin'] })
+import { mont } from "@/utils/fonts";
 
 export const metadata: Metadata = {
-  title: 'Teem App',
-  description: 'Experience the power of smart scheduling ',
-}
+  title: "Teem App",
+  description: "Experience the power of smart scheduling ",
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={mont.className}>{children}</body>
     </html>
-  )
+  );
 }
-

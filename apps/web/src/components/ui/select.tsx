@@ -3,11 +3,8 @@
 import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
-import { Raleway } from "next/font/google";
-
 import { cn } from "@/lib/utils";
-
-const raleway = Raleway({ subsets: ["latin-ext"], weight: ["400"] });
+import { rale } from "@/utils/fonts";
 
 const Select = SelectPrimitive.Root;
 
@@ -82,7 +79,7 @@ const SelectContent = React.forwardRef<
         position === "popper" &&
           "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
         className,
-        raleway.className
+        rale.className
       )}
       position={position}
       {...props}
@@ -91,7 +88,7 @@ const SelectContent = React.forwardRef<
       <SelectPrimitive.Viewport
         className={cn(
           "p-1",
-          raleway.className,
+          rale.className,
           position === "popper" &&
             "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]"
         )}
@@ -113,7 +110,7 @@ const SelectLabel = React.forwardRef<
     className={cn(
       "py-1.5 pl-8 pr-2 text-sm font-semibold",
       className,
-      raleway.className
+      rale.className
     )}
     {...props}
   />
@@ -129,7 +126,7 @@ const SelectItem = React.forwardRef<
     className={cn(
       "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className,
-      raleway.className
+      rale.className
     )}
     {...props}
   >
@@ -150,7 +147,7 @@ const SelectSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Separator
     ref={ref}
-    className={cn("-mx-1 my-1 h-px bg-muted", className, raleway.className)}
+    className={cn("-mx-1 my-1 h-px bg-muted", className, rale.className)}
     {...props}
   />
 ));

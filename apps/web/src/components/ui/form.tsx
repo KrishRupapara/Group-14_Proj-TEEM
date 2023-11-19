@@ -12,9 +12,7 @@ import {
 
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
-import { Montserrat } from "next/font/google";
-
-const montserrat = Montserrat({ subsets: ["latin"], weight: ["400", "700"] });
+import { mont } from "@/utils/fonts";
 
 const Form = FormProvider;
 
@@ -99,7 +97,7 @@ const FormLabel = React.forwardRef<
       className={cn(
         error && "text-destructive",
         className,
-        montserrat.className,
+        mont.className,
         "font-bold"
       )}
       htmlFor={formItemId}
