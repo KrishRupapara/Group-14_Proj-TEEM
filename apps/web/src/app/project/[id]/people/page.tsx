@@ -1,4 +1,4 @@
-import PeopleCard from "../components/PeopleCard";
+import PeopleCard from "../../components/PeopleCard";
 
 export default function PeoplePage() {
   return (

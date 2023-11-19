@@ -19,6 +19,7 @@ module.exports = {
       colors: {
         "prim-brown": "#564154",
         primaryblue: "#BDDDFF",
+        buttonblue: "#295BE7",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -71,6 +72,10 @@ module.exports = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+      },
+      fontFamily: {
+        mont: ["var(--font-mont)"],
+        rale: ["var(--font-rale)"],
       },
     },
   },

@@ -105,7 +105,7 @@ export default function Dashboardfile() {
             <div className="h-[40vh] w-full py-2 flex flex-col justify-around items-start">
               <div className="mx-auto">
                 <h2 className="font-bold mb-6 text-3xl text-black">
-                  Let's build a Workspace
+                  Let&apos;s build a Workspace
                 </h2>
               </div>
 

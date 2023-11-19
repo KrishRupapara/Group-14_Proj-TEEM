@@ -1,13 +1,10 @@
 import Progressbar from "@/components/ui/progress-bar";
-import NavComponent from "@/components/ui/navbar";
+import NavComponent from "@/components/Navbar";
 
 export default function Dashboard() {
   return (
-    <div>
-      {/* Navbar */}
-      {/* <div className="bg-white border-b-2 border-gray-500"> */}
+    <div className="bg-gradient-to-b from-primaryblue to-white">
       <NavComponent />
-      {/* </div> */}
 
       <div className="w-5/6 mx-auto h-full">
         {/* Task */}
@@ -16,7 +13,7 @@ export default function Dashboard() {
           <div className="grid grid-cols-3 h-3/4 w-full p-14 gap-10 ">
             <div className=" rounded-xl flex justify-around items-center p-2 bg-white shadow-xl">
               <div>
-                <h1 className="font-bold text-xl">Project Name</h1>
+                <h1 className="text-xl font-bold">Project Name</h1>
                 <p>Description</p>
               </div>
               <Progressbar percent={50} />
