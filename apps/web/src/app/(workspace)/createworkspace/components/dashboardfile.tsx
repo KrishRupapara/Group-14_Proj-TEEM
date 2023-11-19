@@ -7,6 +7,8 @@ import { useState } from "react";
 import { Icons } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useFieldArray, useForm } from "react-hook-form";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Dashboardfile() {
   const [isLoading, setIsLoading] = useState(false);
@@ -17,25 +19,75 @@ export default function Dashboardfile() {
     description: "",
   });
 
-  async function onSubmit(event: React.SyntheticEvent) {
-    event.preventDefault();
-    try {
-      setIsLoading(true);
+  const { register, handleSubmit, control } = useForm({
+    defaultValues: {
+      Email: [{}],
+      Role: [{}],
+    }
+  });
 
-      const res = await fetch("http://localhost:3500/api/createworkspace", {
+  
+
+  const { fields, append, remove } = useFieldArray({ control, name: "Email" });
+  const router = useRouter();
+
+  const onFormSubmit = (data) => {
+
+    let email = data.Email;
+    let role = data.Role;
+
+    var members = []
+
+    for(let i=0;i<email.length;i++){
+    var addmember = {
+      email : email[i],
+      role : role[i]
+    }
+    members.push(addmember)
+  }
+    // console.log(email[1]);
+    // console.log(members);
+    // console.log(data);
+    // console.log(workspace.title);
+    let title = workspace.title;
+    let type = workspace.type;
+    let description = workspace.description;
+    try {
+      const res = fetch("http://localhost:3500/api/createworkspace", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(workspace),
+        body: JSON.stringify({title,type,description,members}),
       }).then((res) => res.json());
-      console.log(res.message);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setIsLoading(false);
+
+      router.push("/dashboard");
+
+    } catch (err: any) {
+      console.log("Login failed", err.message);
     }
-  }
+
+  };
+
+  // async function onSubmit(event: React.SyntheticEvent) {
+  //   event.preventDefault();
+  //   try {
+  //     setIsLoading(true);
+
+  //     const res = await fetch("http://localhost:3500/api/createworkspace", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(workspace),
+  //     }).then((res) => res.json());
+  //     console.log(res.message);
+  //   } catch (err) {
+  //     console.log(err);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // }
   return (
     // bg-gradient-to-tr from-[#E0CBA8] via-[#779FA1] to-[#E0CBA8]
 
@@ -99,7 +151,7 @@ export default function Dashboardfile() {
           {/* card */}
           <form
             action=""
-            onSubmit={onSubmit}
+            onSubmit={handleSubmit(onFormSubmit)}
             className=" mx-auto h-full flex flex-col justify-center"
           >
             <div className="h-[40vh] w-full py-2 flex flex-col justify-around items-start">
@@ -214,13 +266,56 @@ export default function Dashboardfile() {
                   value={workspace.description}
                 ></textarea>
               </div>
+
+              <div className="flex flex-col w-3/5 mx-auto py-1 mt-3">
+                <button
+                  className="border border-xl rounded-xl bg-blue-600 m-1 p-2 w-2/5"
+                  onClick={() => append({})}
+                >
+                  Add member
+                </button>
+
+                <div className='flex flex-col' >
+                  {fields.map(({ id }, index) => {
+                    return <div className='flex'>
+                      <input
+                        id="members"
+                        placeholder="Enter members email by Comma"
+                        type="email"
+                        autoCapitalize="none"
+                        autoComplete="off"
+                        autoCorrect="off"
+                        required
+                        className='border rounded-xl p-2 m-1'
+                        {...register(`Email.${index}.Email` as any)}
+                      />
+
+
+                      <select id="Role" required className='border rounded-xl p-2 m-1' {...register(`Role.${index}`)}>
+                        {/* <option disabled selected>Choose a role</option> */}
+                        <option value="collaborator">collaborator</option>
+                        <option value="Manager">Manager</option>
+                      </select>
+
+                      <button className="border bg-blue-600 m-2 p-1 rounded-xl py-1" onClick={() => remove(index)}>Erase</button>
+                    </div>
+                  })}
+
+                  {/* <div className='flex flex-col mx-auto mt-2 text-[#295BE7] underline'>
+                  <button type='submit' className="">
+                    Invite with link
+                  </button>
+                </div> */}
+                </div>
+              </div>
+
               {/*Submit Button*/}
               <div className="flex flex-col w-3/5 mx-auto py-1 mt-10">
                 <button
                   disabled={isLoading}
                   type="submit"
                   className=" bg-orange-400 rounded-full py-2 px-3 hover:bg-orange-600 font-bold text-white text-lg flex items-center justify-center"
-                  onClick={onSubmit}
+                // onClick={onSubmit}
                 >
                   Continue
                 </button>
