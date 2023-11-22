@@ -13,7 +13,7 @@ export function TaskDialog() {
           height={28}
         />
       </DialogTrigger>
-      <DialogContent className="max-w-[1000px] h-4/5 bg-[#E5F2FF]">
+      <DialogContent className="max-w-[1000px] h-4/5 bg-[#E5F2FF] ">
         <Task />
       </DialogContent>
     </Dialog>

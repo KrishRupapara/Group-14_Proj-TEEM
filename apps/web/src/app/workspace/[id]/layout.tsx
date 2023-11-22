@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
-import ProjectNav from "./components/ProjectNav";
-
-const montserrat = Montserrat({ subsets: ["latin"] });
+import { mont } from "@/utils/fonts";
+import ProjectNav from "../components/ProjectNav";
 
 export const metadata: Metadata = {
   title: "Project page",
@@ -16,9 +14,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={montserrat.className}>
+      <body className={mont.className}>
         <ProjectNav />
-
         {children}
       </body>
     </html>

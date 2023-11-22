@@ -3,6 +3,7 @@ import {
   serial,
   varchar,
   time,
+  date,
   timestamp,
   integer,
   primaryKey,
@@ -18,12 +19,14 @@ export const meets = pgTable(
     title: varchar("title", { length: 50 }).notNull(),
     agenda: varchar("agenda", { length: 200 }),
     description: varchar("description", { length: 200 }),
-    meetTime: timestamp("meetTime",   { withTimezone: true }),
-    duration: time("duration"),
+    meetDate: date("meetDate").notNull(),
+    startTime: time("startTime").notNull(),
+    endTime: time("endTime").notNull(),
     venue: varchar("venue", { length: 200 }),
     workspaceID: integer("workspaceID").notNull(),
     organizerID: integer("organizerID").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
+    
   },
   (table) => {
     return {
