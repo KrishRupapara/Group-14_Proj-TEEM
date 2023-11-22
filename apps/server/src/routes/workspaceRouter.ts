@@ -9,7 +9,7 @@ import {
   deleteWorkspaceDELETE,
   getPeople,
   getYourWork,
-  getUpcoming,
+  getYourMeet,
   getStream,
   editWSDetailsGet,
   editWsDetailsPATCH,
@@ -46,13 +46,10 @@ router
 router
   .route("/:wsID/yourWork")
   .get(requireAuth, wsExist, authorizeMember, getYourWork);
+  router
+  .route("/:wsID/yourMeet")
+  .get(requireAuth, wsExist, authorizeMember, getYourMeet);
 
-router
-  .route("/:wsID/upcoming")
-  .get(requireAuth, wsExist, authorizeMember, getUpcoming);
-router
-  .route("/:wsID/upcoming")
-  .get(requireAuth, wsExist, authorizeMember, getUpcoming);
 
 router
   .route("/:wsID/editWSDetails")

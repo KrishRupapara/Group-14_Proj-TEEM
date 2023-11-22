@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 import { db } from "../config/database";
 import { users } from "../model/User";
-import { and, or, eq, gte, sql } from "drizzle-orm";
+import { and, or, eq, gte, desc } from "drizzle-orm";
 
 import { sendInvitation } from "../services/sendInvitation";
 
@@ -13,6 +13,7 @@ import { tasks } from "../model/Task";
 import { wsTokenOptions } from "../services/workspaceServices";
 import { invitees } from "../model/MeetInvitee";
 import { meets } from "../model/Meet";
+import { PgColumn } from "drizzle-orm/pg-core";
 // import { streamObject } from "../model/streamObject";
 
 export const getStream = async (req: Request, res: Response) => {
@@ -38,15 +39,19 @@ export const getStream = async (req: Request, res: Response) => {
       objectID: number;
       objectType: string; // Type can be "task" or "meet"
       objectTitle: string;
+      objectDescription: string | null;
       objectStatus: string | null;
       created_at: Date;
     }
+
+    const currentTimestamp = new Date();
 
     const Stream: streamObject[] = [
       ...taskStream.map((task) => ({
         objectID: task.taskID,
         objectType: "Task",
         objectTitle: task.title,
+        objectDescription: task.description,
         objectStatus: task.status ? task.status : null,
         // objectTime: task.deadline ? new Date(task.deadline) : null,
         created_at: task.createdAt,
@@ -55,7 +60,12 @@ export const getStream = async (req: Request, res: Response) => {
         objectID: meet.meetID,
         objectType: "Meet",
         objectTitle: meet.title,
-        objectStatus: null,
+        objectDescription: meet.agenda,
+        objectStatus: meet.meetTime
+          ? meet.meetTime > currentTimestamp
+            ? "UPCOMING"
+            : "DONE"
+          : null,
         // objectTime: meet.meetTime ? new Date(meet.meetTime) : null,
         created_at: meet.createdAt,
       })),
@@ -169,25 +179,76 @@ export const getPeople = async (req: Request, res: Response) => {
 export const getYourWork = async (req: Request, res: Response) => {
   const wsID = parseInt(req.params.wsID, 10);
   const user_id = req.user.userID;
+  const filterOption = (req.query.filter as string) || "All";
+  // console.log(filterOption);
+  try {
+    if (filterOption === "Upcoming") {
+      const currentTimestamp = new Date();
 
-  const Work = await db
-    .select({
-      taskID: tasks.taskID,
-      taskTitle: tasks.title,
-      taskStatus: tasks.status,
-      taskDeadline: tasks.deadline,
-      taskType: tasks.taskType,
-    })
-    .from(tasks)
-    .innerJoin(assignees, eq(tasks.taskID, assignees.taskID))
-    .where(
-      and(eq(assignees.workspaceID, wsID), eq(assignees.assigneeID, user_id))
-    );
+      const upcomingTask = await db
+        .select({
+          taskID: tasks.taskID,
+          taskTitle: tasks.title,
+          taskStatus: tasks.status,
+          taskDeadline: tasks.deadline,
+          taskType: tasks.taskType,
+          taskDescription: tasks.description,
+        })
+        .from(tasks)
+        .innerJoin(assignees, eq(tasks.taskID, assignees.taskID))
+        .innerJoin(workspaces, eq(tasks.workspaceID, workspaces.workspaceID))
+        .where(
+          and(
+            eq(assignees.workspaceID, wsID),
+            or(
+              eq(assignees.assigneeID, user_id),
+              eq(workspaces.projectManager, user_id)
+            ),
+            gte(
+              tasks.deadline, // Convert deadline to a timestamp
+              currentTimestamp // Use the current timestamp
+            )
+          )
+        )
+        .orderBy(tasks.deadline);
 
-  console.log(Work);
-  res.json(Work);
+      // console.log(upcomingTask);
+      res.json(upcomingTask);
+    } else {
+      let Work = await db
+        .select({
+          taskID: tasks.taskID,
+          taskTitle: tasks.title,
+          taskStatus: tasks.status,
+          taskDeadline: tasks.deadline,
+          taskType: tasks.taskType,
+          taskDescription: tasks.description,
+        })
+        .from(tasks)
+        .innerJoin(assignees, eq(tasks.taskID, assignees.taskID))
+        .innerJoin(workspaces, eq(tasks.workspaceID, workspaces.workspaceID))
+        .where(
+          and(
+            eq(assignees.workspaceID, wsID),
+            or(
+              eq(assignees.assigneeID, user_id),
+              eq(workspaces.projectManager, user_id)
+            )
+          )
+        )
+        .orderBy(desc(tasks.createdAt));
+
+      // console.log(Work);
+      res.json(Work);
+    }
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(500)
+      .send({ message: "Internal server error in Your Meet" });
+  }
 };
-
+/*
 export const getUpcoming = async (req: Request, res: Response) => {
   const wsID = parseInt(req.params.wsID, 10);
   if (isNaN(wsID) || !Number.isInteger(wsID)) {
@@ -263,6 +324,78 @@ export const getUpcoming = async (req: Request, res: Response) => {
     return res
       .status(500)
       .send({ message: "Internal server error in upcoming" });
+  }
+};*/
+
+export const getYourMeet = async (req: Request, res: Response) => {
+  const wsID = parseInt(req.params.wsID, 10);
+  const user_id = req.user.userID;
+  const filterOption = (req.query.filter as string) || "All";
+  try {
+    if (filterOption === "Upcoming") {
+      const currentTimestamp = new Date();
+      const upcomingMeet = await db
+        .select({
+          meetID: meets.meetID,
+          meetTitle: meets.title,
+          meetTime: meets.meetTime,
+          meetDuration: meets.duration,
+          meetAgenda: meets.agenda,
+          meetOrganizer: users.name,
+        })
+        .from(meets)
+        .innerJoin(invitees, eq(meets.meetID, invitees.meetID))
+        .innerJoin(workspaces, eq(meets.workspaceID, workspaces.workspaceID))
+        .innerJoin(users, eq(meets.organizerID, users.userID))
+        .where(
+          and(
+            eq(invitees.workspaceID, wsID),
+            or(
+              eq(invitees.inviteeID, user_id),
+              eq(workspaces.projectManager, user_id)
+            ),
+            gte(
+              meets.meetTime, // Convert deadline to a timestamp
+              currentTimestamp // Use the current timestamp
+            )
+          )
+        )
+      .orderBy(meets.meetTime);
+
+      // console.log(upcomingMeet);
+      res.json(upcomingMeet);
+    } else {
+      const Meet = await db
+        .select({
+          meetID: meets.meetID,
+          meetTitle: meets.title,
+          // meetStatus: gte(meets.meetTime , currentTimestamp) ?"UPCOMING" : "DONE" ,
+          meetTime: meets.meetTime,
+          meetDuration: meets.duration,
+          meetAgenda: meets.agenda,
+          meetOrganizer: users.name,
+        })
+        .from(meets)
+        .innerJoin(invitees, eq(meets.meetID, invitees.meetID))
+        .innerJoin(users, eq(meets.organizerID, users.userID))
+        .innerJoin(workspaces, eq(meets.workspaceID, workspaces.workspaceID))
+        .where(
+          and(
+            eq(invitees.workspaceID, wsID),
+            or(
+              eq(invitees.inviteeID, user_id),
+              eq(workspaces.projectManager, user_id)
+            )
+          )
+        )
+        .orderBy(desc(meets.createdAt));
+      res.json(Meet);
+    }
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(500)
+      .send({ message: "Internal server error in Your Meet" });
   }
 };
 
@@ -458,6 +591,28 @@ export const deleteWorkspaceDELETE = async (req: Request, res: Response) => {
   }
 };
 
+function greaterThan(
+  deadline: PgColumn<
+    {
+      name: "deadline";
+      tableName: "tasks";
+      dataType: "date"; // console.log(taskStream);
+      // console.log(taskStream);
+      columnType: "PgTimestamp";
+      data: Date;
+      driverParam: string;
+      notNull: false;
+      hasDefault: false;
+      enumValues: undefined;
+      baseColumn: never;
+    },
+    {},
+    {}
+  >,
+  arg1: Date
+): any {
+  throw new Error("Function not implemented.");
+}
 // export const deleteMembers = async (req: Request, res: Response) => {
 //   try {
 

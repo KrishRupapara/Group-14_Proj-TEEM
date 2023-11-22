@@ -23,36 +23,15 @@ export const createWorkspaceGet = async (req: Request, res: Response) => {
   res.send("<h1>You can create new workspace</h1>");
 };
 
-/* Request Body Preview */
-// {
-//     "title": "Your Project Title",
-//     "description": "Your Project Description",
-//     "members": [
-//       {
-//         "member_id": "email_id_1",
-//         "role": 0
-//       },
-//       {
-//         "member_id": "user_id_2",
-//         "role": 1
-//       },
-//       {
-//         "member_id": "user_id_3",
-//         "role": 2
-//       }
-//     ]
-//     "deadline" : "2023-10-30T14:30:00.000Z" // estimated deadline for completion of project
-//   }
-
 export const createWorkspacePost = async (req: Request, res: Response) => {
   // res.send("<h1>You can create new workspace</h1>");
-  var { title,type, description, Members = [] } = req.body;
+  var { title, type, description, Members = [] } = req.body;
 
   if (!title) {
     return res.status(400).send({ error: "Tilte is required" });
   }
 
-  const userID:any = req.user.userID;
+  const userID: any = req.user.userID;
   console.log(userID);
 
   const unregisteredMembers: string[] = [];
@@ -123,7 +102,7 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
         });
       }
     }
-   
+
     /*
     const wsToken = signJWT({ ...workspace_id[0] });
 
@@ -145,14 +124,7 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
 
     // await sendInvite(ProjectManager[0].name,title,registeredMembers);
 
-    /*if (req.body.userChoice == "sendInvitation") {
-
-      await sendInvitation(ProjectManager[0].name, title, unregisteredMembers);
-      res.status(200).send({ message: "Invitations sent successfully" });
-
-    } else if (req.body.userChoice == "cancel") {
-      res.status(200).send({ message: "Operation canceled" });
-    }*/
+    
   } catch (err) {
     console.log(err);
     return res
@@ -162,7 +134,7 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
 };
 
 export const getWorkspace = async (req: Request, res: Response) => {
- /*
+  /*
   const workspaceID : {wsID:any} = {
     wsID: req.params.wsid
 };
@@ -174,28 +146,27 @@ export const getWorkspace = async (req: Request, res: Response) => {
   res.cookie("wsToken", wsToken, wsTokenOptions);
    */
 
-
- const  wsID:any =  req.params.wsID
+  const wsID: any = req.params.wsID;
   try {
-    
-  const workspace = await db
-    .select({
-      title: workspaces.title,
-      description: workspaces.description,
-      projectManager: users.name})
-    .from(workspaces)
-    .where(eq(workspaces.workspaceID, wsID))
-    .innerJoin(users, eq(workspaces.projectManager , users.userID))
-    .limit(1);
+    const workspace = await db
+      .select({
+        title: workspaces.title,
+        description: workspaces.description,
+        projectManager: users.name,
+      })
+      .from(workspaces)
+      .where(eq(workspaces.workspaceID, wsID))
+      .innerJoin(users, eq(workspaces.projectManager, users.userID))
+      .limit(1);
 
-  let Members = await db
-    .select({
-       name: users.name,
-       role: members.role,
-    })
-    .from(members)
-    .where(eq(members.workspaceID, wsID))
-    .innerJoin(users, eq(members.memberID , users.userID))
+    let Members = await db
+      .select({
+        name: users.name,
+        role: members.role,
+      })
+      .from(members)
+      .where(eq(members.workspaceID, wsID))
+      .innerJoin(users, eq(members.memberID, users.userID));
 
     console.log(JSON.stringify(workspace));
     console.log(JSON.stringify(Members));
@@ -242,10 +213,6 @@ export const getWorkspace = async (req: Request, res: Response) => {
       .send({ message: "Internal server error in workspace" });
   }
 };
-
-
-
-
 
 /*
 export const settingsWSGet = async(req: Request, res: Response) =>{
@@ -489,7 +456,3 @@ export const addMembersPost = async (req: Request, res: Response) => {
     }
   };
   */
-
-
-
-
