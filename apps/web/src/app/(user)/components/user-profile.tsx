@@ -114,7 +114,7 @@ export default function UserProfile() {
         <div>
           <Button
             type="submit"
-            className="text-white bg-blue-500 px-10 py-2 rounded-[6px] transition-all hover:bg-blue-800 text-lg"
+            className="text-white bg-blue-500 px-10 py-2 rounded-[6px] transition-all hover:bg-blue-800 text-lg mt-5"
           >
             Save
           </Button>

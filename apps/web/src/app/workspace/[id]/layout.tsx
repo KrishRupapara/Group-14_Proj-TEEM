@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import NavComponent from "@/components/Navbar";
 import { mont } from "@/utils/fonts";
 import ProjectNav from "../components/ProjectNav";
 

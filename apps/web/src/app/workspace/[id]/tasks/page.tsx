@@ -1,7 +1,6 @@
 import React from "react";
 import Tasks from "../../components/tasks";
 import Progressbar from "@/components/ui/progress-bar";
-import TaskPage from "../../components/taskPage";
 
 export default function page() {
   return (
