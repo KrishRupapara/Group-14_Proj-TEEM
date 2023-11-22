@@ -352,7 +352,7 @@ export const changePassword = async (req : Request, res : Response) => {
         return res.status(400).send({ error: "Invalid Credentials" });
       }
 
-      const isSame = await bcrypt.compare(oldPassword, userToChangePaasword[0].password!);
+      const isSame = await bcrypt.compare(newPassword, userToChangePaasword[0].password!);
       if (isSame) {
         res.send("New Password is same as current password.");
       }

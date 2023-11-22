@@ -40,12 +40,12 @@ router.route("/:wsID/:taskID/getTask")
 router.route("/:wsID/:taskID/taskDashboard")
   .get(requireAuth, wsExist, authorizeMember,  taskExist, authorizeAssignee, taskDashboard );
   
-router.route("/:wsID/:taskID/showAssignees")
-  .get(requireAuth, wsExist, authorizeMember,  taskExist, getTaskDetails, showAssignees );
+// router.route("/:wsID/:taskID/showAssignees")
+//   .get(requireAuth, wsExist, authorizeMember,  taskExist, getTaskDetails, showAssignees );
 
-router.route("/:wsID/:taskID/editTaskDetails")
-    .get(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, editTaskDetailsGet)
-    .patch(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, editTaskDetailsPATCH);
+// router.route("/:wsID/:taskID/editTaskDetails")
+//     .get(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, editTaskDetailsGet)
+//     .patch(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, editTaskDetailsPATCH);
 
 router.route("/:wsID/:taskID/editTaskAssignees")
     .get(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, editTaskAssigneesGet)
