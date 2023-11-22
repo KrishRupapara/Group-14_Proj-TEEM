@@ -10,7 +10,7 @@ import { TaskDialog } from "./ui/task-dialog";
 
 export default function NavComponent() {
   return (
-    <div className="bg-white sticky top-0">
+    <div className="bg-white sticky top-0 z-10">
       <div className="h-[5rem] w-4/5 mx-auto flex flex-row items-center justify-between">
         <div>
           <Image
