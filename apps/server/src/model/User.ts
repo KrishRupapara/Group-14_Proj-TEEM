@@ -18,4 +18,5 @@ export const users = pgTable("users", {
   createdAt: timestamp("createdAt").notNull().defaultNow(),
   isVerified: boolean("isVerified").notNull().default(false),
   isConnectedToGoogle: boolean("isConnectedToGoogle").notNull().default(false),
+  gmailID: varchar("gmailID", {length: 60}),
 });
