@@ -1,10 +1,10 @@
 //auth.test.js
-import request from "supertest";
-import {
-  createWorkspacePost,
-  createWorkspaceGet,
-  signUpHandler,
-} from "../controllers";
+import supertest from "supertest"; 
+// import {
+//   createWorkspacePost,
+//   createWorkspaceGet,
+//   signUpHandler,
+// } from "../controllers";
 
 import { db } from "../config/database";
 
@@ -21,7 +21,7 @@ describe("signupHandler", () => {
       country: "abc",
     };
 
-    const response = await request(app)
+    const response = await supertest(app)
       .post("/api/signup")
       .send(userData)
       .set("Accept", "application/json")
@@ -56,4 +56,16 @@ describe("signupHandler", () => {
   //     expect(res.status).toHaveBeenCalledWith(400);
   //     expect(res.send).toHaveBeenCalledWith({ meesage: "Email already exists" });
   //   });
+});
+
+describe("loginHandler", () => {
+  it('should return 400 if email or password is missing', async () => {
+    const response = await supertest(app)
+      .post('/api/login')
+      .send({})
+      .expect(400);
+
+    expect(response.body).toEqual({ error: 'Please provide email and password' });
+  });
+
 });
