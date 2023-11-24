@@ -2,7 +2,6 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
-const app = express();
 
 import https from "https";
 import fs from "fs";
@@ -34,6 +33,7 @@ import { client as redisClient } from "./config/redisConnect";
 import morgan from "morgan";
 import { dashboardGet } from "./controllers";
 
+export const app: express.Application = express();
 app.set("trust proxy", 1);
 app.use(
   rateLimit({
@@ -68,6 +68,7 @@ app.get("/smoothies", requireAuth, (req, res) => {
 
 const PORT = process.env.PORT || 3500;
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log("Server listening on port " + PORT + "!");
 });
+

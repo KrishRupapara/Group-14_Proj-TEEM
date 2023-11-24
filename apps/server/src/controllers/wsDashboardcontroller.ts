@@ -61,8 +61,8 @@ export const getStream = async (req: Request, res: Response) => {
         objectType: "Meet",
         objectTitle: meet.title,
         objectDescription: meet.agenda,
-        objectStatus: meet.meetTime
-          ? meet.meetTime > currentTimestamp
+        objectStatus: meet.meetDate
+          ? new Date(meet.meetDate) > currentTimestamp
             ? "UPCOMING"
             : "DONE"
           : null,
@@ -338,8 +338,7 @@ export const getYourMeet = async (req: Request, res: Response) => {
         .select({
           meetID: meets.meetID,
           meetTitle: meets.title,
-          meetTime: meets.meetTime,
-          meetDuration: meets.duration,
+          meetDate: meets.meetDate,
           meetAgenda: meets.agenda,
           meetOrganizer: users.name,
         })
@@ -354,13 +353,16 @@ export const getYourMeet = async (req: Request, res: Response) => {
               eq(invitees.inviteeID, user_id),
               eq(workspaces.projectManager, user_id)
             ),
-            gte(
-              meets.meetTime, // Convert deadline to a timestamp
-              currentTimestamp // Use the current timestamp
+            or(
+              gte(meets.meetDate, currentTimestamp.toISOString()), // Meet date is today or in the future
+              and(
+                eq(meets.meetDate, currentTimestamp.toISOString()), // Meet date is today
+                gte(meets.endTime, currentTimestamp.toISOString()) // End time is in the future
+              )
             )
           )
         )
-      .orderBy(meets.meetTime);
+      .orderBy(meets.meetDate);
 
       // console.log(upcomingMeet);
       res.json(upcomingMeet);
@@ -370,8 +372,7 @@ export const getYourMeet = async (req: Request, res: Response) => {
           meetID: meets.meetID,
           meetTitle: meets.title,
           // meetStatus: gte(meets.meetTime , currentTimestamp) ?"UPCOMING" : "DONE" ,
-          meetTime: meets.meetTime,
-          meetDuration: meets.duration,
+          meetTime: meets.meetDate,
           meetAgenda: meets.agenda,
           meetOrganizer: users.name,
         })
