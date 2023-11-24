@@ -150,8 +150,7 @@ export const loginHandler = async (req: Request, res: Response) => {
       session_id,
       req.get("user-agent") || "",
       refresh_token,
-      isVerified,
-      req.ip
+      isVerified
     );
 
     res.cookie("refreshToken", refresh_token, refreshTokenCookieOptions);

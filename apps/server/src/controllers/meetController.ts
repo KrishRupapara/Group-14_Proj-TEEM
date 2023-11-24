@@ -19,8 +19,8 @@ export const scheduleMeetHandler = async (req: Request, res: Response) => {
     description,
     agenda,
     date,
-    time,
-    duration,
+    startTime,
+    endTime,
     participants = [],
   } = req.body;
 
@@ -30,14 +30,14 @@ export const scheduleMeetHandler = async (req: Request, res: Response) => {
     return res.send({ message: "Please login again!!" });
   }
 
-  if (!title || !agenda || !date || !time || !duration) {
+  if (!title || !agenda || !date || !startTime || !endTime) {
     return res
       .status(400)
       .send({ error: "Please enter required informations" });
   }
 
   console.log("User id is ", req.user.userID);
-  const meetTime = new Date(date + " " + time);
+  // const meetDate = new Date(date + " " + time);
 
   const meet = await db
     .insert(meets)
@@ -45,8 +45,9 @@ export const scheduleMeetHandler = async (req: Request, res: Response) => {
       title: title,
       agenda: agenda,
       description: description,
-      meetTime: new Date(meetTime) as any,
-      duration: duration,
+      meetDate: date,
+      startTime : startTime,
+      endTime : endTime,
       workspaceID: parseInt(workspaceID),
       organizerID: req.user.userID,
       createdAt: new Date(),
