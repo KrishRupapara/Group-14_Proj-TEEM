@@ -7,7 +7,7 @@
     "build": "tsc",
     "dev": "nodemon --files src/index.ts --env-file=.env",
     "start": "node dist/index.js",
-    "test": "jest"
+    "test": "jest --collect-coverage"
   },
   "keywords": [],
   "author": "",
