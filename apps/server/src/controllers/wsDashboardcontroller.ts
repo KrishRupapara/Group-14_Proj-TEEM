@@ -362,7 +362,7 @@ export const getYourMeet = async (req: Request, res: Response) => {
             )
           )
         )
-      .orderBy(meets.meetDate);
+        .orderBy(meets.meetDate);
 
       // console.log(upcomingMeet);
       res.json(upcomingMeet);
@@ -428,9 +428,23 @@ export const editWsDetailsPATCH = async (req: Request, res: Response) => {
   const userID: any = req.user.userID;
   // const toDo:any = req.params.action;
 
-  const { title, description, type } = req.body;
+  // if (!description) return res.status(400).send({ error: "description is required" });
+  // if (!type) return res.status(400).send({ error: "type is required" });
 
   try {
+    const { title, description, type } = req.body;
+    if (
+      title === undefined ||
+      description === undefined ||
+      type === undefined
+    ) {
+      return res
+        .status(400)
+        .json({ error: "Title, description, and type are required" });
+    }
+    if (!title)
+      return res.status(400).send({ error: "Title can not be empty" });
+
     await db
       .update(workspaces)
       .set({
@@ -450,7 +464,7 @@ export const editWsDetailsPATCH = async (req: Request, res: Response) => {
 };
 
 export const editWSMembersGet = async (req: Request, res: Response) => {
-  const wsID: any = req.workspace.workspaceID;;
+  const wsID: any = req.workspace.workspaceID;
 
   try {
     const Members = await db
@@ -472,7 +486,7 @@ export const editWSMembersGet = async (req: Request, res: Response) => {
 };
 
 export const editWSMembersPATCH = async (req: Request, res: Response) => {
-  const wsID: any = req.workspace.workspaceID;;
+  const wsID: any = req.workspace.workspaceID;
   const userID: any = req.user.userID;
   const { Members = [] } = req.body;
   const unregisteredMembers: string[] = [];
@@ -548,7 +562,7 @@ export const editWSMembersPATCH = async (req: Request, res: Response) => {
 export const deleteWorkspaceDELETE = async (req: Request, res: Response) => {
   try {
     // checking for params
-    const wsID: any = req.workspace.workspaceID;;
+    const wsID: any = req.workspace.workspaceID;
 
     const currentWorkspace = await db
       .select()

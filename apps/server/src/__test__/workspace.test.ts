@@ -122,6 +122,7 @@ describe("createWorkspacePost", () => {
   });
 });*/
 
+/*
 describe("editWsDetailsGET", () => {
   it("should return 400 with if the workspace_id is not a number", async () => {
     const wsID = "workspace_id";
@@ -161,6 +162,120 @@ describe("editWsDetailsGET", () => {
       title: "test Workspace 2",
       type: "test",
       description: "testing",
+    });
+  });
+});*/
+
+describe("editWsDetailsPATCH", () => {
+    
+  describe("invalid workspace ID", () => {
+    it("should return 400 with if the workspace_id is not a number", async () => {
+      const wsID = "workspace_id";
+      const response = await supertest(app)
+        .patch(`/api/${wsID}/editWSDetails`)
+        .expect(400);
+
+      expect(response.body).toEqual({ Message: "Invalid wsID" });
+    });
+
+    it("should return 400 with if workspace_id is not passed", async () => {
+      var wsID;
+      const response = await supertest(app)
+        .patch(`/api/${wsID}/editWSDetails`)
+        .expect(400);
+
+      expect(response.body).toEqual({ Message: "Invalid wsID" });
+    });
+
+    it("should return 404 with if the workspace does not exist", async () => {
+      const wsID = 987;
+      const response = await supertest(app)
+        .patch(`/api/${wsID}/editWSDetails`)
+        .expect(404);
+
+      expect(response.body).toEqual({ Message: "Workspace Doesn't Exist" });
+    });
+  });
+
+  describe("invalid request body", () => {
+    it("should return 400 with a success message if req body is empty", async () => {
+      const wsID = 19;
+      const response = await supertest(app)
+        .patch(`/api/${wsID}/editWSDetails`)
+        .send({})
+        .expect(400);
+
+      expect(response.body).toEqual({
+        error: "Title, description, and type are required",
+      });
+    });
+
+    it("should return 400 with a success message if title is empty", async () => {
+      const wsID = 19;
+      const response = await supertest(app)
+        .patch(`/api/${wsID}/editWSDetails`)
+        .send({
+          title: null,
+          type: null,
+          description: null,
+        })
+        .expect(400);
+
+      expect(response.body).toEqual({ error: "Title can not be empty" });
+    });
+  });
+
+  describe("valid request body", () => {
+
+    it("should return 200 with a success message if workspace is edited successfully with null type", async () => {
+      //every thing is perfect
+      const wsID = 19;
+      const workspaceData = {
+        title: "dummy Workspace 2",
+        type: null,
+        description: "testing",
+      };
+
+      const response = await supertest(app)
+        .patch(`/api/${wsID}/editWSDetails`)
+        .send(workspaceData)
+        .expect(200);
+
+      expect(response.body).toEqual({ message: "Settings Saved" });
+    });
+
+    it("should return 200 with a success message if workspace is edited successfully with null description", async () => {
+      //every thing is perfect
+      const wsID = 19;
+      const workspaceData = {
+        title: "dummy Workspace 2",
+        type: "dummy",
+        description: "testing",
+      };
+
+      const response = await supertest(app)
+        .patch(`/api/${wsID}/editWSDetails`)
+        .send(workspaceData)
+        .expect(200);
+
+      expect(response.body).toEqual({ message: "Settings Saved" });
+    });
+
+    it("should return 200 with a success message if workspace is edited successfully", async () => {
+      //every thing is perfect
+      const wsID = 19;
+      const workspaceData = {
+        title: "dummy Workspace 2",
+        type: "dummy",
+        description: "testing",
+      };
+
+      const response = await supertest(app)
+        .patch(`/api/${wsID}/editWSDetails`)
+        .send(workspaceData)
+        .expect(200);
+
+      expect(response.body).toEqual({ message: "Settings Saved" });
     });
   });
 });
