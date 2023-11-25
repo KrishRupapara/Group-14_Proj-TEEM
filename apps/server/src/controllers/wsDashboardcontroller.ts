@@ -401,7 +401,7 @@ export const getYourMeet = async (req: Request, res: Response) => {
 };
 
 export const editWSDetailsGet = async (req: Request, res: Response) => {
-  const wsID: any = req.params.wsID;
+  const wsID: any = req.workspace.workspaceID;
 
   try {
     const Workspace = await db
@@ -414,7 +414,7 @@ export const editWSDetailsGet = async (req: Request, res: Response) => {
       .where(eq(workspaces.workspaceID, wsID))
       .limit(1);
 
-    res.json(Workspace);
+    res.status(200).json(Workspace[0]);
   } catch (error) {
     console.log(error);
     return res
@@ -424,7 +424,7 @@ export const editWSDetailsGet = async (req: Request, res: Response) => {
 };
 
 export const editWsDetailsPATCH = async (req: Request, res: Response) => {
-  const wsID: any = req.params.wsID;
+  const wsID: any = req.workspace.workspaceID;
   const userID: any = req.user.userID;
   // const toDo:any = req.params.action;
 
@@ -440,7 +440,7 @@ export const editWsDetailsPATCH = async (req: Request, res: Response) => {
       })
       .where(eq(workspaces.workspaceID, wsID));
 
-    res.send({ message: "Settings Saved" });
+    res.status(200).send({ message: "Settings Saved" });
   } catch (error) {
     console.log(error);
     return res
@@ -450,7 +450,7 @@ export const editWsDetailsPATCH = async (req: Request, res: Response) => {
 };
 
 export const editWSMembersGet = async (req: Request, res: Response) => {
-  const wsID: any = req.params.wsID;
+  const wsID: any = req.workspace.workspaceID;;
 
   try {
     const Members = await db
@@ -472,7 +472,7 @@ export const editWSMembersGet = async (req: Request, res: Response) => {
 };
 
 export const editWSMembersPATCH = async (req: Request, res: Response) => {
-  const wsID: any = req.params.wsID;
+  const wsID: any = req.workspace.workspaceID;;
   const userID: any = req.user.userID;
   const { Members = [] } = req.body;
   const unregisteredMembers: string[] = [];
@@ -548,7 +548,7 @@ export const editWSMembersPATCH = async (req: Request, res: Response) => {
 export const deleteWorkspaceDELETE = async (req: Request, res: Response) => {
   try {
     // checking for params
-    const wsID: any = req.params.wsID;
+    const wsID: any = req.workspace.workspaceID;;
 
     const currentWorkspace = await db
       .select()

@@ -33,6 +33,11 @@ router
 // router.use("/api", meetRouter);
 // router.route("/:wsid")
 //     .get(requireAuth, authorizeMember, getWorkspace);
+router
+  .route("/:wsID/editWSDetails")
+  .get(requireAuth, wsExist, authorizeManager, editWSDetailsGet)
+  .patch(requireAuth, wsExist, authorizeManager, editWsDetailsPATCH)
+  .delete(requireAuth, wsExist, authorizeManager, deleteWorkspaceDELETE);
 
 router
   .route("/:wsID/stream")
@@ -40,8 +45,8 @@ router
 
 router
   .route("/:wsID/people")
-  // .get(requireAuth, wsExist, authorizeMember, getPeople);
-  .get(getPeople);
+  .get(requireAuth, wsExist, authorizeMember, getPeople);
+  // .get(getPeople);
 
 router
   .route("/:wsID/yourWork")
@@ -51,11 +56,6 @@ router
   .get(requireAuth, wsExist, authorizeMember, getYourMeet);
 
 
-router
-  .route("/:wsID/editWSDetails")
-  .get(requireAuth, wsExist, authorizeManager, editWSDetailsGet)
-  .patch(requireAuth, wsExist, authorizeManager, editWsDetailsPATCH)
-  .delete(requireAuth, wsExist, authorizeManager, deleteWorkspaceDELETE);
 
 router
   .route("/:wsID/editWSMembers")
