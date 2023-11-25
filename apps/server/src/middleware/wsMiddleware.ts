@@ -14,7 +14,7 @@ export const wsExist = async (
   const wsID = parseInt(req.params.wsID, 10);
 
   if (isNaN(wsID)) {
-    return res.status(400).send("Invalid wsID");
+    return res.status(400).send({ Message: "Invalid wsID" });
   }
   try {
     const Workspace = await db
