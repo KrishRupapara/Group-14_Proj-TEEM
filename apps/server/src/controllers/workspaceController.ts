@@ -28,7 +28,7 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
   var { title, type, description, Members = [] } = req.body;
 
   if (!title) {
-    return res.status(400).send({ error: "Tilte is required" });
+    return res.status(400).send({ error: "Title is required" });
   }
 
   const userID: any = req.user.userID;

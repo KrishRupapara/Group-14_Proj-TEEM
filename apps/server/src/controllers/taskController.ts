@@ -186,16 +186,17 @@ export const editTaskAssigneesGet = async (req: Request, res: Response) => {
 };
 
 export const editTaskAssigneesPATCH = async (req: Request, res: Response) => {
-  const wsID: any = req.params.wsID;
+  const wsID: any = req.workspace.workspaceID;
   const taskID: any = req.params.taskID;
 
   const nonmemberAssignee: string[] = []; //users which are not part of workspace
   const assignee: string[] = []; //users which are part of workspace
   const unregisteredAssignee: string[] = []; //users which are part of workspace
 
-  var { Assignees = [] } = req.body;
+  
 
   try {
+    var { Assignees = [] } = req.body;
     await db
       .delete(assignees)
       .where(
