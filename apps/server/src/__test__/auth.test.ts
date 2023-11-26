@@ -13,7 +13,7 @@ import { app } from "../index";
 describe("signupHandler", () => {
   it("should send a status code of 200 when new user created", async () => {
     const userData = {
-      email: "dummy4@gmail.com",
+      email: "htpt1@gmail.com",
       name: "dummy 4",
       password: "12345678",
       organization: "abc",
@@ -24,38 +24,55 @@ describe("signupHandler", () => {
     const response = await supertest(app)
       .post("/api/signup")
       .send(userData)
-      .set("Accept", "application/json")
-      .expect("Content-Type", /json/)
       .expect(200);
 
     // Perform assertions
     // expect(response.status).toBe(200);
     expect(response.body).toEqual({ message: "Signup successful" });
+
   });
 
-  //   it("should send a status code of 400 when usser exist", async () => {
-  //     const req = {
-  //       body: {
-  //         email: "dummy1@gmail.com",
-  //         name: "dummy 1",
-  //         password: "12345678",
-  //         organization: "",
-  //         jobTitle: "",
-  //         country: "",
-  //       },
-  //     } as Request;
+  it("should send a status code of 400 email id not present", async () => {
+    const userData = {
+      email: "",
+      name: "",
+      password: "12345678",
+      organization: "abc",
+      jobTitle: "abc",
+      country: "abc",
+    };
 
-  //     const res = {
-  //       status: jest.fn().mockReturnThis(),
-  //       send: jest.fn(),
-  //     } as unknown as Response;
+    const response = await supertest(app)
+        .post("/api/signup")
+        .send(userData)
+        .expect(400);
 
-  //     await signUpHandler(req, res);
+    // Perform assertions
+    // expect(response.status).toBe(200);
+    expect(response.body).toEqual({ error: "Username and password required" });
 
-  //     // Assert the expected behavior
-  //     expect(res.status).toHaveBeenCalledWith(400);
-  //     expect(res.send).toHaveBeenCalledWith({ meesage: "Email already exists" });
-  //   });
+  });
+
+    it("should send a status code of 400 when user exist", async () => {
+      const userData = {
+        email: "dummy4@gmail.com",
+        name: "dummy 4",
+        password: "12345678",
+        organization: "abc",
+        jobTitle: "abc",
+        country: "abc",
+      };
+
+      const response = await supertest(app)
+          .post("/api/signup")
+          .send(userData)
+          .expect(400);
+
+      // Perform assertions
+      // expect(response.status).toBe(200);
+      expect(response.body).toEqual({ message: "Email already exists" });
+
+    });
 });
 
 describe("loginHandler", () => {

@@ -337,21 +337,22 @@ export const changePassword = async (req : Request, res : Response) => {
 
   try{
 
+    console.log(req.user);
     const userID  : any = req.user.userID;    // get userID from req.user
     const { oldPassword, newPassword , confirmPassword } = req.body;
     
     // find user from database
-    const userToChangePaasword = await db
+    const userToChangePassword = await db
         .select()
         .from(users)
         .where(eq(users.userID, userID))
         .limit(1);
   
-      if (userToChangePaasword.length<1) {
+      if (userToChangePassword.length<1) {
         return res.status(400).send({ error: "Invalid Credentials" });
       }
 
-      const isSame = await bcrypt.compare(newPassword, userToChangePaasword[0].password!);
+      const isSame = await bcrypt.compare(newPassword, userToChangePassword[0].password!);
       if (isSame) {
         res.send("New Password is same as current password.");
       }
