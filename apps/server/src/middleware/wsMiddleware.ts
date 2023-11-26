@@ -62,7 +62,7 @@ export const authorizeManager = async (
   try {
     if (req.workspace.projectManager === userID) next();
     else {
-      res.status(401).send("You do not own the workspace");
+      res.status(401).send({ Message: "You do not own the workspace" });
     }
   } catch (error) {
     console.log(error);
@@ -90,7 +90,9 @@ export const authorizeMember = async (
         .limit(1);
 
       if (isMemeber.length === 0) {
-        res.send("You are not a part of the workspace");
+        res.status(401).send({
+          Message: "You are not a part of the workspace",
+        });
       } else {
         next();
       }
