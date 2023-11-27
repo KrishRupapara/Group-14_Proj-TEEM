@@ -19,32 +19,26 @@ export default function Dashboardfile() {
     description: "",
   });
 
+  const members = [
+    { Email: "", 
+      Role: "" 
+    },
+  ];
+
   const { register, handleSubmit, control } = useForm({
     defaultValues: {
-      Email: [{}],
-      Role: [{}],
+      members: [{}],
     }
   });
 
 
 
-  const { fields, append, remove } = useFieldArray({ control, name: "Email" });
+  const { fields, append, remove } = useFieldArray({ control, name: "members" });
   const router = useRouter();
 
   const onFormSubmit = (data) => {
 
-    let email = data.Email;
-    let role = data.Role;
-
-    var members = []
-
-    for (let i = 0; i < email.length; i++) {
-      var addmember = {
-        email: email[i],
-        role: role[i]
-      }
-      members.push(addmember)
-    }
+    const { members } = data;
     // console.log(email[1]);
     // console.log(members);
     // console.log(data);
@@ -225,11 +219,11 @@ export default function Dashboardfile() {
                           autoCorrect="off"
                           required
                           className='border rounded-xl p-2 m-1'
-                          {...register(`Email.${index}.Email` as any)}
+                          {...register(`members.${index}.Email` as any)}
                         />
 
 
-                        <select id="Role" required className='border rounded-xl p-2 m-1' {...register(`Role.${index}`)}>
+                        <select id="Role" required className='border rounded-xl p-2 m-1' {...register(`members.${index}.Role` as any)}>
                           {/* <option disabled selected>Choose a role</option> */}
                           <option value="collaborator">collaborator</option>
                           <option value="Manager">Manager</option>
