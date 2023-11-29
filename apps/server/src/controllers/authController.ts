@@ -41,7 +41,7 @@ export const signUpHandler = async (req: Request, res: Response) => {
 
     if (existingUser.length > 0) {
       console.log("Email already exists");
-      return res.status(400).send({ meesage: "Email already exists" });
+      return res.status(400).send({ message: "Email already exists" });
     }
 
     const salt = await bcrypt.genSalt();
@@ -136,7 +136,7 @@ export const loginHandler = async (req: Request, res: Response) => {
         return res.send({ access_token });
       }
 
-      return res.send({ message: "Already logged in" });
+      return res.status(200).send({ message: "Already logged in" });
     }
 
     const access_token = signJWT({ tokenUser }, { expiresIn: "24h" });
