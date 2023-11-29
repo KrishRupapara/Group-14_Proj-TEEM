@@ -164,6 +164,15 @@ export default function Loginpage() {
                   Sign up
                 </Link>
               </span>
+              <span>
+                Forgot Password?{" "}
+                <Link
+                  href="/forgotpassword"
+                  className="text-blue-800 underline underline-offset-2"
+                >
+                  Forgotpassword
+                </Link>
+              </span>
             </div>
             {/* {JSON.stringify(user)} */}
           </form>

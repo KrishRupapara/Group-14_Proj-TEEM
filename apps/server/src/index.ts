@@ -55,7 +55,9 @@ app.use("/api", dashboardRouter);
 app.use("/api", taskRouter);
 app.use("/api", meetRouter);
 
-app.get("/", requireAuth, dashboardGet);
+// app.get("/", (req: Request, res:Response) => {
+//   return res.send('Hello world')
+// });
 
 redisClient.on("error", (err) => {
   throw new Error("Redis not connected!!");
