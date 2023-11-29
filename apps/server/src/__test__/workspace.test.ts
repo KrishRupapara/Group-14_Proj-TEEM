@@ -33,7 +33,6 @@ jest.mock("../middleware/wsMiddleware.ts", () => {
   };
 });*/
 
-/*
 describe("createWorkspacePost", () => {
   it("should return 400 if title is missing", async () => {
     const response = await supertest(app)
@@ -106,8 +105,8 @@ describe("createWorkspacePost", () => {
       description: "testing",
       Members: [
         { member_id: "dummy1@gmail.com", Role: "TeamMate" },
-        { member_id: "dummy4@gmail.com", Role: "collaborator" },
-        { member_id: "dummy5@gmail.com", Role: "Client" },
+        { member_id: "dummy2@gmail.com", Role: "collaborator" },
+        { member_id: "dummy3@gmail.com", Role: "Client" },
       ],
     };
 
@@ -120,8 +119,8 @@ describe("createWorkspacePost", () => {
       message: "Workspace Created successfully",
     });
   });
-});*/
-/*
+});
+
 describe("editWsDetailsGET", () => {
   describe("invlaid request body", () => {
     it("should return 400 with if the workspace_id is not a number", async () => {
@@ -153,8 +152,8 @@ describe("editWsDetailsGET", () => {
   });
 
   describe("unauthorized manager", () => {
-    it("should return 401 with if the workspace does not exist", async () => {
-      const wsID = 20;
+    it("should return 401 with if the user do not own workspace", async () => {
+      const wsID = 31;
       const response = await supertest(app)
         .patch(`/api/${wsID}/editWSDetails`)
         .expect(401);
@@ -173,13 +172,13 @@ describe("editWsDetailsGET", () => {
       .expect(200);
 
     expect(response.body).toEqual({
-      title: "test Workspace 2",
-      type: "test",
+      title: "dummy Workspace 2",
       description: "testing",
+      type: "dummy",
     });
   });
-});*/
-/*
+});
+
 describe("editWsDetailsPATCH", () => {
   describe("invalid workspace ID", () => {
     it("should return 400 with if the workspace_id is not a number", async () => {
@@ -211,8 +210,8 @@ describe("editWsDetailsPATCH", () => {
   });
 
   describe("unauthorized manager", () => {
-    it("should return 401 with if the workspace does not exist", async () => {
-      const wsID = 20;
+    it("should return 401 with if the user do not own workspace", async () => {
+      const wsID = 31;
       const response = await supertest(app)
         .patch(`/api/${wsID}/editWSDetails`)
         .expect(401);
@@ -286,23 +285,6 @@ describe("editWsDetailsPATCH", () => {
       expect(response.body).toEqual({ message: "Settings Saved" });
     });
 
-    it("should return 200 with a success message if workspace is edited successfully with null description", async () => {
-      //every thing is perfect
-      const wsID = 19;
-      const workspaceData = {
-        title: "dummy Workspace 2",
-        type: "dummy",
-        description: "testing",
-      };
-
-      const response = await supertest(app)
-        .patch(`/api/${wsID}/editWSDetails`)
-        .send(workspaceData)
-        .expect(200);
-
-      expect(response.body).toEqual({ message: "Settings Saved" });
-    });
-
     it("should return 200 with a success message if workspace is edited successfully", async () => {
       //every thing is perfect
       const wsID = 19;
@@ -320,9 +302,8 @@ describe("editWsDetailsPATCH", () => {
       expect(response.body).toEqual({ message: "Settings Saved" });
     });
   });
-});*/
+});
 
-/*
 describe("editWsMembersGET", () => {
   describe("invalid request body", () => {
     it("should return 400 with if the workspace_id is not a number", async () => {
@@ -354,8 +335,8 @@ describe("editWsMembersGET", () => {
   });
 
   describe("unauthorized manager", () => {
-    it("should return 401 with if the workspace does not exist", async () => {
-      const wsID = 20;
+    it("should return 401 with if user do not own workspace", async () => {
+      const wsID = 31;
       const response = await supertest(app)
         .patch(`/api/${wsID}/editWSMembers`)
         .expect(401);
@@ -374,27 +355,27 @@ describe("editWsMembersGET", () => {
       .expect(200);
 
     expect(response.body).toEqual({
-        "Members": [
-            {
-                "Name": "mihir paija",
-                "Role": "Manager"
-            },
-            {
-                "Name": "dummy 1",
-                "Role": "TeamMate"
-            },
-            {
-                "Name": "dummy 4",
-                "Role": "collaborator"
-            },
-            {
-                "Name": "dummy 5",
-                "Role": "Client"
-            }
-        ]
+      Members: [
+        {
+          Name: "mihir paija",
+          Role: "Manager",
+        },
+        {
+          Name: "dummy 1",
+          Role: "TeamMate",
+        },
+        {
+          Name: "dummy 2",
+          Role: "collaborator",
+        },
+        {
+          Name: "dummy 3",
+          Role: "Client",
+        },
+      ],
     });
   });
-});*/
+});
 
 describe("editWsMembersPATCH", () => {
   describe("invalid workspace ID", () => {
@@ -427,8 +408,8 @@ describe("editWsMembersPATCH", () => {
   });
 
   describe("unauthorized manager", () => {
-    it("should return 401 with if the workspace does not exist", async () => {
-      const wsID = 20;
+    it("should return 401 with if user do not own workspace", async () => {
+      const wsID = 31;
       const response = await supertest(app)
         .patch(`/api/${wsID}/editWSMembers`)
         .expect(401);
@@ -495,11 +476,11 @@ describe("editWsMembersPATCH", () => {
             Role: "TeamMate",
           },
           {
-            member_id: "dummy4@gmail.com",
+            member_id: "dummy2@gmail.com",
             Role: "collaborator",
           },
           {
-            member_id: "dummy5@gmail.com",
+            member_id: "dummy3@gmail.com",
             Role: "Client",
           },
           {
@@ -530,7 +511,7 @@ describe("editWsMembersPATCH", () => {
             Role: "TeamMate",
           },
           {
-            member_id: "dummy4@gmail.com",
+            member_id: "dummy2@gmail.com",
             Role: "collaborator",
           },
         ],
@@ -554,11 +535,11 @@ describe("editWsMembersPATCH", () => {
             Role: "TeamMate",
           },
           {
-            member_id: "dummy4@gmail.com",
+            member_id: "dummy2@gmail.com",
             Role: "collaborator",
           },
           {
-            member_id: "dummy5@gmail.com",
+            member_id: "dummy3@gmail.com",
             Role: "Client",
           },
         ],
@@ -605,8 +586,8 @@ describe("editWsWSDetailsDELETE", () => {
   });
 
   describe("unauthorized manager", () => {
-    it("should return 401 with if the workspace does not exist", async () => {
-      const wsID = 20;
+    it("should return 401 with if user do not own workspace", async () => {
+      const wsID = 31;
       const response = await supertest(app)
         .delete(`/api/${wsID}/editWSDetails`)
         .expect(401);
@@ -618,7 +599,7 @@ describe("editWsWSDetailsDELETE", () => {
   });
 
   it("should return 200 with if the workspace deleted", async () => {
-    const wsID = 22;
+    const wsID = 41;
     const response = await supertest(app)
       .delete(`/api/${wsID}/editWSDetails`)
       .expect(200);
