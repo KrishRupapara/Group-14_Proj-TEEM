@@ -33,7 +33,7 @@ export default function Dashboardfile() {
   });
   const router = useRouter();
 
-  const onFormSubmit = (data) => {
+  const onFormSubmit = (data: any) => {
     const { members } = data;
     // console.log(email[1]);
     // console.log(members);
