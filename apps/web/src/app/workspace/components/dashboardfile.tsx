@@ -21,7 +21,12 @@ export default function Dashboardfile() {
     description: "",
   });
 
-  const members = [{ Email: "", Role: "" }];
+  const members = [
+    {
+      Email: "",
+      Role: ""
+    },
+  ];
 
   const { register, handleSubmit, control } = useForm({
     defaultValues: {
@@ -208,7 +213,7 @@ export default function Dashboardfile() {
                       return (
                         <div className="lg:flex">
                           <input
-                            id="members"
+                            id={`members[${index}].Email`}
                             placeholder="Enter members email"
                             type="email"
                             autoCapitalize="none"
@@ -220,7 +225,7 @@ export default function Dashboardfile() {
                           />
 
                           <select
-                            id="Role"
+                            id={`members[${index}].Role`}
                             required
                             className="bg-white  border-2 border-gray-300 focus:ring-blue-900 focus:border-blue-500 rounded-xl p-2 m-1"
                             {...register(`members.${index}.Role` as any)}
@@ -232,7 +237,7 @@ export default function Dashboardfile() {
                             <option value="Manager">Manager</option>
                           </select>
 
-                          <button
+                          {/* <button
                             type="button"
                             className="border text-white hover:bg-blue-800 bg-blue-600 m-2 p-1 rounded-xl py-1"
                             onClick={() => {
@@ -240,7 +245,15 @@ export default function Dashboardfile() {
                             }}
                           >
                             Erase
+                          </button> */}
+                        {fields.length > 1 && (
+                          <button
+                            className="border bg-blue-600 m-2 p-1 rounded-xl py-1"
+                            onClick={() => remove(index)}
+                          >
+                            Erase
                           </button>
+                        )}
                         </div>
                       );
                     })}
