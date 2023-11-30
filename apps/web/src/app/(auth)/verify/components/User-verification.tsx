@@ -86,15 +86,15 @@ export default function varification() {
   }
 
   return (
-    <div>
-      <div className="h-[calc(100vh-4rem)] flex flex-col text-center">
+    <div className="bg-[#E5F2FF]">
+      <div className="h-screen flex flex-col text-center">
         <Toaster />
-        <Image
+        {/* <Image
           alt="Image Not Found"
           src={"/img/Verification_bg.png"}
           className="-z-30 absolute"
           fill
-        />
+        /> */}
         {/* </div> */}
         <div className="lg:w-1/4 sm:w-3/4 md:w-3/4 mx-auto my-auto">
           {/* <img

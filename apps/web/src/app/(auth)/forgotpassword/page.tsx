@@ -39,7 +39,7 @@ export default function Forgotpassword() {
 
     return (
         <div className="w-screen h-screen bg-gradient-to-b from-primaryblue to-white flex flex-row justify-between items-center">
-            <div className='w-1/3 mx-auto flex flex-col justify-around'>
+            <div className='lg:w-1/3 md:w-1/2 sm:w-1/2 mx-auto flex flex-col justify-around'>
                 <div className='mx-auto mb-10' >
                     <h2 className='text-3xl'> Forgot Password?</h2>
                 </div>
