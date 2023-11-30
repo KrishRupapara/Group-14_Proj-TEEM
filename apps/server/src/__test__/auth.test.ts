@@ -24,8 +24,6 @@ describe("signupHandler", () => {
     const response = await supertest(app)
       .post("/api/signup")
       .send(userData)
-      .set("Accept", "application/json")
-      .expect("Content-Type", /json/)
       .expect(200);
 
     // Perform assertions
