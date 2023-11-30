@@ -15,7 +15,7 @@ export default function Tasks({ type }: { type: string }) {
           </div>
         </div>
         <div className="col-end-13  flex flex-col justify-center">
-          <button className="rounded-xl px-4 py-2 text-white tracking-wide bg-[#295BE7] text-xl">
+          <button className="rounded-xl lg:px-4 md:px-4 sm:px-5 py-2 text-white tracking-wide bg-[#295BE7] lg:text-xl md:text-lg sm:text-md">
             STATUS
           </button>
         </div>
