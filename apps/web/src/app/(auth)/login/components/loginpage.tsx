@@ -55,8 +55,8 @@ export default function Loginpage() {
     }
   }
   return (
-    <div className="signup-bg h-screen">
-      <div className="h-[6rem] flex flex-row justify-between items-center px-5">
+    <div className="h-screen signup-bg sm:text-3xl xl:text-lg">
+      <div className="h-[6rem] flex flex-row justify-between items-center px-5 ">
         <Image
           src="/img/logoblack.png"
           alt="Image Not found"
@@ -74,20 +74,20 @@ export default function Loginpage() {
         {/* <div className="h-full w-1/3 flex flex-col justify-end place-items-start">
                       <Image src="/img/doodleleft.png" alt="Image Not found" width={300} height={250}/>
                     </div> */}
-        <div className="h-full w-1/2 mx-auto p-4">
+        <div className="h-full xl:w-1/2 sm:w-2/3 mx-auto p-4">
           {/* card */}
           <form
             action=""
             onSubmit={onSubmit}
-            className=" mx-auto h-full flex flex-col justify-center"
+            className=" mx-auto h-full flex flex-col justify-center w-full"
           >
-            <div className="h-[40vh] w-full py-2 flex flex-col justify-around items-center ">
-              <h2 className="font-bold text-2xl text-slate-700">
+            <div className="sm:h-[30vh] xl:h-[40vh]  w-full py-2 flex flex-col justify-around items-center">
+              <h2 className="font-bold xl:text-2xl text-slate-700">
                 Login with TEEM for free
               </h2>
               {/* name */}
               {/* email */}
-              <div className="flex flex-col w-3/5 mx-auto py-1">
+              <div className="flex flex-col xl:w-3/5 sm:w-full mx-auto py-1">
                 <label htmlFor="email" id="email" className="font-bold mb-1">
                   Enter Your Email
                 </label>
@@ -101,7 +101,7 @@ export default function Loginpage() {
                   disabled={isLoading}
                   //onChange={(e) => setUser({ ...user, email: e.target.value })}
 
-                  className=" rounded-xl bg-gray-200 p-3"
+                  className="rounded-xl bg-white p-3"
                   onChange={(e) =>
                     setUser({
                       ...user,
@@ -112,7 +112,7 @@ export default function Loginpage() {
                 />
               </div>
               {/* password */}
-              <div className="flex flex-col w-3/5 mx-auto py-1">
+              <div className="flex flex-col xl:w-3/5 sm:w-full mx-auto py-1">
                 <label
                   htmlFor="password"
                   id="password"
@@ -130,7 +130,7 @@ export default function Loginpage() {
                   disabled={isLoading}
                   //onChange={(e) => setUser({ ...user, password: e.target.value })}
 
-                  className=" rounded-xl bg-gray-200 p-3"
+                  className="bg-white rounded-xl p-3"
                   onChange={(e) => {
                     setUser({
                       ...user,
@@ -142,12 +142,12 @@ export default function Loginpage() {
               </div>
             </div>
 
-            <div className="h-[20vh] w-full flex flex-col justify-around items-center">
-              <div className="flex flex-col w-3/5 mx-auto ">
+            <div className="xl:h-[20vh] sm:h-[15vh] w-full flex flex-col justify-around items-center ">
+              <div className="flex flex-col xl:w-3/5 sm:w-full  mx-auto">
                 <button
                   disabled={isLoading}
                   type="submit"
-                  className=" bg-orange-300 rounded-xl py-3 px-3 hover:bg-blue-700 font-bold text-white text-lg flex items-center justify-center"
+                  className=" bg-blue-500 rounded-xl py-3 px-3 hover:bg-blue-700 font-bold text-white text-lg flex items-center justify-center"
                 >
                   {isLoading && (
                     <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />

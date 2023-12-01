@@ -52,7 +52,7 @@ export const signUpHandler = async (req: Request, res: Response) => {
 
     redisClient.set(email, otp_secure, "EX", 60 * 5);
 
-    // await sendOTP(name, email, otp); //do not remove this comment as it is for sending the email!!!
+    await sendOTP(name, email, otp); //do not remove this comment as it is for sending the email!!!
 
     const id = await db.insert(users).values({
       name,

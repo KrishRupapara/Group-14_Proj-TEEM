@@ -21,14 +21,14 @@ const array = [
 export default function Schedulepage() {
   const [id, setId] = useState(0);
   return (
-    <div className="bg-blue-100 h-screen">
+    <div className="bg-blue-100 xl:h-screen sm:h-full">
       {/* upper half */}
-      <div className="w-4/5 mx-auto grid grid-cols-12 h-1/4">
-        <div className="col-span-9 flex flex-col justify-around">
-          <h1 className="font-bold text-5xl font-sans my-5">
+      <div className="xl:w-4/5 sm:w-full mx-auto xl:grid xl:grid-cols-12 xl:h-1/4 p-5">
+        <div className="xl:col-span-9 flex flex-col justify-around">
+          <h1 className="font-bold text-3xl font-sans my-5">
             Scheduling made easy!
           </h1>
-          <p className="w-3/4">
+          <p className="xl:w-3/4 sm:w-full">
             Jump into the world of smoother collaborations, fewer headaches, and
             more meaningful outcomes.
             <br /> <br />
@@ -41,8 +41,8 @@ export default function Schedulepage() {
       </div>
 
       {/* bottom half */}
-      <div className="flex w-4/5 mx-auto h-3/4 items-center gap-5 mt-5">
-        <div className="w-1/2 flex justify-between flex-col">
+      <div className="xl:flex sm:flex sm:flex-col xl:flex-row xl:w-4/5 sm:w-full mx-auto xl:h-3/4 sm:h-full items-center gap-5 mt-5 p-2">
+        <div className="xl:w-1/2 sm:w-full xl:flex justify-between xl:flex-col sm:flex sm:flex-row">
           <button
             onClick={() => setId(0)}
             className={cn(
@@ -87,7 +87,7 @@ export default function Schedulepage() {
           </button>
           <br />
         </div>
-        <div className="w-1/2  items-center justify-center  p-5">
+        <div className="xl:w-1/2 sm:w-full items-center justify-center p-5">
           {/* <p>{name1}</p> */}
           <Image
             alt="image not found"

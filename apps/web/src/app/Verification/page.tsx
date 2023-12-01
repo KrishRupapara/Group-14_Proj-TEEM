@@ -55,7 +55,7 @@ export default function varification() {
       console.log(res.message);
 
       if (res.message == "User Verified") {
-        router.push("/Profile");
+        router.push("/Dashboard");
       } else {
         toast.error(res.message);
         // setstatus(res.message);
