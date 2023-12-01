@@ -1,10 +1,12 @@
+"use client";
 import Progressbar from "@/components/ui/progress-bar";
 import NavComponent from "@/components/Navbar";
+import NavBar from "@/components/newNavbar";
 
 export default function Dashboard() {
   return (
     <div className="bg-gradient-to-b from-primaryblue to-white">
-      <NavComponent />
+      <NavBar />
 
       <div className="w-5/6 mx-auto h-full">
         {/* Task */}

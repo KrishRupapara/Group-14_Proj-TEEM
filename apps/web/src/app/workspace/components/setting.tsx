@@ -111,7 +111,7 @@ export default function Setting() {
   useEffect(() => {
 
     const once = () => {
-      console.log("check");
+      // console.log("check");
 
       axios.get('http://localhost:3500/api/' + id + '/editWSDetails')
         .then(res => {
@@ -128,7 +128,7 @@ export default function Setting() {
 
   return (
     <div className="w-screen min-h-[calc(100vh-7.9rem)] bg-gradient-to-b from-primaryblue to-white flex flex-row justify-between items-center">
-      <div className='w-1/3 mx-auto flex flex-col justify-around'>
+      <div className='lg:w-1/3 md:w-1/2 sm:w-1/2 mx-auto flex flex-col justify-around'>
         <div className='flex flex-col justify-around'>
           <h1 className='text-2xl mb-4 mx-auto font-bold'>Edit Workspace</h1>
           <form action="" onSubmit={handleSubmit(onFormSubmit)}>
