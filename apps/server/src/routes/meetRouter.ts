@@ -19,9 +19,11 @@ router
 router.route("/events").get(getCalendarEvents);
 
 router.route("/deleteMeet/:meetID").get(requireAuth, deleteMeet);
-router
-  .route("/:wsID/:meetID/showInvitees")
-  .get(requireAuth, authorizeMember, showInvitees);
+
+// router
+//   .route("/:wsID/:meetID/showInvitees")
+//   .get(requireAuth, authorizeMember, showInvitees);
+
 router
   .route("/workspace/:wsID/meet/:meetID/dashboard")
   .get(
