@@ -49,7 +49,7 @@ export const getStream = async (req: Request, res: Response) => {
     const Stream: streamObject[] = [
       ...taskStream.map((task) => ({
         objectID: task.taskID,
-        objectType: "Task",
+        objectType: "task",
         objectTitle: task.title,
         objectDescription: task.description,
         objectStatus: task.status ? task.status : null,
@@ -58,23 +58,26 @@ export const getStream = async (req: Request, res: Response) => {
       })),
       ...meetStream.map((meet) => ({
         objectID: meet.meetID,
-        objectType: "Meet",
+        objectType: "meet",
         objectTitle: meet.title,
         objectDescription: meet.agenda,
-        objectStatus: meet.meetTime
-          ? meet.meetTime > currentTimestamp
+        objectStatus: meet.meetDate
+          ? new Date(meet.meetDate) > currentTimestamp ||
+            (new Date(meet.meetDate).getDate() === currentTimestamp.getDate() &&
+              new Date(meet.endTime) > currentTimestamp)
             ? "UPCOMING"
             : "DONE"
           : null,
         // objectTime: meet.meetTime ? new Date(meet.meetTime) : null,
         created_at: meet.createdAt,
+        meetDate: meet.meetDate,
       })),
     ];
 
-    Stream.sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
-    // console.log(Stream);
+    // Stream.sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
+    // // console.log(Stream);
 
-    res.json(Stream);
+    res.json({ Stream: Stream });
   } catch (err) {
     console.log(err);
     return res.status(500).send({ message: "Internal server error in stream" });
@@ -91,26 +94,6 @@ export const getPeople = async (req: Request, res: Response) => {
 
   // const user_id = req.user.userID;
   try {
-    // const Workspace = await db
-    //   .select({
-    //     title: workspaces.title,
-    //     description: workspaces.description,
-    //     progress: workspaces.progress,
-    //     projectManager: users.name,
-    //     type: workspaces.title,
-    //     created_at: workspaces.createdAt,
-    //   })
-    //   .from(workspaces)
-    //   .innerJoin(users, eq(workspaces.projectManager, users.userID))
-    //   .where(eq(workspaces.workspaceID, wsID));
-
-    const people = await db
-      .select()
-      .from(members)
-      .where(eq(members.workspaceID, wsID));
-
-    console.log(people);
-
     const Manager = await db
       .select({
         userID: users.userID,
@@ -144,9 +127,7 @@ export const getPeople = async (req: Request, res: Response) => {
       })
       .from(members)
       .innerJoin(users, eq(members.memberID, users.userID))
-      .where(
-        and(eq(members.workspaceID, wsID), eq(members.role, "collaborator"))
-      );
+      .where(and(eq(members.workspaceID, wsID), eq(members.role, "Client")));
     // console.log(Teammate);
 
     const Collaborator = await db
@@ -158,7 +139,9 @@ export const getPeople = async (req: Request, res: Response) => {
       })
       .from(members)
       .innerJoin(users, eq(members.memberID, users.userID))
-      .where(and(eq(members.workspaceID, wsID), eq(members.role, "Client")));
+      .where(
+        and(eq(members.workspaceID, wsID), eq(members.role, "collaborator"))
+      );
     // console.log(Teammate);
 
     const People = {
@@ -167,7 +150,7 @@ export const getPeople = async (req: Request, res: Response) => {
       Collaborator: Collaborator,
       Client: Client,
     };
-    console.log(People);
+    // console.log(People);
 
     return res.json({ People: People });
   } catch (err) {
@@ -177,75 +160,109 @@ export const getPeople = async (req: Request, res: Response) => {
 };
 
 export const getYourWork = async (req: Request, res: Response) => {
-  const wsID = parseInt(req.params.wsID, 10);
+  const wsID = req.workspace.workspaceID;
   const user_id = req.user.userID;
   const filterOption = (req.query.filter as string) || "All";
   // console.log(filterOption);
   try {
     if (filterOption === "Upcoming") {
       const currentTimestamp = new Date();
-
-      const upcomingTask = await db
-        .select({
-          taskID: tasks.taskID,
-          taskTitle: tasks.title,
-          taskStatus: tasks.status,
-          taskDeadline: tasks.deadline,
-          taskType: tasks.taskType,
-          taskDescription: tasks.description,
-        })
-        .from(tasks)
-        .innerJoin(assignees, eq(tasks.taskID, assignees.taskID))
-        .innerJoin(workspaces, eq(tasks.workspaceID, workspaces.workspaceID))
-        .where(
-          and(
-            eq(assignees.workspaceID, wsID),
-            or(
-              eq(assignees.assigneeID, user_id),
-              eq(workspaces.projectManager, user_id)
-            ),
-            gte(
-              tasks.deadline, // Convert deadline to a timestamp
-              currentTimestamp // Use the current timestamp
+      if (user_id === req.workspace.projectManager) {
+        const upcomingTask = await db
+          .select({
+            taskID: tasks.taskID,
+            taskTitle: tasks.title,
+            taskStatus: tasks.status,
+            taskDeadline: tasks.deadline,
+            taskType: tasks.taskType,
+            taskDescription: tasks.description,
+          })
+          .from(tasks)
+          .where(
+            and(
+              eq(assignees.workspaceID, wsID),
+              gte(
+                tasks.deadline,
+                currentTimestamp // Use the current timestamp
+              )
             )
           )
-        )
-        .orderBy(tasks.deadline);
-
-      // console.log(upcomingTask);
-      res.json(upcomingTask);
-    } else {
-      let Work = await db
-        .select({
-          taskID: tasks.taskID,
-          taskTitle: tasks.title,
-          taskStatus: tasks.status,
-          taskDeadline: tasks.deadline,
-          taskType: tasks.taskType,
-          taskDescription: tasks.description,
-        })
-        .from(tasks)
-        .innerJoin(assignees, eq(tasks.taskID, assignees.taskID))
-        .innerJoin(workspaces, eq(tasks.workspaceID, workspaces.workspaceID))
-        .where(
-          and(
-            eq(assignees.workspaceID, wsID),
-            or(
+          .orderBy(tasks.deadline);
+        // console.log(upcomingTask);
+        res.json({ upcomingTask: upcomingTask });
+      } else {
+        const upcomingTask = await db
+          .select({
+            taskID: tasks.taskID,
+            taskTitle: tasks.title,
+            taskStatus: tasks.status,
+            taskDeadline: tasks.deadline,
+            taskType: tasks.taskType,
+            taskDescription: tasks.description,
+          })
+          .from(tasks)
+          .innerJoin(assignees, eq(tasks.taskID, assignees.taskID))
+          .where(
+            and(
+              eq(assignees.workspaceID, wsID),
               eq(assignees.assigneeID, user_id),
-              eq(workspaces.projectManager, user_id)
+              gte(
+                tasks.deadline, // Convert deadline to a timestamp
+                currentTimestamp // Use the current timestamp
+              )
             )
           )
-        )
-        .orderBy(desc(tasks.createdAt));
-
-      // console.log(Work);
-      res.json(Work);
+          .orderBy(tasks.deadline);
+        // console.log(upcomingTask);
+        res.json({ upcomingTask: upcomingTask });
+      }
+    } else if (filterOption === "All") {
+      if (user_id === req.workspace.projectManager) {
+        // console.log("enter")
+        let Work = await db
+          .select({
+            taskID: tasks.taskID,
+            taskTitle: tasks.title,
+            taskStatus: tasks.status,
+            taskDeadline: tasks.deadline,
+            taskType: tasks.taskType,
+            taskDescription: tasks.description,
+          })
+          .from(tasks)
+          .where(eq(tasks.workspaceID, wsID))
+          .orderBy(desc(tasks.createdAt));
+        res.json({ Work: Work });
+      } else {
+        let Work = await db
+          .select({
+            taskID: tasks.taskID,
+            taskTitle: tasks.title,
+            taskStatus: tasks.status,
+            taskDeadline: tasks.deadline,
+            taskType: tasks.taskType,
+            taskDescription: tasks.description,
+          })
+          .from(tasks)
+          .innerJoin(assignees, eq(tasks.taskID, assignees.taskID))
+          // .innerJoin(
+          //   workspaces,
+          //   eq(assignees.workspaceID, workspaces.workspaceID)
+          // )
+          .where(
+            and(
+              eq(assignees.workspaceID, wsID),
+              eq(assignees.assigneeID, user_id)
+            )
+          )
+          .orderBy(desc(tasks.createdAt));
+        res.json({ Work: Work });
+      }
     }
   } catch (err) {
     console.log(err);
     return res
       .status(500)
-      .send({ message: "Internal server error in Your Meet" });
+      .send({ message: "Internal server error in Your Work" });
   }
 };
 /*
@@ -328,68 +345,106 @@ export const getUpcoming = async (req: Request, res: Response) => {
 };*/
 
 export const getYourMeet = async (req: Request, res: Response) => {
-  const wsID = parseInt(req.params.wsID, 10);
+  const wsID = req.workspace.workspaceID;
   const user_id = req.user.userID;
   const filterOption = (req.query.filter as string) || "All";
   try {
     if (filterOption === "Upcoming") {
       const currentTimestamp = new Date();
-      const upcomingMeet = await db
-        .select({
-          meetID: meets.meetID,
-          meetTitle: meets.title,
-          meetTime: meets.meetTime,
-          meetDuration: meets.duration,
-          meetAgenda: meets.agenda,
-          meetOrganizer: users.name,
-        })
-        .from(meets)
-        .innerJoin(invitees, eq(meets.meetID, invitees.meetID))
-        .innerJoin(workspaces, eq(meets.workspaceID, workspaces.workspaceID))
-        .innerJoin(users, eq(meets.organizerID, users.userID))
-        .where(
-          and(
-            eq(invitees.workspaceID, wsID),
-            or(
-              eq(invitees.inviteeID, user_id),
-              eq(workspaces.projectManager, user_id)
-            ),
-            gte(
-              meets.meetTime, // Convert deadline to a timestamp
-              currentTimestamp // Use the current timestamp
+      if (user_id === req.workspace.projectManager) {
+        const upcomingMeet = await db
+          .select({
+            meetID: meets.meetID,
+            meetTitle: meets.title,
+            meetDate: meets.meetDate,
+            meetAgenda: meets.agenda,
+            meetOrganizer: users.name,
+          })
+          .from(meets)
+          .innerJoin(users, eq(meets.organizerID, users.userID))
+          .where(
+            and(
+              eq(meets.workspaceID, wsID),
+              or(
+                gte(meets.meetDate, currentTimestamp.toISOString()), // Meet date is today or in the future
+                and(
+                  eq(meets.meetDate, currentTimestamp.toISOString()), // Meet date is today
+                  gte(meets.endTime, currentTimestamp.toISOString()) // End time is in the future
+                )
+              )
             )
           )
-        )
-      .orderBy(meets.meetTime);
+          .orderBy(meets.meetDate);
 
-      // console.log(upcomingMeet);
-      res.json(upcomingMeet);
-    } else {
-      const Meet = await db
-        .select({
-          meetID: meets.meetID,
-          meetTitle: meets.title,
-          // meetStatus: gte(meets.meetTime , currentTimestamp) ?"UPCOMING" : "DONE" ,
-          meetTime: meets.meetTime,
-          meetDuration: meets.duration,
-          meetAgenda: meets.agenda,
-          meetOrganizer: users.name,
-        })
-        .from(meets)
-        .innerJoin(invitees, eq(meets.meetID, invitees.meetID))
-        .innerJoin(users, eq(meets.organizerID, users.userID))
-        .innerJoin(workspaces, eq(meets.workspaceID, workspaces.workspaceID))
-        .where(
-          and(
-            eq(invitees.workspaceID, wsID),
-            or(
+        // console.log(upcomingMeet);
+        res.json(upcomingMeet);
+      } else {
+        const upcomingMeet = await db
+          .select({
+            meetID: meets.meetID,
+            meetTitle: meets.title,
+            meetDate: meets.meetDate,
+            meetAgenda: meets.agenda,
+            meetOrganizer: users.name,
+          })
+          .from(meets)
+          .innerJoin(invitees, eq(meets.meetID, invitees.meetID))
+          .innerJoin(users, eq(meets.organizerID, users.userID))
+          .where(
+            and(
+              eq(invitees.workspaceID, wsID),
               eq(invitees.inviteeID, user_id),
-              eq(workspaces.projectManager, user_id)
+              or(
+                gte(meets.meetDate, currentTimestamp.toISOString()), // Meet date is today or in the future
+                and(
+                  eq(meets.meetDate, currentTimestamp.toISOString()), // Meet date is today
+                  gte(meets.endTime, currentTimestamp.toISOString()) // End time is in the future
+                )
+              )
             )
           )
-        )
-        .orderBy(desc(meets.createdAt));
-      res.json(Meet);
+          .orderBy(meets.meetDate);
+
+        // console.log(upcomingMeet);
+        res.json(upcomingMeet);
+      }
+    } else if (filterOption === "All") {
+      if (user_id === req.workspace.projectManager) {
+        const Meet = await db
+          .select({
+            meetID: meets.meetID,
+            meetTitle: meets.title,
+            // meetStatus: gte(meets.meetTime , currentTimestamp) ?"UPCOMING" : "DONE" ,
+            meetTime: meets.meetDate,
+            meetAgenda: meets.agenda,
+            meetOrganizer: users.name,
+          })
+          .from(meets)
+          .innerJoin(users, eq(meets.organizerID, users.userID))
+          .where(eq(meets.workspaceID, wsID))
+          .orderBy(desc(meets.createdAt));
+        // console.log(Meet);
+        res.json(Meet);
+      } else {
+        const Meet = await db
+          .select({
+            meetID: meets.meetID,
+            meetTitle: meets.title,
+            // meetStatus: gte(meets.meetTime , currentTimestamp) ?"UPCOMING" : "DONE" ,
+            meetTime: meets.meetDate,
+            meetAgenda: meets.agenda,
+            meetOrganizer: users.name,
+          })
+          .from(meets)
+          .innerJoin(invitees, eq(meets.meetID, invitees.meetID))
+          .innerJoin(users, eq(meets.organizerID, users.userID))
+          .where(
+            and(eq(invitees.workspaceID, wsID), eq(invitees.inviteeID, user_id))
+          )
+          .orderBy(desc(meets.createdAt));
+        // console.log(Meet);
+        res.json(Meet);
+      }
     }
   } catch (err) {
     console.log(err);
@@ -400,7 +455,7 @@ export const getYourMeet = async (req: Request, res: Response) => {
 };
 
 export const editWSDetailsGet = async (req: Request, res: Response) => {
-  const wsID: any = req.params.wsID;
+  const wsID: any = req.workspace.workspaceID;
 
   try {
     const Workspace = await db
@@ -413,7 +468,7 @@ export const editWSDetailsGet = async (req: Request, res: Response) => {
       .where(eq(workspaces.workspaceID, wsID))
       .limit(1);
 
-    res.json(Workspace);
+    res.status(200).json(Workspace[0]);
   } catch (error) {
     console.log(error);
     return res
@@ -423,13 +478,27 @@ export const editWSDetailsGet = async (req: Request, res: Response) => {
 };
 
 export const editWsDetailsPATCH = async (req: Request, res: Response) => {
-  const wsID: any = req.params.wsID;
+  const wsID: any = req.workspace.workspaceID;
   const userID: any = req.user.userID;
   // const toDo:any = req.params.action;
 
-  const { title, description, type } = req.body;
+  // if (!description) return res.status(400).send({ error: "description is required" });
+  // if (!type) return res.status(400).send({ error: "type is required" });
 
   try {
+    const { title, description, type } = req.body;
+    if (
+      title === undefined ||
+      description === undefined ||
+      type === undefined
+    ) {
+      return res
+        .status(400)
+        .json({ error: "Title, description, and type are required" });
+    }
+    if (!title)
+      return res.status(400).send({ error: "Title can not be empty" });
+    if (!type) return res.status(400).send({ error: "Type can not be empty" });
     await db
       .update(workspaces)
       .set({
@@ -439,7 +508,7 @@ export const editWsDetailsPATCH = async (req: Request, res: Response) => {
       })
       .where(eq(workspaces.workspaceID, wsID));
 
-    res.send({ message: "Settings Saved" });
+    res.status(200).send({ message: "Settings Saved" });
   } catch (error) {
     console.log(error);
     return res
@@ -449,7 +518,7 @@ export const editWsDetailsPATCH = async (req: Request, res: Response) => {
 };
 
 export const editWSMembersGet = async (req: Request, res: Response) => {
-  const wsID: any = req.params.wsID;
+  const wsID: any = req.workspace.workspaceID;
 
   try {
     const Members = await db
@@ -471,7 +540,7 @@ export const editWSMembersGet = async (req: Request, res: Response) => {
 };
 
 export const editWSMembersPATCH = async (req: Request, res: Response) => {
-  const wsID: any = req.params.wsID;
+  const wsID: any = req.workspace.workspaceID;
   const userID: any = req.user.userID;
   const { Members = [] } = req.body;
   const unregisteredMembers: string[] = [];
@@ -534,7 +603,7 @@ export const editWSMembersPATCH = async (req: Request, res: Response) => {
         unregisteredMembers,
       });
     } else {
-      res.send({ message: "Settings Saved" });
+      res.status(200).send({ message: "Settings Saved" });
     }
   } catch (error) {
     console.log(error);
@@ -547,7 +616,7 @@ export const editWSMembersPATCH = async (req: Request, res: Response) => {
 export const deleteWorkspaceDELETE = async (req: Request, res: Response) => {
   try {
     // checking for params
-    const wsID: any = req.params.wsID;
+    const wsID: any = req.workspace.workspaceID;
 
     const currentWorkspace = await db
       .select()
@@ -582,7 +651,9 @@ export const deleteWorkspaceDELETE = async (req: Request, res: Response) => {
     //delete workspace from taskassignees table
     await db.delete(assignees).where(eq(wsID, assignees.workspaceID));
 
-    res.send("Workspace deleted successfully");
+    res.status(200).send({
+      Message: "Workspace deleted successfully",
+    });
   } catch (err) {
     console.log(err);
     return res

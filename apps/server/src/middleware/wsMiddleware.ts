@@ -11,11 +11,12 @@ export const wsExist = async (
   res: Response,
   next: NextFunction
 ) => {
-  const wsID = parseInt(req.params.wsID, 10);
+  const wsID:any = parseInt(req.params.wsID, 10);
 
-  if (isNaN(wsID)) {
-    return res.status(400).send("Invalid wsID");
+  if (wsID != req.params.wsID) {
+    return res.status(400).send({Error: "Invalid wsID"});
   }
+
   try {
     const Workspace = await db
       .select({
@@ -31,7 +32,7 @@ export const wsExist = async (
 
     if (Workspace.length > 0) {
       req.workspace = Workspace[0];
-      console.log(req.workspace);
+      // console.log(req.workspace);
       next();
     } else {
       res.status(404).send({ Message: "Workspace Doesn't Exist" });
@@ -62,7 +63,7 @@ export const authorizeManager = async (
   try {
     if (req.workspace.projectManager === userID) next();
     else {
-      res.status(401).send("You do not own the workspace");
+      res.status(401).send({error: "You do not own the workspace"});
     }
   } catch (error) {
     console.log(error);
@@ -78,8 +79,10 @@ export const authorizeMember = async (
   res: Response,
   next: NextFunction
 ) => {
-  const userID: any = req.user.userID;
+  const userID = req.user.userID;
+  console.log(req.workspace);
   const wsID = req.workspace.workspaceID;
+  // const wsID = parseInt(req.params.workspaceID, 10);
 
   try {
     if (req.workspace.projectManager !== userID) {
@@ -90,7 +93,9 @@ export const authorizeMember = async (
         .limit(1);
 
       if (isMemeber.length === 0) {
-        res.send("You are not a part of the workspace");
+        res.status(401).send({
+          Message: "You are not a part of the workspace",
+        });
       } else {
         next();
       }

@@ -20,6 +20,7 @@ module.exports = {
         "prim-brown": "#564154",
         primaryblue: "#BDDDFF",
         buttonblue: "#295BE7",
+
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

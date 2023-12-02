@@ -6,8 +6,12 @@ import { useState } from "react";
 import { Icons } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function Loginpage() {
+  const router = useRouter();
+
   async function submitgoogle(event: React.SyntheticEvent) {
     event.preventDefault();
     try {
@@ -40,14 +44,27 @@ export default function Loginpage() {
     try {
       setIsLoading(true);
 
-      const res = await fetch("http://localhost:3500/api/signup", {
+      const res = await fetch("http://localhost:3500/api/login", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(user),
       }).then((res) => res.json());
-      console.log(res.message);
+
+      console.log(res);
+
+      if (res.message === "Login successful") {
+        toast.success("Login successful");
+        setTimeout(() => {
+          router.push(`dashboard`);
+        }, 700);
+      }
+
+      if (res.message === "Invalid Credentials") {
+        toast.error("Invalid Credentials");
+      }
     } catch (err) {
       console.log(err);
     } finally {
@@ -162,6 +179,15 @@ export default function Loginpage() {
                   className="text-blue-800 underline underline-offset-2"
                 >
                   Sign up
+                </Link>
+              </span>
+              <span>
+                Forgot Password?{" "}
+                <Link
+                  href="/forgotpassword"
+                  className="text-blue-800 underline underline-offset-2"
+                >
+                  Forgotpassword
                 </Link>
               </span>
             </div>

@@ -5,9 +5,7 @@ import jwt from "jsonwebtoken";
 
 export const accessTokenCookieOptions: CookieOptions = {
   httpOnly: true,
-  domain: "localhost",
   path: "/",
-  sameSite: "lax",
   secure: false,
   expires: new Date(Date.now() + 86400 * 1000),
 };
@@ -21,15 +19,13 @@ export const createSession = async (
   id: string,
   refresh_token: string,
   userAgent: string,
-  isVerified: boolean,
-  ip: string
+  isVerified: boolean
 ) => {
   const session: SessionType = {
     id,
     refresh_token,
     userAgent,
     isVerified,
-    ip,
   };
 
   redisClient.set(id, JSON.stringify(session), "EX", 60 * 60 * 24 * 30);

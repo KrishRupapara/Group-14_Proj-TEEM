@@ -58,8 +58,7 @@ export const googleoauthHandler = async (req: Request, res: Response) => {
       session_id,
       refreshToken,
       req.get("user-agent") || "",
-      true,
-      req.ip
+      true
     );
 
     res.cookie("refreshToken", refreshToken);

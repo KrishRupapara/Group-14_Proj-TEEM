@@ -1,17 +1,19 @@
 "use client";
-import React, { useState, useRef, useEffect } from "react";
+import React, { FC, useState, useRef, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import toast, { Toaster } from "react-hot-toast";
+import toast, { Toaster } from 'react-hot-toast';
+
 
 let currentOTPIndex: number = 0;
-export default function Verification() {
+export default function varification() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const email = searchParams.get("email");
+  const searchParams = useSearchParams()
+  const email = searchParams.get('email')
   const [otp, setotp] = useState<string[]>(new Array(6).fill(""));
   const [ActiveOTPIndex, setActiveOTPIndex] = useState<number>(0);
-  const [status, setstatus] = useState("");
+  // const [status, setstatus] = useState("");
 
   const inputRef = useRef<HTMLInputElement>(null);
   const handleOnChange = ({
@@ -38,6 +40,9 @@ export default function Verification() {
     inputRef.current?.focus();
   }, [ActiveOTPIndex]);
 
+
+
+
   async function onsubmit() {
     try {
       const otp_val = otp.join("");
@@ -48,38 +53,67 @@ export default function Verification() {
         },
         body: JSON.stringify({ otp: otp_val, email }),
       }).then((res) => res.json());
-
+      // console.log(res.message);
       setotp(new Array(6).fill(""));
 
       if (res.message == "User verified") {
         toast.success("User Verified");
-        router.push("/Profile");
+        router.push("/dashboard");
       } else {
         toast.error(res.message);
+        // setstatus(res.message);
       }
     } catch (err: any) {
       console.log("Login failed", err.message);
     }
   }
 
+  async function onresend() {
+    try {
+      const res = await fetch("http://localhost:3500/api/resendOtp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(email),
+      }).then((res) => res.json());
+      console.log(res.message);
+      toast(res.message);
+
+    } catch (err: any) {
+      console.log("Login failed", err.message);
+    }
+  }
+
   return (
-    <div>
-      <div className="h-[calc(100vh-4rem)] flex flex-col text-center">
+    <div className="bg-[#E5F2FF]">
+      <div className="h-screen flex flex-col text-center">
         <Toaster />
-        <Image
+        {/* <Image
           alt="Image Not Found"
           src={"/img/Verification_bg.png"}
           className="-z-30 absolute"
           fill
-        />
-
-        <div className="w-1/4 mx-auto my-auto">
-          <div className="relative w-full h-2/3">
-            <Image src="/img/Logo_black.png" className="absolute" alt="" fill />
-          </div>
-
+        /> */}
+        {/* </div> */}
+        <div className="lg:w-1/4 sm:w-3/4 md:w-3/4 mx-auto my-auto">
+          {/* <img
+            src="/img/Logo_black.png"
+            style={{ width: "100%", height: "40%" }}
+            alt=""
+          /> */}
+          <Image
+            alt="Image Not Found"
+            src={"/img/Logo_black.png"}
+            layout="responsive"
+            width={100}
+            height={100}
+            className="mx-auto"
+          // className="-z-30 absolute"
+          // fill
+          />
           <h1 className="font-bold mb-4 mt-3">Verify your account</h1>
-          <p>Enter the OTP we have sent in your mailbox</p>
+          <p>Enter the OTP we've sent in your mailbox</p>
 
           <div className="flex justify-center items-center space-x-2">
             {otp.map((_, index) => {
@@ -106,13 +140,33 @@ export default function Verification() {
             Verify
           </button>
           <div>
-            <button className="text-xs" onClick={onsubmit}>
+            <button className="text-xs" onClick={onresend}>
               Resend OTP
             </button>
           </div>
-          <div>{status}</div>
+          {/* <div>{status}</div> */}
         </div>
       </div>
+      {/* <div className="h-[4rem] flex justify-center w-full bg-footer">
+        <div className="mt-3">
+          <a href="#">
+            <img
+              src="/img/insta.png"
+              style={{ width: "90%", height: "80%" }}
+              alt=""
+            />
+          </a>
+        </div>
+        <div className="mt-3 ml-2">
+          <a href="#">
+            <img
+              src="/img/E_mail.png"
+              style={{ width: "75%", height: "80%" }}
+              alt=""
+            />
+          </a>
+        </div>
+      </div> */}
     </div>
   );
 }

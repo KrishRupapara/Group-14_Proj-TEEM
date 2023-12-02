@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -11,33 +10,70 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const UserProfileSchema = z.object({
-  username: z.string(),
-  title: z.string(),
-  country: z.string(),
-  email: z.string(),
+  UserName: z.string(),
+  JobTitle: z.string(),
+  Organization: z.string(),
+  Country: z.string(),
+  Email: z.string(),
 });
 
 type UserProfileSchemaType = z.infer<typeof UserProfileSchema>;
 
 export default function UserProfile() {
+  const [loading, isLoading] = useState(true);
+  const [data, setData] = useState({
+    Country: "",
+    Email: "",
+    UserName: "",
+    JobTitle: "",
+    Organization: "",
+  });
+
   const form = useForm<UserProfileSchemaType>({
     resolver: zodResolver(UserProfileSchema),
-    defaultValues: {
-      username: "John Doe",
-      title: "Software Engineer",
-      country: "India",
-      email: "abc@gmail.com",
-    },
+    defaultValues: data,
     mode: "onChange",
   });
 
+  useEffect(() => {
+    fetch(`http://localhost:3500/api/profile`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data: UserProfileSchemaType) => {
+        setData(data);
+        isLoading(false);
+        form.reset(data);
+      });
+  }, []);
+
   function onSubmit(data: UserProfileSchemaType) {
-    console.log(data);
+    fetch(`http://localhost:3500/api/profile`, {
+      method: "PATCH",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then((res) => {
+      console.log(res);
+    });
   }
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  console.log(data);
 
   return (
     <Form {...form}>
@@ -50,7 +86,7 @@ export default function UserProfile() {
           <div className=" py-2 px-5 rounded-sm flex flex-col justify-between gap-2">
             <FormField
               control={form.control}
-              name="username"
+              name="UserName"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Username</FormLabel>
@@ -64,7 +100,7 @@ export default function UserProfile() {
 
             <FormField
               control={form.control}
-              name="title"
+              name="JobTitle"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Job Title</FormLabel>
@@ -78,7 +114,21 @@ export default function UserProfile() {
 
             <FormField
               control={form.control}
-              name="country"
+              name="Organization"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Organization</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Organization" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="Country"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Country</FormLabel>
@@ -98,12 +148,19 @@ export default function UserProfile() {
             <h1 className="text-lg">abc@email.com</h1> */}
             <FormField
               control={form.control}
-              name="email"
+              name="Email"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input disabled {...field} />
+                    <fieldset disabled>
+                      <Input
+                        disabled
+                        type="text"
+                        placeholder="email"
+                        {...field}
+                      />
+                    </fieldset>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -114,7 +171,7 @@ export default function UserProfile() {
         <div>
           <Button
             type="submit"
-            className="text-white bg-blue-500 px-10 py-2 rounded-[6px] transition-all hover:bg-blue-800 text-lg"
+            className="text-white bg-blue-500 px-10 py-2 rounded-[6px] transition-all hover:bg-blue-800 text-lg mt-5"
           >
             Save
           </Button>

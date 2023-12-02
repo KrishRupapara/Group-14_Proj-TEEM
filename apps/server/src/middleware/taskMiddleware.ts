@@ -13,8 +13,9 @@ export const taskExist = async (
 ) => {
   try {
     const taskID: any = parseInt(req.params.taskID, 10);
-    if (isNaN(taskID)) {
-      return res.status(400).send("Invalid taskID");
+   
+    if (taskID != req.params.taskID) {
+    return res.status(400).send({Error: "Invalid taskID"});
     }
     const wsID = req.workspace.workspaceID;
 
@@ -52,15 +53,18 @@ export const authorizeAssignee = async (
     const userID: any = req.user.userID;
     const wsID = req.workspace.workspaceID;
     const taskID = req.task.taskID;
+
     if (req.workspace.projectManager !== userID) {
       const isAssignee = await db
         .select()
         .from(assignees)
-        .where(and(eq(assignees.workspaceID, wsID), eq(assignees.assigneeID, userID)))
+        .where(
+          and(eq(assignees.workspaceID, wsID), eq(assignees.assigneeID, userID))
+        )
         .limit(1);
 
       if (isAssignee.length === 0) {
-        res.send("You have not been assigned to this task");
+        res.status(401).send({error: "You have not been assigned to this task"});
       } else {
         next();
       }
@@ -69,11 +73,9 @@ export const authorizeAssignee = async (
     }
   } catch (err) {
     console.log(err);
-    res
-      .status(500)
-      .send({
-        message: "Internal server error in authorize assignee middleware",
-      });
+    res.status(500).send({
+      message: "Internal server error in authorize assignee middleware",
+    });
   }
 };
 

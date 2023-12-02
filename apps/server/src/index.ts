@@ -2,16 +2,6 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
-const app = express();
-
-import https from "https";
-import fs from "fs";
-
-// const cert = fs.readFileSync("../server.key");
-// const key = fs.readFileSync("../server.cert");
-
-// create an HTTPS server with the self-signed certificate and private key
-// const server = https.createServer({ key: key, cert: cert }, app);
 
 //routers
 import {
@@ -32,8 +22,10 @@ import helmet from "helmet";
 import { rateLimit } from "express-rate-limit";
 import { client as redisClient } from "./config/redisConnect";
 import morgan from "morgan";
-import { dashboardGet } from "./controllers";
 
+export const app: express.Application = express();
+
+app.use(cookieParser(process.env.JWT_SECRET));
 app.set("trust proxy", 1);
 app.use(
   rateLimit({
@@ -41,12 +33,17 @@ app.use(
     max: 100, // limit each IP to 100 requests per windowMs
   })
 );
-app.use(cors());
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 app.use(helmet());
 app.use(compression());
 
 app.use(express.json());
-app.use(cookieParser(process.env.JWT_SECRET));
 app.use(morgan("dev"));
 
 app.use("/api", authRouter);
@@ -55,7 +52,9 @@ app.use("/api", dashboardRouter);
 app.use("/api", taskRouter);
 app.use("/api", meetRouter);
 
-app.get("/", requireAuth, dashboardGet);
+app.get("/", (req, res) => {
+  res.send("Hello world");
+});
 
 redisClient.on("error", (err) => {
   throw new Error("Redis not connected!!");
@@ -68,6 +67,9 @@ app.get("/smoothies", requireAuth, (req, res) => {
 
 const PORT = process.env.PORT || 3500;
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log("Server listening on port " + PORT + "!");
 });
+
+module.exports = app;
+

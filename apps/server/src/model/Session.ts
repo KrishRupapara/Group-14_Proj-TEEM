@@ -3,5 +3,4 @@ export interface SessionType {
   refresh_token: string;
   userAgent: string;
   isVerified?: boolean;
-  ip: string;
 }

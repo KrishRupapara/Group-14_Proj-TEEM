@@ -25,6 +25,10 @@ export const requireAuth = (
 ) => {
   const { accessToken, refreshToken } = req.cookies;
 
+  // console.log(req.cookies);
+  // console.log(accessToken, refreshToken);
+  // console.log(req.user);
+
   try {
     if (accessToken) {
       const payload = jwt.verify(
@@ -33,26 +37,23 @@ export const requireAuth = (
       ) as payload;
 
       req.user = payload.tokenUser;
-        console.log(req.user);
-      return next();
+    } else {
+      const payload = jwt.verify(refreshToken, process.env.JWT_SECRET!) as any;
+
+      redisClient.get(payload.userID, (err, data) => {
+        if (err) throw err;
+
+        if (data != refreshToken) {
+          return res.status(401).json({ message: "Please login Again" });
+        }
+      });
+      const access_token = signJWT({ ...payload, session: payload.userID });
+
+      res.cookie("accessToken", access_token, accessTokenCookieOptions);
+
+      req.user = payload.tokenUser;
     }
-
-    const payload = jwt.verify(refreshToken, process.env.JWT_SECRET!) as any;
-
-    redisClient.get(payload.userID, (err, data) => {
-      if (err) throw err;
-
-      if (data != refreshToken) {
-        return res.status(401).json({ message: "Please login Again" });
-      }
-    });
-    const access_token = signJWT({ ...payload, session: payload.userID });
-
-    res.cookie("accessToken", access_token, accessTokenCookieOptions);
-
-    req.user = payload.tokenUser;
-
-    next();
+    return next();
   } catch (err) {
     console.log(err);
     res.status(401).json({ message: "Unauthorized" });

@@ -30,7 +30,7 @@ export default function NavComponent() {
             <Link href="/dashboard">Dashboard</Link>
           </li>
           <li>
-            <Link href="">
+            <Link href="/calendar">
               <FontAwesomeIcon icon={faCalendar} height={28} />
             </Link>
           </li>
