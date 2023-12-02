@@ -84,19 +84,14 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
   width: 100%;
-  height: 150vh;
+  height: 100%;
 }
 .footer-bg {
   background: #101d42;
 }
 
 .signup-bg {
-  background: linear-gradient(
-      181deg,
-      rgba(224, 203, 168, 0.88) 1.49%,
-      rgba(136, 73, 143, 0) 103.15%
-    ),
-    linear-gradient(116deg, #88498f 50.45%, #ff6542 100%);
+  background: #E5F2FF;
 }
 
 .signup-right {
@@ -147,4 +142,21 @@ input::-webkit-inner-spin-button {
 
 .Projectbg {
   background: linear-gradient(180deg, #bdddff 0%, #fff 100%);
+}
+
+.progress-ring__circle {
+    stroke-dasharray: 400, 400;
+    transition: stroke-dashoffset 0.35s;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+  }
+  
+@media only screen and (min-width : 480px) 
+{
+    .revprop{ display: flex; flex-direction: column-reverse; }
+}
+
+.bg-nav{
+  background: url("/img/bgimage.webp");
+  background-size: cover;
 }

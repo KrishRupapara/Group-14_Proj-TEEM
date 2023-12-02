@@ -78,7 +78,7 @@ export default function UserAuthForm() {
 
   return (
     // <div>
-    <div className="bg-gray-300 h-screen signup-bg">
+    <div className="bg-gray-300 h-screen signup-bg xl:text-lg sm:text-3xl">
       <Toaster />
       <div className="h-[6rem] flex flex-row justify-between items-center px-5">
         <Image
@@ -87,24 +87,11 @@ export default function UserAuthForm() {
           width={140}
           height={150}
         />
-        <Image
-          src="/img/butterfly.png"
-          alt="Image Not found"
-          width={80}
-          height={80}
-        />
+        
       </div>
-      <div className="h-[100vh-6rem] flex flex-row">
-        <div className="h-full w-1/3 flex flex-col justify-end place-items-start">
-          <Image
-            src="/img/doodleleft.png"
-            alt="Image Not found"
-            width={300}
-            height={250}
-          />
-        </div>
+      <div className="xl:h-[100vh-6rem] sm:h-5/6 flex flex-row ">
 
-        <div className="h-full w-1/2 mx-auto p-4">
+        <div className="xl:h-full xl:w-1/2 sm:w-full mx-auto p-4 ">
           {/* card */}
           <form
             action=""
@@ -112,7 +99,7 @@ export default function UserAuthForm() {
             className=" mx-auto h-full flex flex-col justify-center"
           >
             <div className="h-[59.1vh] w-full py-2 flex flex-col justify-around items-center ">
-              <h2 className="font-bold text-2xl text-slate-700 pb-3">
+              <h2 className="font-bold xl:text-2xl md:text-2xl text-slate-700 pb-3 sm:text-xl">
                 Sign up with TEEM for free
               </h2>
               {/* name */}
@@ -131,7 +118,7 @@ export default function UserAuthForm() {
                   disabled={isLoading}
                   //onChange={(e) => setUser({ ...user, password: e.target.value })}
 
-                  className=" rounded-xl bg-gray-200 p-3"
+                  className=" rounded-xl bg-white p-3"
                   onChange={(e) => {
                     setUser({
                       ...user,
@@ -160,7 +147,7 @@ export default function UserAuthForm() {
                   disabled={isLoading}
                   //onChange={(e) => setUser({ ...user, email: e.target.value })}
 
-                  className=" rounded-xl bg-gray-200 p-3"
+                  className=" rounded-xl bg-white p-3"
                   onChange={(e) =>
                     setUser({
                       ...user,
@@ -193,7 +180,7 @@ export default function UserAuthForm() {
                   disabled={isLoading}
                   //onChange={(e) => setUser({ ...user, password: e.target.value })}
 
-                  className=" rounded-xl bg-gray-200 p-3"
+                  className=" rounded-xl bg-white p-3"
                   onChange={(e) => {
                     setUser({
                       ...user,
@@ -218,7 +205,7 @@ export default function UserAuthForm() {
                 <button
                   disabled={isLoading}
                   type="submit"
-                  className="bg-orange-300 rounded-xl py-3 px-3 font-bold text-white text-lg flex items-center justify-center"
+                  className="bg-blue-500 hover:bg-blue-700 rounded-xl py-3 px-3 font-bold text-white text-lg flex items-center justify-center"
                 >
                   {isLoading && (
                     <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
@@ -229,7 +216,7 @@ export default function UserAuthForm() {
             </div>
 
             <div className=" h-[20vh] w-full flex flex-col justify-around items-center">
-              <p>--------------------------OR--------------------------</p>
+              <p>------------------------OR-------------------------</p>
               <div className="flex flex-col w-3/5 mx-auto py-1">
                 <button
                   disabled={isLoading}
@@ -267,14 +254,6 @@ export default function UserAuthForm() {
               </span>
             </div>
           </form>
-        </div>
-        <div className="h-full w-1/4 flex flex-col justify-end place-items-end">
-          <Image
-            src="/img/doodleright.png"
-            alt="Image Not found"
-            width={180}
-            height={230}
-          />
         </div>
       </div>
     </div>
