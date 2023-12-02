@@ -41,7 +41,7 @@ export const signUpHandler = async (req: Request, res: Response) => {
 
     if (existingUser.length > 0) {
       console.log("Email already exists");
-      return res.status(400).send({ meesage: "Email already exists" });
+      return res.status(400).send({ message: "Email already exists" });
     }
 
     const salt = await bcrypt.genSalt();
@@ -136,7 +136,7 @@ export const loginHandler = async (req: Request, res: Response) => {
         return res.send({ access_token });
       }
 
-      return res.send({ message: "Already logged in" });
+      return res.status(200).send({ message: "Already logged in" });
     }
 
     const access_token = signJWT({ tokenUser }, { expiresIn: "24h" });
@@ -212,12 +212,6 @@ export const forgotPasswordPost = async (req: Request, res: Response) => {
     if (user.length < 1) {
       return res.status(400).send({ error: "Invalid Credentials" });
     }
-    
-    if (!user[0].isVerified) {
-      // check for verification
-      res.send("User not verified.");
-    }
-
 
       const salt = await bcrypt.genSalt();                
       const otp = randomInt(100000, 1000000).toString();
@@ -231,7 +225,7 @@ export const forgotPasswordPost = async (req: Request, res: Response) => {
 
     
 
-    res.send("OTP sent successfully");
+    res.status(200).send({message : "OTP sent successfully"});
   } catch (err) {
     console.log(err);
     return res.status(500).send({ message: "Internal server error" });
@@ -243,7 +237,7 @@ export const resetPasswordPost = async (req: Request, res: Response) => {
   if (!email || !password || !otp) {
     return res
       .status(400)
-      .send({ error: "Invalid/insufficient email or Password" });
+      .send({ error: "Invalid/insufficient email or Password or OTP" });
   }
   try {
     redisClient.get(email, async (err, otp_secure) => {
@@ -272,7 +266,7 @@ export const resetPasswordPost = async (req: Request, res: Response) => {
 
       const isSame = await bcrypt.compare(password, user[0].password!);
       if (isSame) {
-        res.send("New Password is same as current password.");
+        res.status(400).send({error : "New Password is same as current password."});
       }
 
       const salt = await bcrypt.genSalt(); // adding salt
@@ -283,7 +277,7 @@ export const resetPasswordPost = async (req: Request, res: Response) => {
         .set({ password: password })
         .where(eq(users.emailId, email));
 
-      return res.send({ message: "Password Reset Successfully" });
+      return res.status(200).send({ message: "Password Reset Successfully" });
     });
   } catch (err) {
     console.log(err);
@@ -335,31 +329,35 @@ export const resendOtp = async (req : Request, res : Response) => {
 
 export const changePassword = async (req : Request, res : Response) => {
 
-  try{
+  const userID  : any = req.user.userID;    // get userID from req.user
+  const { oldPassword, newPassword , confirmPassword } = req.body;
 
-    const userID  : any = req.user.userID;    // get userID from req.user
-    const { oldPassword, newPassword , confirmPassword } = req.body;
+  if(!oldPassword || !newPassword || !confirmPassword){
+    return res.status(400).send({ error: "Invalid/insufficient password" });
+  }
+
+  try{
     
     // find user from database
-    const userToChangePaasword = await db
+    const userToChangePassword = await db
         .select()
         .from(users)
         .where(eq(users.userID, userID))
         .limit(1);
   
-      if (userToChangePaasword.length<1) {
+      if (userToChangePassword.length<1) {
         return res.status(400).send({ error: "Invalid Credentials" });
       }
 
-      const isSame = await bcrypt.compare(newPassword, userToChangePaasword[0].password!);
+      const isSame = await bcrypt.compare(newPassword, userToChangePassword[0].password!);
       if (isSame) {
-        res.send("New Password is same as current password.");
+        res.status(400).send({error : "New Password is same as current password."});
       }
 
 
     
       if(newPassword !== confirmPassword){
-        res.send("New Password and Confirm Password are not same.");
+        res.status(400).send({error : "New Password and Confirm Password are not same."});
       }
 
       const salt = await bcrypt.genSalt(); // adding salt
@@ -370,7 +368,7 @@ export const changePassword = async (req : Request, res : Response) => {
         .set({ password: password })
         .where(eq(users.userID, userID));
 
-      return res.send({ message: "Password Changed Successfully" });
+      return res.status(200).send({ message: "Password Changed Successfully" });
 
   }catch (err) {
     console.log(err);
