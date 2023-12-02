@@ -72,6 +72,25 @@ router
     editTaskAssigneesPATCH
   );
 
+  router
+  .route("/:wsID/:taskID/editTaskAssignees")
+  .get(
+    requireAuth,
+    wsExist,
+    authorizeManager,
+    taskExist,
+    getTaskDetails,
+    editTaskDetailsGet
+  )
+  .patch(
+    requireAuth,
+    wsExist,
+    authorizeManager,
+    taskExist,
+    getTaskDetails,
+    editTaskDetailsPATCH
+  )
+
 router
   .route("/:wsID/:taskID/editTaskDetails")
   // .get(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, editTaskAssigneesGet)
