@@ -30,6 +30,4 @@ router.route("/resetPassword").post(resetPasswordPost);
 router.route("/resendOtp").post(resendOtp);
 router.route("/changePassword").post(requireAuth,changePassword);
 
-
-
 export { router as authRouter };

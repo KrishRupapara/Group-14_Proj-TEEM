@@ -1,16 +1,11 @@
 "use client";
-import React from "react";
-import Image from "next/image";
-import NavComponent from "@/components/Navbar";
 import Navbar from "@/components/newNavbar";
 import { useState } from "react";
-// import { cn } from "@/lib/utils";
-import { Icons } from "@/components/ui/icons";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { useFieldArray, useForm } from "react-hook-form";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 export default function Dashboardfile() {
   const [isLoading, setIsLoading] = useState(false);
@@ -24,7 +19,7 @@ export default function Dashboardfile() {
   const members = [
     {
       Email: "",
-      Role: ""
+      Role: "",
     },
   ];
 
@@ -42,21 +37,22 @@ export default function Dashboardfile() {
 
   const onFormSubmit = (data: any) => {
     const { members } = data;
-    // console.log(email[1]);
-    // console.log(members);
-    // console.log(data);
-    // console.log(workspace.title);
     let title = workspace.title;
     let type = workspace.type;
     let description = workspace.description;
+
     try {
-      const res = fetch("http://localhost:3500/api/createworkspace", {
+      const res: any = fetch("http://localhost:3500/api/createworkspace", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ title, type, description, members }),
       }).then((res) => res.json());
+
+      if (res.ok) toast.success(res.message);
+      else toast.error(res.message);
 
       router.push("/dashboard");
     } catch (err: any) {
@@ -89,14 +85,6 @@ export default function Dashboardfile() {
         <Navbar />
       </div>
       <div className="bg-[#eef6ff] lg:min-h-[calc(100vh-4rem)] md:min-h-[calc(100vh-3rem)] sm:min-h-[calc(100vh-2rem)] flex flex-col">
-        {/* <div className="z-0 overflow-hidden absolute h-screen w-full">
-          <div className="overflow-hidden opacity-85 h-60 w-60 absolute left-0 right-0 bottom-0 top-0 rounded-full border-2  m-auto"></div>
-          <div className="overflow-hidden opacity-85 h-[40rem] w-[40rem] absolute left-0 right-0 bottom-0 top-0 rounded-full border-2  m-auto"></div>
-          <div className="overflow-hidden opacity-85 h-[60rem] w-[60rem] absolute left-0 right-0 bottom-0 top-0 rounded-full border-2  m-auto"></div>
-          <div className="overflow-hidden opacity-85 h-[80rem] w-[80rem] absolute left-0 right-0 bottom-0 top-0 rounded-full border-2  m-auto"></div>
-          <div className="overflow-hidden opacity-85 h-[100rem] w-[100rem] absolute left-0 right-0 bottom-0 top-0 rounded-full border-2  m-auto"></div>
-        </div> */}
-
         <div className="flex flex-col">
           <div className="h-full lg:w-2/4 md:w-fit mx-auto card-bg relative">
             {/* card */}
@@ -115,7 +103,7 @@ export default function Dashboardfile() {
                   <label
                     htmlFor="workspacetitle"
                     id="workspacetitle"
-                    className=" mb-1 text-center text-black font-medium"
+                    className="mb-1 text-center text-black font-medium"
                   >
                     Workspace Name
                   </label>
@@ -127,8 +115,6 @@ export default function Dashboardfile() {
                     autoCorrect="off"
                     disabled={isLoading}
                     required
-                    //onChange={(e) => setUser({ ...user, email: e.target.value })}
-
                     className="border-2 border-gray-300 rounded-lg bg-white p-3"
                     onChange={(e) =>
                       setWorkspace({
@@ -211,7 +197,7 @@ export default function Dashboardfile() {
                   <div className="flex flex-col mx-auto">
                     {fields.map(({ id }, index) => {
                       return (
-                        <div className="lg:flex">
+                        <div key={id} className="flex items-center gap-2">
                           <input
                             id={`members[${index}].Email`}
                             placeholder="Enter members email"
@@ -227,7 +213,7 @@ export default function Dashboardfile() {
                           <select
                             id={`members[${index}].Role`}
                             required
-                            className="bg-white  border-2 border-gray-300 focus:ring-blue-900 focus:border-blue-500 rounded-xl p-2 m-1"
+                            className="bg-white  border-2 border-gray-300 focus:ring-blue-900 focus:border-blue-500 rounded-xl p-2"
                             {...register(`members.${index}.Role` as any)}
                           >
                             <option disabled selected value="">
@@ -237,23 +223,17 @@ export default function Dashboardfile() {
                             <option value="Manager">Manager</option>
                           </select>
 
-                          {/* <button
-                            type="button"
-                            className="border text-white hover:bg-blue-800 bg-blue-600 m-2 p-1 rounded-xl py-1"
-                            onClick={() => {
-                              remove(index);
-                            }}
-                          >
-                            Erase
-                          </button> */}
-                        {fields.length > 1 && (
-                          <button
-                            className="border bg-blue-600 m-2 p-1 rounded-xl py-1"
-                            onClick={() => remove(index)}
-                          >
-                            Erase
-                          </button>
-                        )}
+                          {fields.length > 1 && (
+                            <button
+                              className="bg-blue-600 rounded-xl h-fit px-2 py-1"
+                              onClick={() => remove(index)}
+                            >
+                              <FontAwesomeIcon
+                                icon={faXmark}
+                                className="text-3xl text-[#eef6ff]"
+                              />
+                            </button>
+                          )}
                         </div>
                       );
                     })}
