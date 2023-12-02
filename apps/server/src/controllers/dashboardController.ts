@@ -111,15 +111,10 @@ export const profilePATCH = async (req: Request, res: Response) => {
     const updatedFields: { [key: string]: string } = {};
 
     // Check if the user has updated their organization
-
-    if (updatedUserData.Email !== existingUserData[0].Email)
-      return res.send({ message: "You cannot change email id" });
-
-    if (updatedUserData.UserName !== existingUserData[0].UserName)
-      if (updatedUserData.Email !== existingUserData[0].Email) {
-        return res.status(400).send({ message: "You cannot change email id" });
-      }
-    if (updatedUserData.UserName !== existingUserData[0].UserName)
+    if (updatedUserData.Email !== existingUserData[0].Email) {
+      return res.status(400).send({ message: "You cannot change email id" });
+    }
+    if (updatedUserData.UserName !== existingUserData[0].UserName) 
       updatedFields.name = updatedUserData.UserName;
 
     if (updatedUserData.Organization !== existingUserData[0].Organization)

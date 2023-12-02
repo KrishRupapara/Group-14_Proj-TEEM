@@ -34,16 +34,7 @@ router
   .get(requireAuth, wsExist, authorizeManager, assignTaskGet)
   .post(requireAuth, wsExist, authorizeManager, assignTaskPost);
 
-router
-  .route("/:wsID/:taskID/getTask")
-  .get(
-    requireAuth,
-    wsExist,
-    authorizeMember,
-    taskExist,
-    getTaskDetails,
-    getTask
-  );
+
 
 router
   .route("/workspace/:wsID/task/:taskID/dashboard")

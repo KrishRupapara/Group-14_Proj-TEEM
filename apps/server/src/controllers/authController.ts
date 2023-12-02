@@ -141,11 +141,9 @@ export const loginHandler = async (req: Request, res: Response) => {
     //   console.log(req.cookies.accessToken);
     //   console.log("Already logged in");
 
-    //   return res.send({ message: "Already logged in" });
+    //   return res.status(200).send({ message: "Already logged in" });
     // }
 
-    //       return res.status(200).send({ message: "Already logged in" });
-    // }
 
     const access_token = signJWT({ tokenUser }, { expiresIn: "24h" });
 

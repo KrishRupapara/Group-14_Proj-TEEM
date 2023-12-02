@@ -79,6 +79,7 @@ export const authorizeMember = async (
   next: NextFunction
 ) => {
   const userID = req.user.userID;
+  console.log(req.workspace);
   const wsID = req.workspace.workspaceID;
   // const wsID = parseInt(req.params.workspaceID, 10);
 
