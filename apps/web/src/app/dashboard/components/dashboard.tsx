@@ -12,7 +12,7 @@ export default function Dashboard() {
   ]);
 
   useEffect(() => {
-    fetch(`http://localhost:3500/api/dashboard`, {
+    fetch("http://localhost:3500/api/dashboard", {
       method: "GET",
       credentials: "include",
       headers: {
@@ -28,7 +28,7 @@ export default function Dashboard() {
   }, []);
 
   if (loading) return <div>Loading...</div>;
-
+  console.log(data)
   return (
     <div className="bg-gradient-to-b from-primaryblue to-white">
       <NavComponent />
@@ -38,9 +38,11 @@ export default function Dashboard() {
         <div className="h-[calc(100vh-5rem)] w-full">
           <div className="h-1/4"></div>
           <div className="grid grid-cols-3 h-3/4 w-full p-14 gap-10 ">
-            {data?.map((item) => (
+            
+              
+             {data?.map((item) => (
               <Link
-                href={`/workspace/${item.workspaceID}/tasks`}
+                href={`/workspace/${item.workspaceID}/stream`}
                 key={item.workspaceID}
               >
                 <WorkspaceContainer
@@ -49,7 +51,7 @@ export default function Dashboard() {
                   progress={item.progress}
                 />
               </Link>
-            ))}
+            ))} 
           </div>
         </div>
       </div>

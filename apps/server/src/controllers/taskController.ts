@@ -606,7 +606,6 @@ export const deleteTask = async (req: Request, res: Response) => {
 
     res.status(200).send({
       message: "Task deleted successfully",
-      EXPECTED: "Task must be deleted from taskassignees table also"
     });
   } catch (err) {
     console.log(err);

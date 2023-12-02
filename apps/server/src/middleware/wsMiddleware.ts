@@ -32,7 +32,7 @@ export const wsExist = async (
 
     if (Workspace.length > 0) {
       req.workspace = Workspace[0];
-      console.log(req.workspace);
+      // console.log(req.workspace);
       next();
     } else {
       res.status(404).send({ Message: "Workspace Doesn't Exist" });
@@ -80,6 +80,7 @@ export const authorizeMember = async (
   next: NextFunction
 ) => {
   const userID = req.user.userID;
+  console.log(req.workspace);
   const wsID = req.workspace.workspaceID;
   // const wsID = parseInt(req.params.workspaceID, 10);
 
