@@ -52,11 +52,14 @@ export const authorizeAssignee = async (
     const userID: any = req.user.userID;
     const wsID = req.workspace.workspaceID;
     const taskID = req.task.taskID;
+
     if (req.workspace.projectManager !== userID) {
       const isAssignee = await db
         .select()
         .from(assignees)
-        .where(and(eq(assignees.workspaceID, wsID), eq(assignees.assigneeID, userID)))
+        .where(
+          and(eq(assignees.workspaceID, wsID), eq(assignees.assigneeID, userID))
+        )
         .limit(1);
 
       if (isAssignee.length === 0) {
@@ -69,11 +72,9 @@ export const authorizeAssignee = async (
     }
   } catch (err) {
     console.log(err);
-    res
-      .status(500)
-      .send({
-        message: "Internal server error in authorize assignee middleware",
-      });
+    res.status(500).send({
+      message: "Internal server error in authorize assignee middleware",
+    });
   }
 };
 

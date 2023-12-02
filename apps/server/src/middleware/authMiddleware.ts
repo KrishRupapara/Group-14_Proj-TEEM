@@ -36,29 +36,24 @@ export const requireAuth = (
         process.env.JWT_SECRET!
       ) as payload;
 
-      // console.log(payload);
+      req.user = payload.tokenUser;
+    } else {
+      const payload = jwt.verify(refreshToken, process.env.JWT_SECRET!) as any;
+
+      redisClient.get(payload.userID, (err, data) => {
+        if (err) throw err;
+
+        if (data != refreshToken) {
+          return res.status(401).json({ message: "Please login Again" });
+        }
+      });
+      const access_token = signJWT({ ...payload, session: payload.userID });
+
+      res.cookie("accessToken", access_token, accessTokenCookieOptions);
 
       req.user = payload.tokenUser;
-      // console.log(req.user);
-      return next();
     }
-
-    const payload = jwt.verify(refreshToken, process.env.JWT_SECRET!) as any;
-
-    redisClient.get(payload.userID, (err, data) => {
-      if (err) throw err;
-
-      if (data != refreshToken) {
-        return res.status(401).json({ message: "Please login Again" });
-      }
-    });
-    const access_token = signJWT({ ...payload, session: payload.userID });
-
-    res.cookie("accessToken", access_token, accessTokenCookieOptions);
-
-    req.user = payload.tokenUser;
-
-    next();
+    return next();
   } catch (err) {
     console.log(err);
     res.status(401).json({ message: "Unauthorized" });

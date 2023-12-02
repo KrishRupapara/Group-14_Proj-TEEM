@@ -31,7 +31,7 @@ export const wsExist = async (
 
     if (Workspace.length > 0) {
       req.workspace = Workspace[0];
-      console.log(req.workspace);
+      // console.log(req.workspace);
       next();
     } else {
       res.status(404).send({ Message: "Workspace Doesn't Exist" });

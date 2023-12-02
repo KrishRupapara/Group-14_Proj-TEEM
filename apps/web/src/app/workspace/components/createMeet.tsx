@@ -242,7 +242,7 @@ export function MeetingForm() {
           )}
         />
 
-        <Button type="submit">Update account</Button>
+        <Button type="submit">Create a meeting</Button>
       </form>
     </Form>
   );

@@ -1,10 +1,44 @@
+"use client";
 import IconType from "@/components/ui/IconType";
 import { rale } from "@/utils/fonts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
 import { cn } from "@/lib/utils";
+import { useState, useEffect } from "react";
 
-export default function TaskPage() {
+export default function TaskPage({
+  wsID,
+  taskID,
+  type,
+}: {
+  wsID: string;
+  taskID: string;
+  type: string;
+}) {
+  const [data, setData] = useState([]);
+  const [loading, isLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(
+      `http://localhost:3500/api/workspace/${wsID}/${type}/${taskID}/dashboard`,
+      {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        isLoading(false);
+        setData(data);
+        console.log(data);
+      });
+  }, [wsID, taskID, type]);
+
+  if (loading) return <div className="text-red-500">Loading...</div>;
+
   return (
     <div className="w-screen h-[calc(100vh-5.1rem)] bg-gradient-to-b from-primaryblue to-white">
       <div className="w-4/5 mx-auto pt-5">
@@ -52,9 +86,13 @@ const Assignee = () => {
         rale.className
       )}
     >
-      
       <div className="flex items-center gap-6 pb-4">
-        <FontAwesomeIcon icon={faUser} width={30} height={30} className="lg:h-12 md:h-10 sm:h-9"/>
+        <FontAwesomeIcon
+          icon={faUser}
+          width={30}
+          height={30}
+          className="lg:h-12 md:h-10 sm:h-9"
+        />
         <h1 className="text-xl font-semibold">Voldemort</h1>
       </div>
       <h2 className="text-xl">Role</h2>

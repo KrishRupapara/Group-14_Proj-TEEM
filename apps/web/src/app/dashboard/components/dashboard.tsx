@@ -12,7 +12,7 @@ export default function Dashboard() {
   ]);
 
   useEffect(() => {
-    fetch(`http://localhost:3500/api/dashboard`, {
+    fetch("http://localhost:3500/api/dashboard", {
       method: "GET",
       credentials: "include",
       headers: {
@@ -42,7 +42,7 @@ export default function Dashboard() {
               
              {data?.map((item) => (
               <Link
-                href={`/workspace/${item.workspaceID}/tasks`}
+                href={`/workspace/${item.workspaceID}/stream`}
                 key={item.workspaceID}
               >
                 <WorkspaceContainer
