@@ -78,25 +78,21 @@ export const profileGet = async (req: Request, res: Response) => {
 
 export const profilePATCH = async (req: Request, res: Response) => {
   try {
-
     var { UserName, Email, Organization, JobTitle, Country } = req.body;
 
     if (
-        UserName === undefined ||
-        Email === undefined ||
-        Organization === undefined ||
-        JobTitle === undefined ||
-        Country === undefined
+      UserName === undefined ||
+      Email === undefined ||
+      Organization === undefined ||
+      JobTitle === undefined ||
+      Country === undefined
     ) {
-      return res
-          .status(400)
-          .json({ error: "insufficient request body" });
+      return res.status(400).json({ error: "insufficient request body" });
     }
     if (!UserName)
       return res.status(400).send({ error: "UserName can not be empty" });
     if (!Email)
       return res.status(400).send({ message: "Email ID cannot be empty" });
-
 
     const existingUserData = await db
       .select({
@@ -120,12 +116,10 @@ export const profilePATCH = async (req: Request, res: Response) => {
       return res.send({ message: "You cannot change email id" });
 
     if (updatedUserData.UserName !== existingUserData[0].UserName)
-
-    if (updatedUserData.Email !== existingUserData[0].Email) {
-      return res.status(400).send({ message: "You cannot change email id" });
-    }
-    if (updatedUserData.UserName !== existingUserData[0].UserName) {
-
+      if (updatedUserData.Email !== existingUserData[0].Email) {
+        return res.status(400).send({ message: "You cannot change email id" });
+      }
+    if (updatedUserData.UserName !== existingUserData[0].UserName)
       updatedFields.name = updatedUserData.UserName;
 
     if (updatedUserData.Organization !== existingUserData[0].Organization)
@@ -143,11 +137,9 @@ export const profilePATCH = async (req: Request, res: Response) => {
         .set(updatedFields)
         .where(eq(users.userID, req.user.userID));
 
-
       // console.log(updatedUser);
 
       return res.status(200).send({ message: "Profile updated successfully" });
-
     } else {
       return res.status(200).send({ message: "Nothing to updated" });
     }
@@ -205,12 +197,10 @@ export const profileDELETE = async (req: Request, res: Response) => {
     //delete user from members table
     await db.delete(members).where(eq(userID, members.memberID));
 
-
     // // delete user from redisclient
     // redisClient.del(userToDel[0].emailId);
 
-      res.status(200).json({message : "User deleted successfully"});
-
+    res.status(200).json({ message: "User deleted successfully" });
 
     // //delete user from sessions table
     // deleteSession(userID);
