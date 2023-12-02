@@ -2,8 +2,9 @@ import { Request, Response } from "express";
 
 import { db } from "../config/database";
 import { users } from "../model/User";
-import { and, or, eq, gte, desc } from "drizzle-orm";
+import { and, or, eq, gte, desc, sql } from "drizzle-orm";
 
+// import { parseISO } from "date-fns";
 import { sendInvitation } from "../services/sendInvitation";
 
 import { workspaces, members } from "../model/Workspace";
@@ -350,7 +351,13 @@ export const getYourMeet = async (req: Request, res: Response) => {
   const filterOption = (req.query.filter as string) || "All";
   try {
     if (filterOption === "Upcoming") {
-      const currentTimestamp = new Date();
+      const currentTimestamp: Date = new Date();
+      const hours = currentTimestamp.getHours().toString().padStart(2, "0");
+      const minutes = currentTimestamp.getMinutes().toString().padStart(2, "0");
+      const seconds = currentTimestamp.getSeconds().toString().padStart(2, "0");
+
+      // Form the time string
+      const currentTime: string = `${hours}:${minutes}:${seconds}`;
       if (user_id === req.workspace.projectManager) {
         const upcomingMeet = await db
           .select({
@@ -366,10 +373,13 @@ export const getYourMeet = async (req: Request, res: Response) => {
             and(
               eq(meets.workspaceID, wsID),
               or(
-                gte(meets.meetDate, currentTimestamp.toISOString()), // Meet date is today or in the future
+                sql`${meets.meetDate} > ${currentTimestamp}`,
+                // gte(meets.meetDate, currentTimestamp), // Meet date is today or in the future
                 and(
-                  eq(meets.meetDate, currentTimestamp.toISOString()), // Meet date is today
-                  gte(meets.endTime, currentTimestamp.toISOString()) // End time is in the future
+                  sql`${meets.meetDate} = ${currentTimestamp}`,
+                  sql`${meets.endTime} > ${currentTime}`
+                  // eq(meets.meetDate, currentTimestamp), // Meet date is today
+                  // gte(meets.endTime, currentTimestamp) // End time is in the future
                 )
               )
             )
@@ -395,10 +405,13 @@ export const getYourMeet = async (req: Request, res: Response) => {
               eq(invitees.workspaceID, wsID),
               eq(invitees.inviteeID, user_id),
               or(
-                gte(meets.meetDate, currentTimestamp.toISOString()), // Meet date is today or in the future
+                sql`${meets.meetDate} > ${currentTimestamp}`,
+                // gte(meets.meetDate, currentTimestamp), // Meet date is today or in the future
                 and(
-                  eq(meets.meetDate, currentTimestamp.toISOString()), // Meet date is today
-                  gte(meets.endTime, currentTimestamp.toISOString()) // End time is in the future
+                  sql`${meets.meetDate} = ${currentTimestamp}`,
+                  sql`${meets.endTime} > ${currentTime}`
+                  // eq(meets.meetDate, currentTimestamp), // Meet date is today
+                  // gte(meets.endTime, currentTimestamp) // End time is in the future
                 )
               )
             )
@@ -684,6 +697,7 @@ function greaterThan(
 ): any {
   throw new Error("Function not implemented.");
 }
+
 // export const deleteMembers = async (req: Request, res: Response) => {
 //   try {
 
