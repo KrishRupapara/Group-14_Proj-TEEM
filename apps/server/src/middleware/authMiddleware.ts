@@ -25,6 +25,10 @@ export const requireAuth = (
 ) => {
   const { accessToken, refreshToken } = req.cookies;
 
+  // console.log(req.cookies);
+  // console.log(accessToken, refreshToken);
+  // console.log(req.user);
+
   try {
     if (accessToken) {
       const payload = jwt.verify(
@@ -32,8 +36,10 @@ export const requireAuth = (
         process.env.JWT_SECRET!
       ) as payload;
 
+      // console.log(payload);
+
       req.user = payload.tokenUser;
-        console.log(req.user);
+      // console.log(req.user);
       return next();
     }
 

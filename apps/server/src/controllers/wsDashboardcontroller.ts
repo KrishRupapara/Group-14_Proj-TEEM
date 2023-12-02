@@ -71,10 +71,10 @@ export const getStream = async (req: Request, res: Response) => {
       })),
     ];
 
-    Stream.sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
-    // console.log(Stream);
+    // Stream.sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
+    // // console.log(Stream);
 
-    res.json({Stream : Stream});
+    res.json({ Stream: Stream });
   } catch (err) {
     console.log(err);
     return res.status(500).send({ message: "Internal server error in stream" });
@@ -193,8 +193,8 @@ export const getYourWork = async (req: Request, res: Response) => {
         .orderBy(tasks.deadline);
 
       // console.log(upcomingTask);
-      res.json({upcomingTask : upcomingTask});
-    } else if(filterOption === "All") {
+      res.json({ upcomingTask: upcomingTask });
+    } else if (filterOption === "All") {
       let Work = await db
         .select({
           taskID: tasks.taskID,
@@ -219,7 +219,7 @@ export const getYourWork = async (req: Request, res: Response) => {
         .orderBy(desc(tasks.createdAt));
 
       // console.log(Work);
-      res.json({Work : Work});
+      res.json({ Work: Work });
     }
   } catch (err) {
     console.log(err);
@@ -345,7 +345,7 @@ export const getYourMeet = async (req: Request, res: Response) => {
         .orderBy(meets.meetDate);
 
       // console.log(upcomingMeet);
-      res.json(upcomingMeet);
+      // res.json(upcomingMeet);
     } else {
       const Meet = await db
         .select({
