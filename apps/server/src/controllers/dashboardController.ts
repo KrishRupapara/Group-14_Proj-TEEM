@@ -21,6 +21,8 @@ export const dashboardGet = async (req: Request, res: Response) => {
     //   .limit(1);
 
     // console.log(User[0].userID);
+    console.log("dashboard");
+    console.log(req.user.userID);
 
     const Workspace = await db
       .select({
@@ -36,12 +38,10 @@ export const dashboardGet = async (req: Request, res: Response) => {
       .innerJoin(users, eq(workspaces.projectManager, users.userID))
       .where(eq(members.memberID, req.user.userID));
 
+    console.log(Workspace);
 
-    // console.log(Workspace);
-
-    res.json({Workspace : Workspace});
-    // res.send("<h1>Welcome to TEEM dashboard</h1>");
-
+    res.json(Workspace);
+    // res.send("<h1>Welcom to TEEM dashboard</h1>");
   } catch (err) {
     console.log(err);
     return res

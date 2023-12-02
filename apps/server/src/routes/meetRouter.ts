@@ -23,7 +23,7 @@ router
   .route("/:wsID/:meetID/showInvitees")
   .get(requireAuth, authorizeMember, showInvitees);
 router
-  .route("/:wsID/:meetID/meetDashboard")
+  .route("/workspace/:wsID/meet/:meetID/dashboard")
   .get(
     requireAuth,
     wsExist,
