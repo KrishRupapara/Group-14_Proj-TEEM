@@ -39,7 +39,7 @@ export const dashboardGet = async (req: Request, res: Response) => {
 
     // console.log(Workspace);
 
-    res.json({Workspace : Workspace});
+    res.json(Workspace);
     // res.send("<h1>Welcome to TEEM dashboard</h1>");
 
   } catch (err) {
