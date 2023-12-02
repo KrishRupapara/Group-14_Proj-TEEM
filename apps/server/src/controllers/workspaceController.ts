@@ -150,7 +150,8 @@ export const getWorkspace = async (req: Request, res: Response) => {
       .select({
         title: workspaces.title,
         description: workspaces.description,
-        projectManager: users.name,
+        projectManager: workspaces.projectManager,
+        progress: workspaces.progress,
       })
       .from(workspaces)
       .where(eq(workspaces.workspaceID, wsID))
@@ -202,8 +203,8 @@ export const getWorkspace = async (req: Request, res: Response) => {
     const wsDetails = JSON.stringify(workspace).concat(JSON.stringify(wsMemArray));
    */
 
-    const wsDetails = JSON.stringify(workspace).concat(JSON.stringify(Members));
-    res.json(wsDetails);
+    // const wsDetails = JSON.stringify(workspace).concat(JSON.stringify(Members));
+    res.json(workspace);
   } catch (error) {
     console.log(error);
     return res

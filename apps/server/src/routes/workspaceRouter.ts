@@ -30,9 +30,9 @@ router
   .get(requireAuth, createWorkspaceGet)
   .post(requireAuth, createWorkspacePost);
 
-// router.use("/api", meetRouter);
-// router.route("/:wsid")
-//     .get(requireAuth, authorizeMember, getWorkspace);
+router
+  .route("/workspace/:wsID")
+  .get(requireAuth, wsExist, authorizeMember, getWorkspace);
 router
   .route("/:wsID/editWSDetails")
   .get(requireAuth, wsExist, authorizeManager, editWSDetailsGet)
@@ -46,16 +46,14 @@ router
 router
   .route("/:wsID/people")
   .get(requireAuth, wsExist, authorizeMember, getPeople);
-  // .get(getPeople);
+// .get(getPeople);
 
 router
   .route("/:wsID/yourWork")
   .get(requireAuth, wsExist, authorizeMember, getYourWork);
-  router
+router
   .route("/:wsID/yourMeet")
   .get(requireAuth, wsExist, authorizeMember, getYourMeet);
-
-
 
 router
   .route("/:wsID/editWSMembers")

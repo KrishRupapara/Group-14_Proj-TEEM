@@ -76,10 +76,16 @@ export const scheduleMeetHandler = async (req: Request, res: Response) => {
 
   if (participants.length > 0) {
     participants.forEach(async (participant: any) => {
+      const userData = await db
+        .select()
+        .from(users)
+        .where(eq(users.emailId, participant.emailId))
+        .limit(1);
+
       const participantDetails = await db
         .select()
         .from(members)
-        .where(eq(users.emailId, participant.emailId))
+        .where(eq(members.memberID, userData[0].userID))
         .limit(1);
 
       if (participantDetails.length > 0) {
@@ -91,12 +97,6 @@ export const scheduleMeetHandler = async (req: Request, res: Response) => {
             inviteeID: participantDetails[0].memberID,
           })
           .execute();
-
-        const userData = await db
-          .select()
-          .from(users)
-          .where(eq(users.userID, participantDetails[0].memberID))
-          .limit(1);
 
         if (userData.length > 0 && userData[0].gmailID) {
           insertEvent({

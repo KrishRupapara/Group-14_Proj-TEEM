@@ -49,7 +49,7 @@ export const getStream = async (req: Request, res: Response) => {
     const Stream: streamObject[] = [
       ...taskStream.map((task) => ({
         objectID: task.taskID,
-        objectType: "Task",
+        objectType: "task",
         objectTitle: task.title,
         objectDescription: task.description,
         objectStatus: task.status ? task.status : null,
@@ -58,16 +58,19 @@ export const getStream = async (req: Request, res: Response) => {
       })),
       ...meetStream.map((meet) => ({
         objectID: meet.meetID,
-        objectType: "Meet",
+        objectType: "meet",
         objectTitle: meet.title,
         objectDescription: meet.agenda,
         objectStatus: meet.meetDate
-          ? new Date(meet.meetDate) > currentTimestamp
+          ? new Date(meet.meetDate) > currentTimestamp ||
+            (new Date(meet.meetDate).getDate() === currentTimestamp.getDate() &&
+              new Date(meet.endTime) > currentTimestamp)
             ? "UPCOMING"
             : "DONE"
           : null,
         // objectTime: meet.meetTime ? new Date(meet.meetTime) : null,
         created_at: meet.createdAt,
+        meetDate: meet.meetDate,
       })),
     ];
 
