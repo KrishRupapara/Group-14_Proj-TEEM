@@ -125,7 +125,7 @@ export const getPeople = async (req: Request, res: Response) => {
       .from(members)
       .innerJoin(users, eq(members.memberID, users.userID))
       .where(
-        and(eq(members.workspaceID, wsID), eq(members.role, "collaborator"))
+        and(eq(members.workspaceID, wsID), eq(members.role, "Client"))
       );
     // console.log(Teammate);
 
@@ -138,7 +138,7 @@ export const getPeople = async (req: Request, res: Response) => {
       })
       .from(members)
       .innerJoin(users, eq(members.memberID, users.userID))
-      .where(and(eq(members.workspaceID, wsID), eq(members.role, "Client")));
+      .where(and(eq(members.workspaceID, wsID), eq(members.role, "collaborator")));
     // console.log(Teammate);
 
     const People = {
