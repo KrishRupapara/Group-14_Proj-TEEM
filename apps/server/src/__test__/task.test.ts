@@ -777,7 +777,7 @@ describe('deleteTask', () => {
  it('should delete task succesfully and return a status code of 200', async () => {
 
     const wsID =  19;
-    const taskID = 71;
+    const taskID = 69;
  
   const response = await supertest(app)
   .delete(`/api/${wsID}/${taskID}/editTaskDetails`)
