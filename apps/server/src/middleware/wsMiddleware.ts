@@ -11,11 +11,12 @@ export const wsExist = async (
   res: Response,
   next: NextFunction
 ) => {
-  const wsID = parseInt(req.params.wsID, 10);
+  const wsID:any = parseInt(req.params.wsID, 10);
 
-  if (isNaN(wsID)) {
-    return res.status(400).send({ Message: "Invalid wsID" });
+  if (wsID != req.params.wsID) {
+    return res.status(400).send({Error: "Invalid wsID"});
   }
+
   try {
     const Workspace = await db
       .select({
@@ -62,7 +63,7 @@ export const authorizeManager = async (
   try {
     if (req.workspace.projectManager === userID) next();
     else {
-      res.status(401).send({ Message: "You do not own the workspace" });
+      res.status(401).send({error: "You do not own the workspace"});
     }
   } catch (error) {
     console.log(error);

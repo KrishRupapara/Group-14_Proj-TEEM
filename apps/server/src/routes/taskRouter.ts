@@ -29,8 +29,7 @@ import {
 
 const router: Router = Router();
 
-router
-  .route("/:wsID/assignTask")
+router.route("/:wsID/assignTask")
   .get(requireAuth, wsExist, authorizeManager, assignTaskGet)
   .post(requireAuth, wsExist, authorizeManager, assignTaskPost);
 
@@ -72,6 +71,25 @@ router
     getTaskDetails,
     editTaskAssigneesPATCH
   );
+
+  router
+  .route("/:wsID/:taskID/editTaskDetails")
+  .get(
+    requireAuth,
+    wsExist,
+    authorizeManager,
+    taskExist,
+    getTaskDetails,
+    editTaskDetailsGet
+  )
+  .patch(
+    requireAuth,
+    wsExist,
+    authorizeManager,
+    taskExist,
+    getTaskDetails,
+    editTaskDetailsPATCH
+  )
 
 router
   .route("/:wsID/:taskID/editTaskDetails")
