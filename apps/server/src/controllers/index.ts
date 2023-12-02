@@ -29,7 +29,7 @@ import {
   profilePATCH,
 } from "./dashboardController";
 
-import { scheduleMeetHandler, deleteMeet } from "./meetController";
+import { deleteMeet, scheduleMeetHandler } from "./meetController";
 
 import {
   assignTaskGet,
@@ -94,7 +94,6 @@ export {
   //addTaskAssignees,
   //removeTaskAssignees,
   profileGet,
-  scheduleMeetHandler,
   oauthHanlder,
   getPeople,
   getYourWork,
@@ -114,5 +113,6 @@ export {
   profileDELETE,
   deleteTask,
   taskDashboard,
-  meetDashboard
+  meetDashboard,
+  scheduleMeetHandler,
 };

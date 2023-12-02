@@ -8,7 +8,12 @@ import { invitees } from "../model/MeetInvitee";
 import { members } from "../model/Workspace";
 import type { event } from "../types/calendarEvent";
 import { client as redisClient } from "../config/redisConnect";
-import { oauth2Client, calendar } from "../services/calendarService";
+import {
+  oauth2Client,
+  calendar,
+  insertEvent,
+  deleteCalendarEvent,
+} from "../services/calendarService";
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -21,23 +26,20 @@ export const scheduleMeetHandler = async (req: Request, res: Response) => {
     date,
     startTime,
     endTime,
+    venue,
     participants = [],
   } = req.body;
 
-  const { workspaceID } = req.params;
+  const { wsID } = req.params;
+  console.log(req.user);
 
-  if (!req.user.userID) {
-    return res.send({ message: "Please login again!!" });
-  }
-
-  if (!title || !agenda || !date || !startTime || !endTime) {
+  if (!title || !agenda || !date) {
     return res
       .status(400)
       .send({ error: "Please enter required informations" });
   }
 
-  console.log("User id is ", req.user.userID);
-  // const meetDate = new Date(date + " " + time);
+  let outsideParticipants: Array<string> = [];
 
   const meet = await db
     .insert(meets)
@@ -46,14 +48,31 @@ export const scheduleMeetHandler = async (req: Request, res: Response) => {
       agenda: agenda,
       description: description,
       meetDate: date,
-      startTime : startTime,
-      endTime : endTime,
-      workspaceID: parseInt(workspaceID),
+      startTime: startTime,
+      endTime: endTime,
+      venue: venue,
+      workspaceID: parseInt(wsID),
       organizerID: req.user.userID,
-      createdAt: new Date(),
     })
     .returning({ meet_id: meets.meetID })
     .execute();
+
+  const organizerData = await db
+    .select()
+    .from(users)
+    .where(eq(users.userID, req.user.userID))
+    .limit(1);
+
+  if (organizerData.length > 0 && organizerData[0].gmailID) {
+    insertEvent({
+      userID: organizerData[0].userID,
+      summary: title,
+      description: agenda,
+      startTime: `${date}T${startTime}:00+05:30`,
+      endTime: `${date}T${endTime}:00+05:30`,
+      organizerEmail: organizerData[0].gmailID,
+    });
+  }
 
   if (participants.length > 0) {
     participants.forEach(async (participant: any) => {
@@ -68,48 +87,43 @@ export const scheduleMeetHandler = async (req: Request, res: Response) => {
           .insert(invitees)
           .values({
             meetID: meet[0].meet_id,
-            workspaceID: parseInt(workspaceID),
+            workspaceID: parseInt(wsID),
             inviteeID: participantDetails[0].memberID,
           })
           .execute();
+
+        const userData = await db
+          .select()
+          .from(users)
+          .where(eq(users.userID, participantDetails[0].memberID))
+          .limit(1);
+
+        if (userData.length > 0 && userData[0].gmailID) {
+          insertEvent({
+            userID: userData[0].userID,
+            summary: title,
+            description: agenda,
+            startTime: `${date}T${startTime}:00+05:30`,
+            endTime: `${date}T${endTime}:00+05:30`,
+            organizerEmail:
+              organizerData[0].gmailID || organizerData[0].emailId,
+          });
+        }
+      } else {
+        outsideParticipants.push(participant.emailId);
       }
+    });
+  }
+
+  if (outsideParticipants.length > 0) {
+    res.status(201).send({
+      message: "Meet scheduled successfully",
+      outsideParticipants: outsideParticipants,
     });
   }
 
   res.status(201).send({ message: "Meet scheduled successfully" });
 };
-
-// export const getCalendarEvents = async (req: Request, res: Response) => {
-//   try {
-//     const { userId } = req.query;
-//     const token = await redisClient.hgetall(
-//       userId + "_google_token",
-//       (err, token) => {
-//         if (err) {
-//           console.log(err);
-//           return;
-//         }
-//         return token;
-//       }
-//     );
-
-//     oauth2Client.setCredentials(token);
-
-//     const response = await calendar.events.insert({
-//       auth: oauth2Client,
-//       calendarId: "primary",
-//       requestBody: event,
-//     });
-
-//     res.json({
-//       message: "Meet scheduled successfully",
-//       link: response.data.htmlLink,
-//     });
-//   } catch (err) {
-//     console.log(err);
-//     res.json(err);
-//   }
-// };
 
 export const getCalendarEvents = async (req: Request, res: Response) => {
   try {
@@ -125,8 +139,6 @@ export const getCalendarEvents = async (req: Request, res: Response) => {
         return token;
       }
     );
-
-    // console.log(token);
 
     oauth2Client.setCredentials(token);
 
@@ -153,9 +165,32 @@ export const getCalendarEvents = async (req: Request, res: Response) => {
 export const deleteMeet = async (req: Request, res: Response) => {
   try {
     // getting meetID from params
-    const meetIDToDelete: any = req.params.meetID;
-    //getting workspaceID from params
-    const wsID: any = req.params.wsID;
+    const meetIDToDelete = parseInt(req.params.meetID);
+
+    //getting workspaceID
+    const wsID = req.workspace.workspaceID;
+
+    const meetingDetails = await db
+      .select()
+      .from(meets)
+      .where(eq(meets.meetID, meetIDToDelete))
+      .limit(1);
+
+    if (meetingDetails.length === 0) {
+      return res.status(400).send({ message: "No such meet exists" });
+    }
+
+    if (meetingDetails[0].organizerID !== req.user.userID) {
+      return res
+        .status(400)
+        .send({ message: "You are not authorized to delete this meet" });
+    }
+
+    //delete meet from google calendar
+    deleteCalendarEvent({
+      userID: req.user.userID,
+      eventId: "eventID",
+    });
 
     //delete meet from meet table
     await db
@@ -166,12 +201,11 @@ export const deleteMeet = async (req: Request, res: Response) => {
     await db
       .delete(invitees)
       .where(
-        eq(invitees.meetID, meetIDToDelete) && eq(invitees.workspaceID, wsID)
+        and(eq(invitees.meetID, meetIDToDelete), eq(invitees.workspaceID, wsID))
       );
 
-    res.json({
+    res.send({
       message: "meet deleted successfully",
-      EXPECTED: "tMeet must be deleted from meetinvitees table also",
     });
   } catch (err) {
     console.log(err);

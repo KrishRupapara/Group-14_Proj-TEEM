@@ -26,14 +26,15 @@ export const meets = pgTable(
     workspaceID: integer("workspaceID").notNull(),
     organizerID: integer("organizerID").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
-    
   },
   (table) => {
     return {
       fk: foreignKey({
         columns: [table.workspaceID, table.organizerID],
-        foreignColumns: [members.workspaceID, members.memberID]
-      }).onDelete("cascade").onUpdate("cascade"),
+        foreignColumns: [members.workspaceID, members.memberID],
+      })
+        .onDelete("cascade")
+        .onUpdate("cascade"),
 
       pk: primaryKey(table.meetID, table.workspaceID, table.organizerID),
     };
