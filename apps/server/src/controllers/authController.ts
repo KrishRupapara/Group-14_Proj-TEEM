@@ -144,6 +144,9 @@ export const loginHandler = async (req: Request, res: Response) => {
     //   return res.status(200).send({ message: "Already logged in" });
     // }
 
+//       return res.status(200).send({ message: "Already logged in" });
+    
+
 
     const access_token = signJWT({ tokenUser }, { expiresIn: "24h" });
 

@@ -46,7 +46,7 @@ export const taskDashboard = async (req: Request, res: Response) => {
         Assignees: Assignees,
       };
 
-      res.json(taskDashboard);
+      res.status(200).json(taskDashboard);
 
   } catch (err) {
     console.log(err);
