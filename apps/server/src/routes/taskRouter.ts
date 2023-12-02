@@ -29,8 +29,7 @@ import {
 
 const router: Router = Router();
 
-router
-  .route("/:wsID/assignTask")
+router.route("/:wsID/assignTask")
   .get(requireAuth, wsExist, authorizeManager, assignTaskGet)
   .post(requireAuth, wsExist, authorizeManager, assignTaskPost);
 
@@ -39,6 +38,15 @@ router.route("/:wsID/:taskID/getTask")
 
 router.route("/:wsID/:taskID/taskDashboard")
   .get(requireAuth, wsExist, authorizeMember,  taskExist, authorizeAssignee, taskDashboard );
+
+router.route("/:wsID/:taskID/editTaskDetails")
+  .get(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, editTaskDetailsGet)
+  .patch(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, editTaskDetailsPATCH)
+  .delete(requireAuth, wsExist, authorizeManager, taskExist, deleteTask);
+
+router.route("/:wsID/:taskID/editTaskAssignees")
+  .get(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, editTaskAssigneesGet)
+  .patch(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, editTaskAssigneesPATCH);
   
 // router.route("/:wsID/:taskID/showAssignees")
 //   .get(requireAuth, wsExist, authorizeMember,  taskExist, getTaskDetails, showAssignees );
@@ -47,13 +55,9 @@ router.route("/:wsID/:taskID/taskDashboard")
 //     .get(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, editTaskDetailsGet)
 //     .patch(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, editTaskDetailsPATCH);
 
-router.route("/:wsID/:taskID/editTaskAssignees")
-    .get(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, editTaskAssigneesGet)
-    .patch(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, editTaskAssigneesPATCH);
 
-    router.route("/:wsID/:taskID/editTaskDetails")
-    // .get(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, editTaskAssigneesGet)
-    .delete(requireAuth, wsExist, authorizeManager, taskExist, getTaskDetails, deleteTask);
+
+    
   /*
 router.route("/:wsID/:taskID/settingsTask/:toDo")
   .get(requireAuth, wsExist, authorizeManager, getTaskDetails, settingsTaskGet)

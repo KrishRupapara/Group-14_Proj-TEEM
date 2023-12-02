@@ -21,12 +21,14 @@ export const updateProjectProgress = async (wsID: any) => {
 
       Progress = (completedTasks / totalTasks) * 100;
       roundedProgress = Math.floor(Progress);
+      /*
       console.log({
         totalTasks: totalTasks,
         completedTasks: completedTasks,
         Progress: Progress,
         roundedProgress: roundedProgress,
       });
+      */
     }
     const updatedProgress = await db
       .update(workspaces)

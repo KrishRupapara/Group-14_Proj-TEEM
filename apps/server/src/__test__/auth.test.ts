@@ -13,8 +13,8 @@ import { app } from "../index";
 describe("signupHandler", () => {
   it("should send a status code of 200 when new user created", async () => {
     const userData = {
-      email: "dummy4@gmail.com",
-      name: "dummy 4",
+      email: "dummy5@gmail.com",
+      name: "dummy 5",
       password: "12345678",
       organization: "abc",
       jobTitle: "abc",

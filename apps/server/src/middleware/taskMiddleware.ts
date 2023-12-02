@@ -13,8 +13,9 @@ export const taskExist = async (
 ) => {
   try {
     const taskID: any = parseInt(req.params.taskID, 10);
-    if (isNaN(taskID)) {
-      return res.status(400).send("Invalid taskID");
+   
+    if (taskID != req.params.taskID) {
+    return res.status(400).send({Error: "Invalid taskID"});
     }
     const wsID = req.workspace.workspaceID;
 
@@ -60,7 +61,7 @@ export const authorizeAssignee = async (
         .limit(1);
 
       if (isAssignee.length === 0) {
-        res.send("You have not been assigned to this task");
+        res.status(401).send({error: "You have not been assigned to this task"});
       } else {
         next();
       }

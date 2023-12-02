@@ -22,7 +22,7 @@ export const assignTaskPost = async (req: Request, res: Response) => {
   const wsID = req.workspace.workspaceID;
 
   if (!(title && deadline)) {
-    return res.status(400).send({ error: "Title is required" });
+    return res.status(400).send({ error: "Enter Mandatory Fields" });
   }
 
   // console.log(deadline);
@@ -93,7 +93,7 @@ export const assignTaskPost = async (req: Request, res: Response) => {
         unregisteredAssignee: unregisteredAssignee,
       });
     } else {
-      res.send({ message: "Task assigned successfully", assignee });
+      res.status(201).send({ message: "Task assigned successfully", assignee });
     }
 
     const updatedProgress = await updateProjectProgress(wsID);
@@ -102,6 +102,70 @@ export const assignTaskPost = async (req: Request, res: Response) => {
     // await sendTask(Workspace[0].title, title, assignee); // send mail to assignees(only member)
   } catch (err) {
     console.log(err);
+    return res.status(500).send({ message: "Internal server error in task" });
+  }
+};
+
+export const editTaskDetailsGet = async (req: Request, res: Response) => {
+  res.status(200).send({
+    Title: res.locals.taskTitle,
+    Description: res.locals.taskDescription,
+    Deadline: res.locals.taskDeadline,
+    Status: res.locals.taskStatus,
+  });
+};
+
+export const editTaskDetailsPATCH = async (req: Request, res: Response) => {
+  const wsID: any = req.params.wsID;
+  const taskID: any = req.params.taskID;
+ // const toDo: any = req.params.action;
+
+  var { title, description, deadline, type, status } = req.body;
+
+  try {
+
+    if (title === undefined || description === undefined || type === undefined || status === undefined) {
+      console.log(undefined);
+      return res.status(400).json({ error: "Fields are required" });
+    }
+ else if (title === null || title === "") 
+     return res.status(400).send({ error: "Title can not be empty"});
+
+ else{
+    if (title !== res.locals.taskTitle) {
+      await db
+        .update(tasks)
+        .set({ title: title })
+        .where(and(eq(tasks.workspaceID, wsID), eq(tasks.taskID, taskID)));
+    }
+
+    if (description !== res.locals.taskDescription) {
+      await db
+        .update(tasks)
+        .set({ description: description })
+        .where(and(eq(tasks.workspaceID, wsID), eq(tasks.taskID, taskID)));
+    }
+
+    if (deadline !== res.locals.taskDeadline) {
+      await db
+        .update(tasks)
+        .set({ deadline: new Date(deadline) as any })
+        .where(and(eq(tasks.workspaceID, wsID), eq(tasks.taskID, taskID)));
+    }
+
+    if (status !== res.locals.taskStatus) {
+      await db
+        .update(tasks)
+        .set({ status: status })
+        .where(and(eq(tasks.workspaceID, wsID), eq(tasks.taskID, taskID)));
+    }
+    
+   
+    res.status(200).send({message: "Task Edited Successfully"})
+
+  }
+ } catch (error) {
+    console.log(error);
     return res.status(500).send({ message: "Internal server error in task" });
   }
 };
@@ -124,57 +188,7 @@ export const showAssignees = async (req: Request, res: Response) => {
 
     console.log(Assignees[0]);
     */
-    res.status(200).send({ Asignees: res.locals.assignees });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).send({ message: "Internal server error in task" });
-  }
-};
-
-export const editTaskDetailsGet = async (req: Request, res: Response) => {
-  res.status(200).send({
-    Title: res.locals.taskTitle,
-    Description: res.locals.taskDescription,
-    Deadline: res.locals.taskDeadline,
-    Status: res.locals.taskStatus,
-  });
-};
-
-export const editTaskDetailsPATCH = async (req: Request, res: Response) => {
-  const wsID: any = req.params.wsID;
-  const taskID: any = req.params.taskID;
-  const toDo: any = req.params.action;
-
-  var { title, description, deadline, status } = req.body;
-
-  try {
-    if (title !== res.locals.taskTitle) {
-      await db
-        .update(tasks)
-        .set({ title: title })
-        .where(and(eq(tasks.workspaceID, wsID), eq(tasks.taskID, taskID)));
-    }
-
-    if (description !== res.locals.taskDescription) {
-      await db
-        .update(tasks)
-        .set({ description: description })
-        .where(and(eq(tasks.workspaceID, wsID), eq(tasks.taskID, taskID)));
-    }
-
-    if (deadline !== res.locals.taskDeadline) {
-      await db
-        .update(tasks)
-        .set({ deadline: deadline })
-        .where(and(eq(tasks.workspaceID, wsID), eq(tasks.taskID, taskID)));
-    }
-
-    if (status !== res.locals.taskStatus) {
-      await db
-        .update(tasks)
-        .set({ status: status })
-        .where(and(eq(tasks.workspaceID, wsID), eq(tasks.taskID, taskID)));
-    }
+    res.status(200).send({Assignees: res.locals.assignees});
   } catch (error) {
     console.log(error);
     return res.status(500).send({ message: "Internal server error in task" });
@@ -194,13 +208,14 @@ export const editTaskAssigneesPATCH = async (req: Request, res: Response) => {
   const unregisteredAssignee: string[] = []; //users which are part of workspace
 
   var { Assignees = [] } = req.body;
+  
+  try{
+  if(Assignees.length === 0)
+    res.status(400).send({Error: "Can't Add Empty Assignees"});
 
-  try {
-    await db
-      .delete(assignees)
-      .where(
-        and(eq(assignees.workspaceID, wsID), eq(assignees.taskID, taskID))
-      );
+    else{
+
+
 
     for (const Assignee of Assignees) {
       const { assignee_id } = Assignee;
@@ -217,12 +232,7 @@ export const editTaskAssigneesPATCH = async (req: Request, res: Response) => {
           const member = await db
             .select()
             .from(members)
-            .where(
-              and(
-                eq(members.workspaceID, wsID),
-                eq(members.memberID, User[0].userID)
-              )
-            )
+            .where(and(eq(members.workspaceID, wsID), eq(members.memberID, User[0].userID)))
             .limit(1);
 
           console.log(member[0]);
@@ -232,32 +242,60 @@ export const editTaskAssigneesPATCH = async (req: Request, res: Response) => {
             nonmemberAssignee.push(assignee_id);
           } else {
             assignee.push(assignee_id);
-            // Add registered members to the workspace
-            await db.insert(assignees).values({
-              taskID: taskID,
-              workspaceID: wsID,
-              assigneeID: member[0].memberID,
-            });
+  
           }
         } else {
           unregisteredAssignee.push(assignee_id);
         }
 
-        if (nonmemberAssignee.length > 0 || unregisteredAssignee.length > 0) {
-          res.status(201).send({
-            message: "Task assigned only to workspace member",
-            memberAssignee: assignee,
-            NonmemberAssignee: nonmemberAssignee,
-            unregisteredAssignee: unregisteredAssignee,
-          });
-        } else {
-          res.status(201).send({ message: "Assigned Members Added", assignee });
-        }
-      } else {
-        res.send("Can't Add Empty Assignee");
-      }
+        
     }
-    res.status(200).send("Task Details Edited Successfully");
+  }
+
+    if(assignee.length === 0)
+    {
+        res.status(400).send({Error: "No changes made as no assignee is part of the workspace"})
+        
+    }
+
+    else{
+    await db
+    .delete(assignees)
+    .where(
+      and(eq(assignees.workspaceID, wsID), eq(assignees.taskID, taskID))
+    );
+
+    for(var i = 0 ; i< assignee.length; ++i)
+    { 
+      const User = await db
+          .select()
+          .from(users)
+          .where(eq(users.emailId, assignee[i]))
+          .limit(1);
+
+      await db
+      .insert(assignees)
+      .values({
+        taskID: taskID,
+        workspaceID: wsID,
+        assigneeID: User[0].userID,
+      });
+    }
+
+    if (nonmemberAssignee.length > 0 || unregisteredAssignee.length > 0) {
+      res.status(201).send({
+        message: "Task assigned only to workspace member",
+        memberAssignee: assignee,
+        NonmemberAssignee: nonmemberAssignee,
+        unregisteredAssignee: unregisteredAssignee,
+      });
+    } 
+    else {
+      res.status(201).send({ message: "Assigned Members Added", assignee });
+    }
+
+  }
+    }
   } catch (error) {
     console.log(error);
     return res.status(500).send({ message: "Internal server error in task" });
@@ -566,9 +604,9 @@ export const deleteTask = async (req: Request, res: Response) => {
     //delete task from taskassignees table
     await db.delete(assignees).where(eq(assignees.taskID, taskIDToDelete));
 
-    res.json({
+    res.status(200).send({
       message: "Task deleted successfully",
-      EXPECTED: "task must be deleted from taskassignees table also",
+      EXPECTED: "Task must be deleted from taskassignees table also"
     });
   } catch (err) {
     console.log(err);

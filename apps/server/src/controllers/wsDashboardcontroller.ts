@@ -431,6 +431,8 @@ export const editWsDetailsPATCH = async (req: Request, res: Response) => {
   const { title, description, type } = req.body;
 
   try {
+
+
     await db
       .update(workspaces)
       .set({
