@@ -73,7 +73,7 @@ router
   );
 
   router
-  .route("/:wsID/:taskID/editTaskAssignees")
+  .route("/:wsID/:taskID/editTaskDetails")
   .get(
     requireAuth,
     wsExist,
