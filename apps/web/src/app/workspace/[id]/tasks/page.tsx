@@ -1,8 +1,12 @@
-import React from "react";
 import Tasks from "../../components/tasks";
 import Progressbar from "@/components/ui/progress-bar";
+import { headers } from "next/headers";
 
 export default function page() {
+  const head = headers();
+  const workspaceId = head.get("next-url")!.split("/")[2];
+  console.log(workspaceId);
+
   return (
     <div className="Projectbg h-[calc(100vh-5.1rem)]">
       <div className="w-fit lg:w-4/5 md:w-4/5 sm:w-4/5 mx-auto p-10">
@@ -16,8 +20,8 @@ export default function page() {
           </div>
         </div>
         <>
-          <Tasks type="meet" />
-          <Tasks type="task" />
+          <Tasks type="meet" workspaceId={workspaceId} />
+          <Tasks type="task" workspaceId={workspaceId} />
         </>
       </div>
     </div>

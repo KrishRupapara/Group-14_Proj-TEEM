@@ -3,9 +3,15 @@ import { cn } from "@/lib/utils";
 import IconType from "@/components/ui/IconType";
 import Link from "next/link";
 
-export default function Tasks({ type }: { type: string }) {
+export default function Tasks({
+  type,
+  workspaceId,
+}: {
+  type: string;
+  workspaceId: string;
+}) {
   return (
-    <Link href={"/project/1/tasks/1"}>
+    <Link href={`/workspace/${workspaceId}/tasks/1`}>
       <div className="border rounded-2xl bg-white flex items-center justify-between mt-5 px-5 py-2 cursor-pointer hover:bg-[#ebf2ff] transition-all shadow-sm">
         <div className="flex gap-6 items-center">
           <IconType type={type} />
