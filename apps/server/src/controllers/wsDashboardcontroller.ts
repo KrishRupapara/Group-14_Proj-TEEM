@@ -71,10 +71,10 @@ export const getStream = async (req: Request, res: Response) => {
       })),
     ];
 
-    Stream.sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
-    // console.log(Stream);
+    // Stream.sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
+    // // console.log(Stream);
 
-    res.json(Stream);
+    res.json({ Stream: Stream });
   } catch (err) {
     console.log(err);
     return res.status(500).send({ message: "Internal server error in stream" });
@@ -91,26 +91,6 @@ export const getPeople = async (req: Request, res: Response) => {
 
   // const user_id = req.user.userID;
   try {
-    // const Workspace = await db
-    //   .select({
-    //     title: workspaces.title,
-    //     description: workspaces.description,
-    //     progress: workspaces.progress,
-    //     projectManager: users.name,
-    //     type: workspaces.title,
-    //     created_at: workspaces.createdAt,
-    //   })
-    //   .from(workspaces)
-    //   .innerJoin(users, eq(workspaces.projectManager, users.userID))
-    //   .where(eq(workspaces.workspaceID, wsID));
-
-    const people = await db
-      .select()
-      .from(members)
-      .where(eq(members.workspaceID, wsID));
-
-    console.log(people);
-
     const Manager = await db
       .select({
         userID: users.userID,
@@ -167,7 +147,7 @@ export const getPeople = async (req: Request, res: Response) => {
       Collaborator: Collaborator,
       Client: Client,
     };
-    console.log(People);
+    // console.log(People);
 
     return res.json({ People: People });
   } catch (err) {
@@ -213,8 +193,8 @@ export const getYourWork = async (req: Request, res: Response) => {
         .orderBy(tasks.deadline);
 
       // console.log(upcomingTask);
-      res.json(upcomingTask);
-    } else {
+      res.json({ upcomingTask: upcomingTask });
+    } else if (filterOption === "All") {
       let Work = await db
         .select({
           taskID: tasks.taskID,
@@ -239,7 +219,7 @@ export const getYourWork = async (req: Request, res: Response) => {
         .orderBy(desc(tasks.createdAt));
 
       // console.log(Work);
-      res.json(Work);
+      res.json({ Work: Work });
     }
   } catch (err) {
     console.log(err);
@@ -362,10 +342,10 @@ export const getYourMeet = async (req: Request, res: Response) => {
             )
           )
         )
-      .orderBy(meets.meetDate);
+        .orderBy(meets.meetDate);
 
       // console.log(upcomingMeet);
-      res.json(upcomingMeet);
+      // res.json(upcomingMeet);
     } else {
       const Meet = await db
         .select({
@@ -401,7 +381,7 @@ export const getYourMeet = async (req: Request, res: Response) => {
 };
 
 export const editWSDetailsGet = async (req: Request, res: Response) => {
-  const wsID: any = req.params.wsID;
+  const wsID: any = req.workspace.workspaceID;
 
   try {
     const Workspace = await db
@@ -414,7 +394,7 @@ export const editWSDetailsGet = async (req: Request, res: Response) => {
       .where(eq(workspaces.workspaceID, wsID))
       .limit(1);
 
-    res.json(Workspace);
+    res.status(200).json(Workspace[0]);
   } catch (error) {
     console.log(error);
     return res
@@ -424,15 +404,27 @@ export const editWSDetailsGet = async (req: Request, res: Response) => {
 };
 
 export const editWsDetailsPATCH = async (req: Request, res: Response) => {
-  const wsID: any = req.params.wsID;
+  const wsID: any = req.workspace.workspaceID;
   const userID: any = req.user.userID;
   // const toDo:any = req.params.action;
 
-  const { title, description, type } = req.body;
+  // if (!description) return res.status(400).send({ error: "description is required" });
+  // if (!type) return res.status(400).send({ error: "type is required" });
 
   try {
-
-
+    const { title, description, type } = req.body;
+    if (
+      title === undefined ||
+      description === undefined ||
+      type === undefined
+    ) {
+      return res
+        .status(400)
+        .json({ error: "Title, description, and type are required" });
+    }
+    if (!title)
+      return res.status(400).send({ error: "Title can not be empty" });
+    if (!type) return res.status(400).send({ error: "Type can not be empty" });
     await db
       .update(workspaces)
       .set({
@@ -442,7 +434,7 @@ export const editWsDetailsPATCH = async (req: Request, res: Response) => {
       })
       .where(eq(workspaces.workspaceID, wsID));
 
-    res.send({ message: "Settings Saved" });
+    res.status(200).send({ message: "Settings Saved" });
   } catch (error) {
     console.log(error);
     return res
@@ -452,7 +444,7 @@ export const editWsDetailsPATCH = async (req: Request, res: Response) => {
 };
 
 export const editWSMembersGet = async (req: Request, res: Response) => {
-  const wsID: any = req.params.wsID;
+  const wsID: any = req.workspace.workspaceID;
 
   try {
     const Members = await db
@@ -474,7 +466,7 @@ export const editWSMembersGet = async (req: Request, res: Response) => {
 };
 
 export const editWSMembersPATCH = async (req: Request, res: Response) => {
-  const wsID: any = req.params.wsID;
+  const wsID: any = req.workspace.workspaceID;
   const userID: any = req.user.userID;
   const { Members = [] } = req.body;
   const unregisteredMembers: string[] = [];
@@ -537,7 +529,7 @@ export const editWSMembersPATCH = async (req: Request, res: Response) => {
         unregisteredMembers,
       });
     } else {
-      res.send({ message: "Settings Saved" });
+      res.status(200).send({ message: "Settings Saved" });
     }
   } catch (error) {
     console.log(error);
@@ -550,7 +542,7 @@ export const editWSMembersPATCH = async (req: Request, res: Response) => {
 export const deleteWorkspaceDELETE = async (req: Request, res: Response) => {
   try {
     // checking for params
-    const wsID: any = req.params.wsID;
+    const wsID: any = req.workspace.workspaceID;
 
     const currentWorkspace = await db
       .select()
@@ -585,7 +577,9 @@ export const deleteWorkspaceDELETE = async (req: Request, res: Response) => {
     //delete workspace from taskassignees table
     await db.delete(assignees).where(eq(wsID, assignees.workspaceID));
 
-    res.send("Workspace deleted successfully");
+    res.status(200).send({
+      Message: "Workspace deleted successfully",
+    });
   } catch (err) {
     console.log(err);
     return res

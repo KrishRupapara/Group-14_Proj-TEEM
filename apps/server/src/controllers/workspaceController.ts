@@ -28,11 +28,11 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
   var { title, type, description, Members = [] } = req.body;
 
   if (!title) {
-    return res.status(400).send({ error: "Tilte is required" });
+    return res.status(400).send({ error: "Title is required" });
   }
 
-  const userID: any = req.user.userID;
-  console.log(userID);
+  const userID = req.user.userID;
+  console.log("from the variable", userID);
 
   const unregisteredMembers: string[] = [];
   const registeredMembers: string[] = [];
@@ -40,10 +40,10 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
   const ProjectManager = await db
     .select()
     .from(users)
-
     .where(eq(users.userID, userID))
-
     .limit(1);
+
+  console.log(ProjectManager);
 
   try {
     const workspace_id = await db
@@ -123,8 +123,6 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
     // await sendInvite(ProjectManager[0].name, title, registeredMembers);
 
     // await sendInvite(ProjectManager[0].name,title,registeredMembers);
-
-    
   } catch (err) {
     console.log(err);
     return res

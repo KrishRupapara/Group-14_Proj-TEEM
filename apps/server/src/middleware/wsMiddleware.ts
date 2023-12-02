@@ -79,8 +79,9 @@ export const authorizeMember = async (
   res: Response,
   next: NextFunction
 ) => {
-  const userID: any = req.user.userID;
+  const userID = req.user.userID;
   const wsID = req.workspace.workspaceID;
+  // const wsID = parseInt(req.params.workspaceID, 10);
 
   try {
     if (req.workspace.projectManager !== userID) {
@@ -91,7 +92,9 @@ export const authorizeMember = async (
         .limit(1);
 
       if (isMemeber.length === 0) {
-        res.send("You are not a part of the workspace");
+        res.status(401).send({
+          Message: "You are not a part of the workspace",
+        });
       } else {
         next();
       }
