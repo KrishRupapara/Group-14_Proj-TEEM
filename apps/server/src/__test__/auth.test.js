@@ -5,7 +5,7 @@ const expect = require('chai').expect;
 describe("signupHandler", () => {
   it("should send a status code of 200 when new user created", async () => {
     const userData = {
-      email: "new10@gmail.com",
+      email: "new11@gmail.com",
       name: "dummy 4",
       password: "12345678",
       organization: "abc",
