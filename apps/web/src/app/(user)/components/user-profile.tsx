@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -33,6 +33,7 @@ export default function UserProfile() {
     JobTitle: "",
     Organization: "",
   });
+  const server = process.env.NEXT_PUBLIC_SERVER;
 
   const form = useForm<UserProfileSchemaType>({
     resolver: zodResolver(UserProfileSchema),
@@ -41,7 +42,7 @@ export default function UserProfile() {
   });
 
   useEffect(() => {
-    fetch(`http://localhost:3500/api/profile`, {
+    fetch(`${server}/api/profile`, {
       method: "GET",
       credentials: "include",
       headers: {
@@ -57,7 +58,7 @@ export default function UserProfile() {
   }, []);
 
   function onSubmit(data: UserProfileSchemaType) {
-    fetch(`http://localhost:3500/api/profile`, {
+    fetch(`${server}/api/profile`, {
       method: "PATCH",
       credentials: "include",
       headers: {
@@ -73,7 +74,7 @@ export default function UserProfile() {
     return <div>Loading...</div>;
   }
 
-  console.log(data);
+  // console.log(data);.
 
   return (
     <Form {...form}>

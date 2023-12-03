@@ -23,7 +23,7 @@ export default function StreamPage() {
   const [loading, isLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`http://localhost:3500/api/${workspaceId}/stream`, {
+    fetch(`${process.env.NEXT_PUBLIC_SERVER}/api/${workspaceId}/stream`, {
       method: "GET",
       credentials: "include",
       headers: {

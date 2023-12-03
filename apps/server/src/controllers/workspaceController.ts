@@ -7,6 +7,8 @@ import { eq } from "drizzle-orm";
 import { workspaces, members } from "../model/Workspace";
 
 import { client as redisClient } from "../config/redisConnect";
+import { sendInvite } from "../services/sendInvite";
+import { sendInvitation } from "../services/sendInvitation";
 
 export const createWorkspacePost = async (req: Request, res: Response) => {
   // res.send("<h1>You can create new workspace</h1>");
@@ -101,13 +103,13 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
         RegisteredMember: registeredMembers,
       });
 
-      // await sendInvitation(ProjectManager[0].name, title, unregisteredMembers);
+      await sendInvitation(ProjectManager[0].name, title, unregisteredMembers);
     } else {
       res.status(201).send({ message: "Workspace Created successfully" });
     }
     // await sendInvite(ProjectManager[0].name, title, registeredMembers);
 
-    // await sendInvite(ProjectManager[0].name,title,registeredMembers);
+    await sendInvite(ProjectManager[0].name, title, registeredMembers);
   } catch (err) {
     console.log(err);
     return res

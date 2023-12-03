@@ -80,7 +80,7 @@ export const verifyUserHandler = async (req: Request, res: Response) => {
       console.log(err);
       return res.status(500).send({ message: "Internal server error" });
     }
-    console.log(otp_secure);
+    // console.log(otp_secure);
     if (!otp_secure) {
       return res.status(400).send({ message: "OTP expired" });
     }
@@ -230,7 +230,7 @@ export const forgotPasswordPost = async (req: Request, res: Response) => {
     const otp = randomInt(100000, 1000000).toString();
     const otp_secure = await bcrypt.hash(otp, salt);
 
-    sendOTP(user[0].name, email, otp); // sending otp
+    await sendOTP(user[0].name, email, otp); // sending otp
     redisClient.set(email, otp_secure, "EX", 60 * 5); // storing that inside redisclient
 
     console.log(user[0]); // just for testing

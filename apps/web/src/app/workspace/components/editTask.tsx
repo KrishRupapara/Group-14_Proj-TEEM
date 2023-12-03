@@ -86,7 +86,7 @@ export default function EditTask({
   function onSubmit(data: z.infer<typeof FormSchema>) {
     console.log(JSON.stringify(data));
     const res = fetch(
-      `http://localhost:3500/api/${task.workspaceID}/${task.taskID}/editTaskDetails`,
+      `${process.env.NEXT_PUBLIC_SERVER}/api/${task.workspaceID}/${task.taskID}/editTaskDetails`,
       {
         method: "POST",
         credentials: "include",

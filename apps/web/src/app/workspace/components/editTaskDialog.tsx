@@ -1,8 +1,5 @@
-import Task from "@/components/CreateTask";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { faClipboard } from "@fortawesome/free-regular-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import EditTask from "./editTask";
 import type { taskType, assigneeType } from "./taskPage";
 

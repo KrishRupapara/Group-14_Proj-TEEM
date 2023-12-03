@@ -25,6 +25,8 @@ export const requireAuth = (
 ) => {
   const { accessToken, refreshToken } = req.cookies;
 
+  console.log(accessToken, refreshToken);
+
   try {
     if (accessToken) {
       const payload = jwt.verify(

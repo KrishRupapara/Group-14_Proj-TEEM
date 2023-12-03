@@ -72,7 +72,7 @@ export default function Task({ wsID }: { wsID: string }) {
   const router = useRouter();
 
   useEffect(() => {
-    fetch(`http://localhost:3500/api/${wsID}/allpeople`, {
+    fetch(`${process.env.NEXT_PUBLIC_SERVER}/api/${wsID}/allpeople`, {
       method: "GET",
       credentials: "include",
       headers: {
@@ -101,14 +101,17 @@ export default function Task({ wsID }: { wsID: string }) {
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     console.log(JSON.stringify(data));
-    const res = fetch(`http://localhost:3500/api/${wsID}/assignTask`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
+    const res = fetch(
+      `${process.env.NEXT_PUBLIC_SERVER}/api/${wsID}/assignTask`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    )
       .then((res) => res.json())
       .then((data) => {
         if (data.message === "Task created successfully") {
