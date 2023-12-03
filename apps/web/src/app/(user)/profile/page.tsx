@@ -4,7 +4,6 @@ import { faUser } from "@fortawesome/free-solid-svg-icons";
 
 import NavComponent from "@/components/Navbar";
 import UserProfile from "../components/user-profile";
-import NavBar from "@/components/newNavbar";
 
 export default function Profilepage() {
   return (
