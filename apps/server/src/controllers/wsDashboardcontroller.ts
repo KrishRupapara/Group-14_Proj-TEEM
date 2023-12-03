@@ -54,7 +54,7 @@ export const getStream = async (req: Request, res: Response) => {
         objectTitle: task.title,
         objectDescription: task.description,
         objectStatus: task.status ? task.status : null,
-        // objectTime: task.deadline ? new Date(task.deadline) : null,
+        TaskDeadline: task.deadline ? new Date(task.deadline) : null,
         created_at: task.createdAt,
       })),
       ...meetStream.map((meet) => ({
