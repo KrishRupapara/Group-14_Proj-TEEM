@@ -30,13 +30,13 @@ app.set("trust proxy", 1);
 app.use(
   rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 500000, // limit each IP to 500 requests per windowMs
+    max: 5000, // limit each IP to 500 requests per windowMs
   })
 );
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://teem-app.vercel.app",
     credentials: true,
   })
 );

@@ -4,7 +4,7 @@ import { CookieOptions } from "express";
 import jwt from "jsonwebtoken";
 
 export const accessTokenCookieOptions: CookieOptions = {
-  httpOnly: true,
+  httpOnly: false,
   path: "/",
   secure: false,
   expires: new Date(Date.now() + 86400 * 1000),
