@@ -1,0 +1,162 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.feature-bg {
+  background: url("/img/featurebg.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 100%;
+  height: 100%;
+}
+.footer-bg {
+  background: #101d42;
+}
+
+.signup-bg {
+  background: #E5F2FF;
+}
+
+.signup-right {
+  background: #e9f4f8;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  mix-blend-mode: darken;
+}
+.bg-dash {
+  background: linear-gradient(
+    178deg,
+    #779fa1 29.88%,
+    rgba(136, 73, 143, 0.68) 105.03%
+  );
+  /*   background: linear-gradient(179deg, #BDDDFF 1.09%, rgba(255, 255, 255, 0.68) 105.47%); */
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.progress-ring__circle {
+  stroke-dasharray: 400, 400;
+  transition: stroke-dashoffset 0.35s;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+.Invitationbg {
+  background: radial-gradient(
+    56.02% 56% at 50.84% 50%,
+    rgba(170, 89, 142, 0.77) 0%,
+    rgba(224, 203, 168, 0.77) 100%
+  );
+}
+
+.bg-footer {
+  background: linear-gradient(
+    224deg,
+    #002abd 4.54%,
+    #4f66b7 14.52%,
+    rgba(79, 102, 183, 0.56) 29.9%,
+    rgba(79, 102, 183, 0.26) 52.71%,
+    rgba(170, 89, 142, 0.87) 73.01%
+  );
+}
+
+.Projectbg {
+  background: linear-gradient(180deg, #bdddff 0%, #fff 100%);
+}
+
+.progress-ring__circle {
+    stroke-dasharray: 400, 400;
+    transition: stroke-dashoffset 0.35s;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+  }
+  
+@media only screen and (min-width : 480px) 
+{
+    .revprop{ display: flex; flex-direction: column-reverse; }
+}
+
+.bg-nav{
+  background: url("/img/bgimage.webp");
+  background-size: cover;
+}
