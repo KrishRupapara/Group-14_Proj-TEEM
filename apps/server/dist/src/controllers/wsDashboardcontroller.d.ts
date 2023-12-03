@@ -1,0 +1,11 @@
+import { Request, Response } from "express";
+export declare const getStream: (req: Request, res: Response) => Promise<Response<any, Record<string, any>> | undefined>;
+export declare const getAllPeople: (req: Request, res: Response) => Promise<Response<any, Record<string, any>>>;
+export declare const getPeople: (req: Request, res: Response) => Promise<Response<any, Record<string, any>>>;
+export declare const getYourWork: (req: Request, res: Response) => Promise<Response<any, Record<string, any>> | undefined>;
+export declare const getYourMeet: (req: Request, res: Response) => Promise<Response<any, Record<string, any>> | undefined>;
+export declare const editWSDetailsGet: (req: Request, res: Response) => Promise<Response<any, Record<string, any>> | undefined>;
+export declare const editWsDetailsPATCH: (req: Request, res: Response) => Promise<Response<any, Record<string, any>> | undefined>;
+export declare const editWSMembersGet: (req: Request, res: Response) => Promise<Response<any, Record<string, any>> | undefined>;
+export declare const editWSMembersPATCH: (req: Request, res: Response) => Promise<Response<any, Record<string, any>> | undefined>;
+export declare const deleteWorkspaceDELETE: (req: Request, res: Response) => Promise<Response<any, Record<string, any>> | undefined>;

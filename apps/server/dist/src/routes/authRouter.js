@@ -1,0 +1,20 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.authRouter = void 0;
+const express_1 = require("express");
+const controllers_1 = require("../controllers");
+const middleware_1 = require("../middleware");
+const router = (0, express_1.Router)();
+exports.authRouter = router;
+router.route("/signup").post(controllers_1.signUpHandler);
+router.route("/login").post(controllers_1.loginHandler);
+router.route("/verify").post(controllers_1.verifyUserHandler);
+router.route("/auth/oauth/google").get(controllers_1.googleoauthHandler);
+router.route("/googleurl").get(controllers_1.oauthHanlder);
+router.route("/logout").get(middleware_1.requireAuth, controllers_1.logoutHandler);
+router.route("/forgotPassword").post(controllers_1.forgotPasswordPost);
+router.route("/resetPassword").post(controllers_1.resetPasswordPost);
+router.route("/resendOtp").post(controllers_1.resendOtp);
+router.route("/changePassword").post(middleware_1.requireAuth, controllers_1.changePassword);
+router.route("/auth/check").get(middleware_1.requireAuth, controllers_1.checkAuth);
+//# sourceMappingURL=authRouter.js.map
