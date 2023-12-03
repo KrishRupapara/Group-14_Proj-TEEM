@@ -19,7 +19,7 @@ export const tasks = pgTable(
     title: varchar("title", { length: 50 }).notNull(),
     description: varchar("description", { length: 200 }),
     taskType: varchar("taskType", { length: 50 }),
-    deadline: timestamp("deadline", { withTimezone: true}),
+    deadline: timestamp("deadline"),
     status: statusEnum("status").notNull().default("To Do"),
     workspaceID: integer("workspaceID").references(
       () => workspaces.workspaceID,

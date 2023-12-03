@@ -107,64 +107,76 @@ export const assignTaskPost = async (req: Request, res: Response) => {
 };
 
 export const editTaskDetailsGet = async (req: Request, res: Response) => {
-  res.status(200).send({
-    Title: res.locals.taskTitle,
-    Description: res.locals.taskDescription,
-    Deadline: res.locals.taskDeadline,
-    Status: res.locals.taskStatus,
-  });
+  try {
+    const wsID = req.workspace.workspaceID;
+    const taskID = req.task.taskID;
+    if (taskID && wsID) {
+      const Task = await db
+        .select()
+        .from(tasks)
+        .where(and(eq(tasks.taskID, taskID), eq(tasks.workspaceID, wsID)))
+        .limit(1);
+
+      return res.status(200).json(Task[0]);
+    }
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(500)
+      .send({ message: "Internal server error in task exist Middleware" });
+  }
 };
 
 export const editTaskDetailsPATCH = async (req: Request, res: Response) => {
-  const wsID: any = req.params.wsID;
-  const taskID: any = req.params.taskID;
- // const toDo: any = req.params.action;
+  const wsID: any = req.workspace.workspaceID;
+  const taskID: any = req.task.taskID;
+  // const toDo: any = req.params.action;
 
   var { title, description, deadline, type, status } = req.body;
 
   try {
+    if (
+      title === undefined ||
+      description === undefined ||
+      type === undefined ||
+      status === undefined
+    ) {
+      // console.log(undefined);
+      return res.status(400).json({ error: "Fields are insufficient" });
+    } else if (title === null || title === "")
+      return res.status(400).send({ error: "Title can not be empty" });
+    else {
+      const existingTask = await db
+        .select()
+        .from(tasks)
+        .where(and(eq(tasks.taskID, taskID), eq(tasks.workspaceID, wsID)))
+        .limit(1);
 
-    if (title === undefined || description === undefined || type === undefined || status === undefined) {
-      console.log(undefined);
-      return res.status(400).json({ error: "Fields are required" });
+      const updatedFields: { [key: string]: string } = {};
+
+      if (title !== existingTask[0].title) 
+         updatedFields.title = title;
+      if (description !== existingTask[0].description)
+        updatedFields.description = description;
+      if (deadline !== existingTask[0].deadline)
+        updatedFields.deadline = new Date(deadline) as any;
+      if (type !== existingTask[0].taskType)
+        updatedFields.taskType = type;
+      if (status !== existingTask[0].status)
+         updatedFields.status = status;
+
+      if (Object.keys(updatedFields).length > 0) {
+        const updatedTask = await db
+          .update(tasks)
+          .set(updatedFields)
+          .where(and(eq(tasks.taskID, taskID), eq(tasks.workspaceID, wsID)));
+
+        const updatedProgress = await updateProjectProgress(wsID);
+        return res.status(200).send({ message: "Task Edited Successfully" });
+      }
+      return res.status(200).send({ message: "Nothing to update" });
     }
- else if (title === null || title === "") 
-     return res.status(400).send({ error: "Title can not be empty"});
-
- else{
-    if (title !== res.locals.taskTitle) {
-      await db
-        .update(tasks)
-        .set({ title: title })
-        .where(and(eq(tasks.workspaceID, wsID), eq(tasks.taskID, taskID)));
-    }
-
-    if (description !== res.locals.taskDescription) {
-      await db
-        .update(tasks)
-        .set({ description: description })
-        .where(and(eq(tasks.workspaceID, wsID), eq(tasks.taskID, taskID)));
-    }
-
-    if (deadline !== res.locals.taskDeadline) {
-      await db
-        .update(tasks)
-        .set({ deadline: new Date(deadline) as any })
-        .where(and(eq(tasks.workspaceID, wsID), eq(tasks.taskID, taskID)));
-    }
-
-    if (status !== res.locals.taskStatus) {
-      await db
-        .update(tasks)
-        .set({ status: status })
-        .where(and(eq(tasks.workspaceID, wsID), eq(tasks.taskID, taskID)));
-    }
-    
-   
-    res.status(200).send({message: "Task Edited Successfully"})
-
-  }
- } catch (error) {
+  } catch (error) {
     console.log(error);
     return res.status(500).send({ message: "Internal server error in task" });
   }
@@ -188,7 +200,7 @@ export const showAssignees = async (req: Request, res: Response) => {
 
     console.log(Assignees[0]);
     */
-    res.status(200).send({Assignees: res.locals.assignees});
+    res.status(200).send({ Assignees: res.locals.assignees });
   } catch (error) {
     console.log(error);
     return res.status(500).send({ message: "Internal server error in task" });
@@ -208,93 +220,84 @@ export const editTaskAssigneesPATCH = async (req: Request, res: Response) => {
   const unregisteredAssignee: string[] = []; //users which are part of workspace
 
   var { Assignees = [] } = req.body;
-  
-  try{
-  if(Assignees.length === 0)
-    res.status(400).send({Error: "Can't Add Empty Assignees"});
 
-    else{
+  try {
+    if (Assignees.length === 0)
+      res.status(400).send({ Error: "Can't Add Empty Assignees" });
+    else {
+      for (const Assignee of Assignees) {
+        const { assignee_id } = Assignee;
 
-
-
-    for (const Assignee of Assignees) {
-      const { assignee_id } = Assignee;
-
-      if (assignee_id !== undefined) {
-        console.log("Defined");
-        const User = await db
-          .select()
-          .from(users)
-          .where(eq(users.emailId, assignee_id))
-          .limit(1);
-
-        if (User.length > 0) {
-          const member = await db
+        if (assignee_id !== undefined) {
+          console.log("Defined");
+          const User = await db
             .select()
-            .from(members)
-            .where(and(eq(members.workspaceID, wsID), eq(members.memberID, User[0].userID)))
+            .from(users)
+            .where(eq(users.emailId, assignee_id))
             .limit(1);
 
-          console.log(member[0]);
+          if (User.length > 0) {
+            const member = await db
+              .select()
+              .from(members)
+              .where(
+                and(
+                  eq(members.workspaceID, wsID),
+                  eq(members.memberID, User[0].userID)
+                )
+              )
+              .limit(1);
 
-          if (member.length === 0) {
-            // Handle unregistered team members
-            nonmemberAssignee.push(assignee_id);
+            console.log(member[0]);
+
+            if (member.length === 0) {
+              // Handle unregistered team members
+              nonmemberAssignee.push(assignee_id);
+            } else {
+              assignee.push(assignee_id);
+            }
           } else {
-            assignee.push(assignee_id);
-  
+            unregisteredAssignee.push(assignee_id);
           }
-        } else {
-          unregisteredAssignee.push(assignee_id);
+        }
+      }
+
+      if (assignee.length === 0) {
+        res.status(400).send({
+          Error: "No changes made as no assignee is part of the workspace",
+        });
+      } else {
+        await db
+          .delete(assignees)
+          .where(
+            and(eq(assignees.workspaceID, wsID), eq(assignees.taskID, taskID))
+          );
+
+        for (var i = 0; i < assignee.length; ++i) {
+          const User = await db
+            .select()
+            .from(users)
+            .where(eq(users.emailId, assignee[i]))
+            .limit(1);
+
+          await db.insert(assignees).values({
+            taskID: taskID,
+            workspaceID: wsID,
+            assigneeID: User[0].userID,
+          });
         }
 
-        
-    }
-  }
-
-    if(assignee.length === 0)
-    {
-        res.status(400).send({Error: "No changes made as no assignee is part of the workspace"})
-        
-    }
-
-    else{
-    await db
-    .delete(assignees)
-    .where(
-      and(eq(assignees.workspaceID, wsID), eq(assignees.taskID, taskID))
-    );
-
-    for(var i = 0 ; i< assignee.length; ++i)
-    { 
-      const User = await db
-          .select()
-          .from(users)
-          .where(eq(users.emailId, assignee[i]))
-          .limit(1);
-
-      await db
-      .insert(assignees)
-      .values({
-        taskID: taskID,
-        workspaceID: wsID,
-        assigneeID: User[0].userID,
-      });
-    }
-
-    if (nonmemberAssignee.length > 0 || unregisteredAssignee.length > 0) {
-      res.status(201).send({
-        message: "Task assigned only to workspace member",
-        memberAssignee: assignee,
-        NonmemberAssignee: nonmemberAssignee,
-        unregisteredAssignee: unregisteredAssignee,
-      });
-    } 
-    else {
-      res.status(201).send({ message: "Assigned Members Added", assignee });
-    }
-
-  }
+        if (nonmemberAssignee.length > 0 || unregisteredAssignee.length > 0) {
+          res.status(201).send({
+            message: "Task assigned only to workspace member",
+            memberAssignee: assignee,
+            NonmemberAssignee: nonmemberAssignee,
+            unregisteredAssignee: unregisteredAssignee,
+          });
+        } else {
+          res.status(201).send({ message: "Assigned Members Added", assignee });
+        }
+      }
     }
   } catch (error) {
     console.log(error);
