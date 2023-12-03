@@ -22,12 +22,40 @@ export default function UserAuthForm() {
     password: "",
   });
 
+  async function submitgoogle(event: React.SyntheticEvent) {
+    event.preventDefault();
+    try {
+      setIsLoading(true);
+
+      const res = await fetch("http://localhost:3500/api/auth/oauth/google", {
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      }).then((res) => res.json());
+      console.log(res.message);
+
+      if (res.message == "Login successful") {
+        toast.success("Login successful");
+        setTimeout(() => {
+          router.push(`dashboard`);
+        }, 700);
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   async function onSubmit(data: formSchema) {
     try {
       setIsLoading(true);
 
-      const res = await fetch("http://localhost:3500/api/signup", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER}/api/signup`, {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -87,10 +115,8 @@ export default function UserAuthForm() {
           width={140}
           height={150}
         />
-        
       </div>
       <div className="xl:h-[100vh-6rem] sm:h-5/6 flex flex-row ">
-
         <div className="xl:h-full xl:w-1/2 sm:w-full mx-auto p-4 ">
           {/* card */}
           <form

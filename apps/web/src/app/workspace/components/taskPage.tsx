@@ -93,7 +93,7 @@ export default function TaskPage({
 
   const onDelete = () => {
     const res = fetch(
-      `http://localhost:3500/api/${wsID}/${taskID}/edit${Type}Details`,
+      `${process.env.NEXT_PUBLIC_SERVER}/api/${wsID}/${taskID}/edit${Type}Details`,
       {
         method: "DELETE",
         credentials: "include",

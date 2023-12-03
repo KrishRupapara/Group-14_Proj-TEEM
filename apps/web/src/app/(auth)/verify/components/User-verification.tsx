@@ -3,14 +3,13 @@ import React, { FC, useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import toast, { Toaster } from 'react-hot-toast';
-
+import toast, { Toaster } from "react-hot-toast";
 
 let currentOTPIndex: number = 0;
-export default function varification() {
+export default function Verification() {
   const router = useRouter();
-  const searchParams = useSearchParams()
-  const email = searchParams.get('email')
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email");
   const [otp, setotp] = useState<string[]>(new Array(6).fill(""));
   const [ActiveOTPIndex, setActiveOTPIndex] = useState<number>(0);
   // const [status, setstatus] = useState("");
@@ -40,13 +39,10 @@ export default function varification() {
     inputRef.current?.focus();
   }, [ActiveOTPIndex]);
 
-
-
-
   async function onsubmit() {
     try {
       const otp_val = otp.join("");
-      const res = await fetch("http://localhost:3500/api/Verify", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER}/api/Verify`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -79,7 +75,6 @@ export default function varification() {
       }).then((res) => res.json());
       console.log(res.message);
       toast(res.message);
-
     } catch (err: any) {
       console.log("Login failed", err.message);
     }
@@ -109,11 +104,11 @@ export default function varification() {
             width={100}
             height={100}
             className="mx-auto"
-          // className="-z-30 absolute"
-          // fill
+            // className="-z-30 absolute"
+            // fill
           />
           <h1 className="font-bold mb-4 mt-3">Verify your account</h1>
-          <p>Enter the OTP we've sent in your mailbox</p>
+          <p>Enter the OTP we&aphos;ve sent in your mailbox</p>
 
           <div className="flex justify-center items-center space-x-2">
             {otp.map((_, index) => {

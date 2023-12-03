@@ -14,25 +14,6 @@ export default function Loginpage() {
   const router = useRouter();
   // const { toast } = useToast();
 
-  async function submitgoogle(event: React.SyntheticEvent) {
-    event.preventDefault();
-    try {
-      setIsLoading(true);
-
-      const res = await fetch("http://localhost:3500/api/auth/oauth/google", {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
-      }).then((res) => res.json());
-      console.log(res.message);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
   const [isLoading, setIsLoading] = useState(false);
 
   const [user, setUser] = useState({
@@ -46,7 +27,7 @@ export default function Loginpage() {
     try {
       setIsLoading(true);
 
-      const res = await fetch("http://localhost:3500/api/login", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER}/api/login`, {
         method: "POST",
         credentials: "include",
         headers: {

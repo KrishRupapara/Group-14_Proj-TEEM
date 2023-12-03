@@ -24,7 +24,7 @@ export default function PeopleComponent({ wsID }: { wsID: string }) {
   const [loading, isLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`http://localhost:3500/api/${wsID}/people`, {
+    fetch(`${process.env.NEXT_PUBLIC_SERVER}/api/${wsID}/people`, {
       method: "GET",
       credentials: "include",
       headers: {

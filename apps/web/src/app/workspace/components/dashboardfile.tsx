@@ -42,15 +42,18 @@ export default function Dashboardfile() {
     let description = workspace.description;
 
     try {
-      const res: any = fetch("http://localhost:3500/api/createworkspace", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ title, type, description, members }),
-        // body: JSON.stringify({ title, type, description, members }),
-      }).then((res) => res.json());
+      const res: any = fetch(
+        `${process.env.NEXT_PUBLIC_SERVER}/api/createworkspace`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ title, type, description, members }),
+          // body: JSON.stringify({ title, type, description, members }),
+        }
+      ).then((res) => res.json());
 
       if (res.ok) toast.success(res.message);
       else toast.error(res.message);

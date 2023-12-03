@@ -95,7 +95,7 @@ export function MeetingForm({ wsID }: { wsID: string }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`http://localhost:3500/api/${wsID}/allpeople`, {
+    fetch(`${process.env.NEXT_PUBLIC_SERVER}/api/${wsID}/allpeople`, {
       method: "GET",
       credentials: "include",
       headers: {
@@ -128,14 +128,17 @@ export function MeetingForm({ wsID }: { wsID: string }) {
   function onSubmit(data: MeetingFormValues) {
     console.log(JSON.stringify(data));
 
-    const res = fetch(`http://localhost:3500/api/${wsID}/scheduleMeet`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    }).then((res) => res.json());
+    const res = fetch(
+      `${process.env.NEXT_PUBLIC_SERVER}/api/${wsID}/scheduleMeet`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    ).then((res) => res.json());
 
     // console.log(res);
   }

@@ -66,8 +66,9 @@ export const googleoauthHandler = async (req: Request, res: Response) => {
     res.cookie("refreshToken", refreshToken);
     res.cookie("accessToken", accessToken);
 
-    console.log(googleUser.email);
-    res.redirect("http://localhost:3000/dashboard");
+    return res.status(200).send({
+      message: "Login Successful",
+    });
   } catch (err) {
     console.log(err);
   }

@@ -27,7 +27,7 @@ export default function WorkComponent({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`http://localhost:3500/api/${wsID}/your${type}`, {
+    fetch(`${process.env.NEXT_PUBLIC_SERVER}/api/${wsID}/your${type}`, {
       method: "GET",
       credentials: "include",
       headers: {

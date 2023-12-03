@@ -87,7 +87,7 @@ export function EditMeet({
   function onSubmit(data: z.infer<typeof meetingFormSchema>) {
     console.log(JSON.stringify(data));
     const res = fetch(
-      `http://localhost:3500/api/${meet.workspaceID}/${meet.meetID}/editMeetDetails`,
+      `${process.env.NEXT_PUBLIC_SERVER}/api/${meet.workspaceID}/${meet.meetID}/editMeetDetails`,
       {
         method: "POST",
         credentials: "include",
