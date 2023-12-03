@@ -1,7 +1,7 @@
 "use client";
 import Progressbar from "@/components/ui/progress-bar";
 import NavComponent from "@/components/Navbar";
-import NavBar from "@/components/newNavbar";
+
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
