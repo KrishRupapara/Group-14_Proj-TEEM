@@ -1,15 +1,15 @@
 "use client";
-import { cn } from "@/lib/utils";
-import { Input } from "./ui/input";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
-import { Textarea } from "./ui/textarea";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import toast, { Toaster } from "react-hot-toast";
+
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 
 import {
   Form,
@@ -19,27 +19,28 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./ui/form";
-
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "./ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
-import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useState } from "react";
-import { participant } from "@/app/workspace/components/createMeet";
+import {
+  Select,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import toast, { Toaster } from "react-hot-toast";
-import { useRouter } from "next/navigation";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
+
+import { useEffect, useState } from "react";
+import type { taskType, assigneeType } from "./taskPage";
 
 const FormSchema = z.object({
   title: z
@@ -61,59 +62,44 @@ const FormSchema = z.object({
   deadline: z.date({
     required_error: "A deadline is required.",
   }),
-  Assignees: z.array(z.string()).refine((value) => value.some((item) => item), {
-    message: "You have to assign the task to alteast one person.",
-  }),
 });
 
-export default function Task({ wsID }: { wsID: string }) {
-  const [data, setData] = useState<Array<participant>>([]);
-
-  const router = useRouter();
-
-  useEffect(() => {
-    fetch(`http://localhost:3500/api/${wsID}/allpeople`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        setData(data.People);
-      });
-  }, [wsID]);
-
+export default function EditTask({
+  task,
+  assignee,
+}: {
+  task: taskType;
+  assignee: assigneeType[];
+}) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     mode: "onChange",
     defaultValues: {
-      title: "",
-      taskType: "",
-      status: "To Do",
-      description: "",
-      deadline: new Date(),
-      Assignees: [],
+      title: task.title,
+      taskType: task.taskType,
+      status: task.status,
+      description: task.description,
+      deadline: new Date(task.deadline),
     },
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     console.log(JSON.stringify(data));
-    const res = fetch(`http://localhost:3500/api/${wsID}/assignTask`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
+    const res = fetch(
+      `http://localhost:3500/api/${task.workspaceID}/${task.taskID}/editTaskDetails`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    )
       .then((res) => res.json())
       .then((data) => {
-        if (data.message === "Task created successfully") {
+        if (data.message === "Task Edited Successfully") {
           toast.success(data.message);
-          router.forward();
         } else {
           toast.error(data.message);
         }
@@ -252,69 +238,6 @@ export default function Task({ wsID }: { wsID: string }) {
                       />
                     </PopoverContent>
                   </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="Assignees"
-              render={() => (
-                <FormItem>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button className="bg-primaryblue text-black hover:bg-blue-100">
-                        <FontAwesomeIcon
-                          icon={faUserPlus}
-                          className="text-lg text-black mr-2"
-                        />
-                        Assign
-                      </Button>
-                    </PopoverTrigger>
-
-                    <PopoverContent className="w-[200px] p-0">
-                      {data?.map((item, id) => (
-                        <FormField
-                          key={id}
-                          control={form.control}
-                          name="Assignees"
-                          render={({ field }) => {
-                            return (
-                              <FormItem
-                                key={id}
-                                className="flex flex-row items-start space-x-3 space-y-0 my-1 mx-2"
-                              >
-                                <FormControl>
-                                  <Checkbox
-                                    checked={field.value?.includes(
-                                      item.emailID
-                                    )}
-                                    onCheckedChange={(checked) => {
-                                      return checked
-                                        ? field.onChange([
-                                            ...field.value,
-                                            item.emailID,
-                                          ])
-                                        : field.onChange(
-                                            field.value?.filter(
-                                              (value) => value !== item.emailID
-                                            )
-                                          );
-                                    }}
-                                  />
-                                </FormControl>
-                                <FormLabel className="font-normal">
-                                  {item.userName}
-                                </FormLabel>
-                              </FormItem>
-                            );
-                          }}
-                        />
-                      ))}
-                    </PopoverContent>
-                  </Popover>
-
                   <FormMessage />
                 </FormItem>
               )}

@@ -6,11 +6,13 @@ import { useState } from "react";
 import { Icons } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+// import { useToast } from "@/components/ui/use-toast";
 
 export default function Loginpage() {
   const router = useRouter();
+  // const { toast } = useToast();
 
   async function submitgoogle(event: React.SyntheticEvent) {
     event.preventDefault();
@@ -55,15 +57,14 @@ export default function Loginpage() {
 
       console.log(res);
 
-      if (res.message === "Login successful") {
+      if (res.message == "Login successful") {
         toast.success("Login successful");
+
         setTimeout(() => {
           router.push(`dashboard`);
         }, 700);
-      }
-
-      if (res.message === "Invalid Credentials") {
-        toast.error("Invalid Credentials");
+      } else {
+        toast.error(res.message);
       }
     } catch (err) {
       console.log(err);
@@ -87,6 +88,7 @@ export default function Loginpage() {
           height={80}
         />
       </div>
+      <Toaster />
       <div className="h-[calc(100vh-6rem)] flex flex-row">
         {/* <div className="h-full w-1/3 flex flex-col justify-end place-items-start">
                       <Image src="/img/doodleleft.png" alt="Image Not found" width={300} height={250}/>
@@ -200,6 +202,7 @@ export default function Loginpage() {
         {/* <div className='h-full w-1/2 signup-right flex flex-col items-center justify-center'>
                 <Image src="/img/signup1.png" alt="image not found" width={500} height={500} />
             </div> */}
+        T
       </div>
     </div>
   );

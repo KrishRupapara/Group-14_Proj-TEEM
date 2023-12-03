@@ -11,7 +11,8 @@ type stream = {
   objectType: string;
   objectDescription: string;
   created_at: string;
-  meetDate: string;
+  meetDate?: string;
+  TaskDeadline?: string;
 };
 
 export default function StreamPage() {
@@ -41,14 +42,14 @@ export default function StreamPage() {
 
   return (
     <>
-      {data?.map((item) => (
+      {data?.map((item, id) => (
         <Tasks
-          key={item.objectID}
+          key={id}
           id={item.objectID}
           type={item.objectType}
           workspaceId={workspaceId}
           title={item.objectTitle}
-          date={item.meetDate}
+          date={item.meetDate || item.TaskDeadline}
           status={item.objectStatus}
         />
       ))}

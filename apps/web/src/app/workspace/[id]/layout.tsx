@@ -13,11 +13,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={mont.className}>
-        <ProjectNav />
-        {children}
-      </body>
-    </html>
+    // <html lang="en">
+    // <body className={mont.className}>
+    <>
+      <ProjectNav />
+      {children}
+    </>
+    // </body>
+    // </html>
   );
 }

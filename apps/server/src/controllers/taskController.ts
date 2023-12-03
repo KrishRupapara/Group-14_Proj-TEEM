@@ -2,15 +2,11 @@ import { NextFunction, Request, Response } from "express";
 import { db } from "../config/database";
 import { users } from "../model/User";
 import { and, eq } from "drizzle-orm";
-import { getDecodedToken } from "../services/sessionServies";
-import { sendTask } from "../services/sendTask";
-import { signJWT } from "../utils/jwt";
 
 import { tasks } from "../model/Task";
-import { workspaces, members } from "../model/Workspace";
+import { members } from "../model/Workspace";
 
 import { assignees } from "../model/TaskAssignee";
-import { timestamp } from "drizzle-orm/pg-core";
 import { updateProjectProgress } from "../utils/progress";
 
 export const assignTaskGet = async (req: Request, res: Response) => {
@@ -18,7 +14,14 @@ export const assignTaskGet = async (req: Request, res: Response) => {
 };
 
 export const assignTaskPost = async (req: Request, res: Response) => {
-  var { title, description, taskType, deadline, Assignees = [] } = req.body;
+  var {
+    title,
+    description,
+    status,
+    taskType,
+    deadline,
+    Assignees = [],
+  } = req.body;
   const wsID = req.workspace.workspaceID;
 
   if (!(title && deadline)) {
@@ -37,7 +40,8 @@ export const assignTaskPost = async (req: Request, res: Response) => {
         title: title,
         description: description,
         taskType: taskType,
-        deadline: new Date(deadline) as any,
+        deadline: new Date(deadline),
+        status: status,
         workspaceID: wsID,
       })
       .returning({ task_id: tasks.taskID });
@@ -93,7 +97,7 @@ export const assignTaskPost = async (req: Request, res: Response) => {
         unregisteredAssignee: unregisteredAssignee,
       });
     } else {
-      res.status(201).send({ message: "Task assigned successfully", assignee });
+      res.status(201).send({ message: "Task created successfully", assignee });
     }
 
     const updatedProgress = await updateProjectProgress(wsID);
@@ -132,7 +136,7 @@ export const editTaskDetailsPATCH = async (req: Request, res: Response) => {
   const taskID: any = req.task.taskID;
   // const toDo: any = req.params.action;
 
-  var { title, description, deadline, type, status } = req.body;
+  var { title, description, deadline, taskType: type, status } = req.body;
 
   try {
     if (
@@ -154,16 +158,13 @@ export const editTaskDetailsPATCH = async (req: Request, res: Response) => {
 
       const updatedFields: { [key: string]: string } = {};
 
-      if (title !== existingTask[0].title) 
-         updatedFields.title = title;
+      if (title !== existingTask[0].title) updatedFields.title = title;
       if (description !== existingTask[0].description)
         updatedFields.description = description;
       if (deadline !== existingTask[0].deadline)
         updatedFields.deadline = new Date(deadline) as any;
-      if (type !== existingTask[0].taskType)
-        updatedFields.taskType = type;
-      if (status !== existingTask[0].status)
-         updatedFields.status = status;
+      if (type !== existingTask[0].taskType) updatedFields.taskType = type;
+      if (status !== existingTask[0].status) updatedFields.status = status;
 
       if (Object.keys(updatedFields).length > 0) {
         const updatedTask = await db
@@ -235,67 +236,119 @@ export const editTaskAssigneesPATCH = async (req: Request, res: Response) => {
             .from(users)
             .where(eq(users.emailId, assignee_id))
             .limit(1);
-
-          if (User.length > 0) {
-            const member = await db
+          if (assignee_id !== undefined) {
+            console.log("Defined");
+            const User = await db
               .select()
-              .from(members)
-              .where(
-                and(
-                  eq(members.workspaceID, wsID),
-                  eq(members.memberID, User[0].userID)
-                )
-              )
+              .from(users)
+              .where(eq(users.emailId, assignee_id))
               .limit(1);
 
-            console.log(member[0]);
+            if (User.length > 0) {
+              const member = await db
+                .select()
+                .from(members)
+                .where(
+                  and(
+                    eq(members.workspaceID, wsID),
+                    eq(members.memberID, User[0].userID)
+                  )
+                )
+                .limit(1);
+              if (User.length > 0) {
+                const member = await db
+                  .select()
+                  .from(members)
+                  .where(
+                    and(
+                      eq(members.workspaceID, wsID),
+                      eq(members.memberID, User[0].userID)
+                    )
+                  )
+                  .limit(1);
 
-            if (member.length === 0) {
-              // Handle unregistered team members
-              nonmemberAssignee.push(assignee_id);
-            } else {
-              assignee.push(assignee_id);
+                console.log(member[0]);
+
+                if (member.length === 0) {
+                  // Handle unregistered team members
+                  nonmemberAssignee.push(assignee_id);
+                } else {
+                  assignee.push(assignee_id);
+                }
+              } else {
+                unregisteredAssignee.push(assignee_id);
+              }
             }
-          } else {
-            unregisteredAssignee.push(assignee_id);
           }
-        }
-      }
 
-      if (assignee.length === 0) {
-        res.status(400).send({
-          Error: "No changes made as no assignee is part of the workspace",
-        });
-      } else {
-        await db
-          .delete(assignees)
-          .where(
-            and(eq(assignees.workspaceID, wsID), eq(assignees.taskID, taskID))
-          );
+          if (assignee.length === 0) {
+            res.status(400).send({
+              Error: "No changes made as no assignee is part of the workspace",
+            });
+          } else {
+            await db
+              .delete(assignees)
+              .where(
+                and(
+                  eq(assignees.workspaceID, wsID),
+                  eq(assignees.taskID, taskID)
+                )
+              );
 
-        for (var i = 0; i < assignee.length; ++i) {
-          const User = await db
-            .select()
-            .from(users)
-            .where(eq(users.emailId, assignee[i]))
-            .limit(1);
+            for (var i = 0; i < assignee.length; ++i) {
+              const User = await db
+                .select()
+                .from(users)
+                .where(eq(users.emailId, assignee[i]))
+                .limit(1);
+              for (var i = 0; i < assignee.length; ++i) {
+                const User = await db
+                  .select()
+                  .from(users)
+                  .where(eq(users.emailId, assignee[i]))
+                  .limit(1);
 
-          await db.insert(assignees).values({
-            taskID: taskID,
-            workspaceID: wsID,
-            assigneeID: User[0].userID,
-          });
-        }
+                await db.insert(assignees).values({
+                  taskID: taskID,
+                  workspaceID: wsID,
+                  assigneeID: User[0].userID,
+                });
+              }
+              await db.insert(assignees).values({
+                taskID: taskID,
+                workspaceID: wsID,
+                assigneeID: User[0].userID,
+              });
+            }
 
-        if (nonmemberAssignee.length > 0 || unregisteredAssignee.length > 0) {
-          res.status(201).send({
-            message: "Task assigned only to workspace member",
-            memberAssignee: assignee,
-            NonmemberAssignee: nonmemberAssignee,
-            unregisteredAssignee: unregisteredAssignee,
-          });
-        } else {
-          res.status(201).send({ message: "Assigned Members Added", assignee });
+            if (
+              nonmemberAssignee.length > 0 ||
+              unregisteredAssignee.length > 0
+            ) {
+              res.status(201).send({
+                message: "Task assigned only to workspace member",
+                memberAssignee: assignee,
+                NonmemberAssignee: nonmemberAssignee,
+                unregisteredAssignee: unregisteredAssignee,
+              });
+            } else {
+              res
+                .status(201)
+                .send({ message: "Assigned Members Added", assignee });
+            }
+          }
+          if (nonmemberAssignee.length > 0 || unregisteredAssignee.length > 0) {
+            res.status(201).send({
+              message: "Task assigned only to workspace member",
+              memberAssignee: assignee,
+              NonmemberAssignee: nonmemberAssignee,
+              unregisteredAssignee: unregisteredAssignee,
+            });
+          } else {
+            res
+              .status(201)
+              .send({ message: "Assigned Members Added", assignee });
+          }
         }
       }
     }

@@ -114,7 +114,7 @@ export const profilePATCH = async (req: Request, res: Response) => {
     if (updatedUserData.Email !== existingUserData[0].Email) {
       return res.status(400).send({ message: "You cannot change email id" });
     }
-    if (updatedUserData.UserName !== existingUserData[0].UserName) 
+    if (updatedUserData.UserName !== existingUserData[0].UserName)
       updatedFields.name = updatedUserData.UserName;
 
     if (updatedUserData.Organization !== existingUserData[0].Organization)

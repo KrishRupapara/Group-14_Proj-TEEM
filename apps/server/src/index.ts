@@ -30,7 +30,7 @@ app.set("trust proxy", 1);
 app.use(
   rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
+    max: 500000, // limit each IP to 500 requests per windowMs
   })
 );
 
@@ -72,4 +72,3 @@ const server = app.listen(PORT, () => {
 });
 
 module.exports = app;
-

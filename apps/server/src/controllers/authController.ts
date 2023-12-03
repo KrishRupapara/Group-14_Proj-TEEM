@@ -114,6 +114,7 @@ export const loginHandler = async (req: Request, res: Response) => {
 
     if (User.length < 1) {
       return res.status(400).send({ error: "Invalid Credentials" });
+      return res.status(400).send({ error: "Invalid Credentials" });
     }
     const { userID, name, isVerified } = User[0];
 
@@ -144,9 +145,7 @@ export const loginHandler = async (req: Request, res: Response) => {
     //   return res.status(200).send({ message: "Already logged in" });
     // }
 
-//       return res.status(200).send({ message: "Already logged in" });
-    
-
+    //       return res.status(200).send({ message: "Already logged in" });
 
     const access_token = signJWT({ tokenUser }, { expiresIn: "24h" });
 
@@ -375,4 +374,8 @@ export const changePassword = async (req: Request, res: Response) => {
     console.log(err);
     return res.status(500).send({ message: "Internal server error" });
   }
+};
+
+export const checkAuth = async (req: Request, res: Response) => {
+  return res.status(200).send({ message: "success" });
 };

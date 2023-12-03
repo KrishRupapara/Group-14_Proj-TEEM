@@ -22,18 +22,27 @@ export default function StreamTitle({ id }: { id: string }) {
       });
   }, [id]);
 
-  if (loading) {
-    return <div>loading...</div>;
-  }
-
   return (
     <>
       <div className="col-start-1 grid gap-0 content-end p-2 whitespace-nowrap">
-        <p className="font-bold text-3xl">{data.title}</p>
-        <p className="text-lg">{data.projectManager}</p>
+        {loading ? (
+          <>
+            <div className="animate-pulse w-32 h-3 rounded-md mb-2 bg-slate-600"></div>
+            <div className="animate-pulse w-16 h-3 rounded-md bg-slate-700 mb-2"></div>
+          </>
+        ) : (
+          <>
+            <h1 className="text-2xl font-bold">{data.title}</h1>
+            <p className="text-lg">{data.projectManager}</p>
+          </>
+        )}
       </div>
       <div className="col-end-6">
-        <Progressbar percent={data.progress} />
+        {loading ? (
+          <div className="animate-pulse w-32 h-32 rounded-full bg-slate-600 my-2"></div>
+        ) : (
+          <Progressbar percent={data.progress} />
+        )}
       </div>
     </>
   );

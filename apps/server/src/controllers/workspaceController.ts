@@ -2,26 +2,11 @@ import { Request, Response } from "express";
 
 import { db } from "../config/database";
 import { users } from "../model/User";
-import { and, eq } from "drizzle-orm";
-import { getDecodedToken } from "../services/sessionServies";
-import { sendInvitation } from "../services/sendInvitation";
-import { sendInvite } from "../services/sendInvite";
-import { signJWT } from "../utils/jwt";
-
-import { tasks } from "../model/Task";
-import { assignees } from "../model/TaskAssignee";
+import { eq } from "drizzle-orm";
 
 import { workspaces, members } from "../model/Workspace";
 
-import { wsTokenOptions } from "../services/workspaceServices";
-import { serial } from "drizzle-orm/mysql-core";
-import { Serializable } from "child_process";
-import { meets } from "../model/Meet";
-import { invitees } from "../model/MeetInvitee";
-
-export const createWorkspaceGet = async (req: Request, res: Response) => {
-  res.send("<h1>You can create new workspace</h1>");
-};
+import { client as redisClient } from "../config/redisConnect";
 
 export const createWorkspacePost = async (req: Request, res: Response) => {
   // res.send("<h1>You can create new workspace</h1>");
@@ -132,25 +117,26 @@ export const createWorkspacePost = async (req: Request, res: Response) => {
 };
 
 export const getWorkspace = async (req: Request, res: Response) => {
-  /*
-  const workspaceID : {wsID:any} = {
-    wsID: req.params.wsid
-};
- 
-  //console.log(workspaceID);
-
-  const wsToken = signJWT({ ...workspaceID });
-
-  res.cookie("wsToken", wsToken, wsTokenOptions);
-   */
-
   const wsID: any = req.params.wsID;
   try {
+    const cachedData = await redisClient.get(
+      `workspace:${wsID}`,
+      async (err, data) => {
+        if (err) throw err;
+
+        return data;
+      }
+    );
+
+    if (cachedData) {
+      return res.status(200).send(JSON.parse(cachedData));
+    }
+
     const workspace = await db
       .select({
         title: workspaces.title,
         description: workspaces.description,
-        projectManager: workspaces.projectManager,
+        projectManager: users.name,
         progress: workspaces.progress,
       })
       .from(workspaces)
@@ -158,52 +144,13 @@ export const getWorkspace = async (req: Request, res: Response) => {
       .innerJoin(users, eq(workspaces.projectManager, users.userID))
       .limit(1);
 
-    let Members = await db
-      .select({
-        name: users.name,
-        role: members.role,
-      })
-      .from(members)
-      .where(eq(members.workspaceID, wsID))
-      .innerJoin(users, eq(members.memberID, users.userID));
+    await redisClient.set(
+      `workspace:${wsID}`,
+      JSON.stringify(workspace),
+      "EX",
+      60 * 15
+    );
 
-    console.log(JSON.stringify(workspace));
-    console.log(JSON.stringify(Members));
-
-    /*
-    type wsMembers = {
-      name: string,
-      role: string
-    }
-    
-
-    const len = Members.length;
-
-    let wsMemArray: wsMembers[] = new Array(len); 
-
-    for(let i = 0; i<len; ++i)
-    { 
-       wsMemArray[i].name = Members[i].name;
-      if(Members[i].role === 0)
-       {
-        wsMemArray[i].role = 'Teammate';
-       }
-
-       if(Members[i].role === 1)
-       {
-        wsMemArray[i].role = 'Collaborator';
-       }
-
-       if(Members[i].role === 2)
-       {
-        wsMemArray[i].role = 'Client';
-       }
-      }
-     
-    const wsDetails = JSON.stringify(workspace).concat(JSON.stringify(wsMemArray));
-   */
-
-    // const wsDetails = JSON.stringify(workspace).concat(JSON.stringify(Members));
     res.json(workspace);
   } catch (error) {
     console.log(error);

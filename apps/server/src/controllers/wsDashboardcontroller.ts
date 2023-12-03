@@ -17,6 +17,8 @@ import { meets } from "../model/Meet";
 import { PgColumn } from "drizzle-orm/pg-core";
 // import { streamObject } from "../model/streamObject";
 
+import { client as redisClient } from "../config/redisConnect";
+
 export const getStream = async (req: Request, res: Response) => {
   const wsID = parseInt(req.params.wsID, 10);
   if (isNaN(wsID) || !Number.isInteger(wsID)) {
@@ -77,6 +79,8 @@ export const getStream = async (req: Request, res: Response) => {
 
     // Stream.sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
     // // console.log(Stream);
+    // Stream.sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
+    // // console.log(Stream);
 
     res.json({ Stream: Stream });
   } catch (err) {
@@ -85,16 +89,79 @@ export const getStream = async (req: Request, res: Response) => {
   }
 };
 
+export const getAllPeople = async (req: Request, res: Response) => {
+  const wsID = parseInt(req.params.wsID, 10);
+
+  try {
+    const cachedData = await redisClient.get(
+      `ws:${wsID}:allpeople`,
+      (err, reply) => {
+        if (err) {
+          console.log(err);
+          return;
+        }
+        return reply;
+      }
+    );
+
+    if (cachedData) {
+      return res.json(JSON.parse(cachedData));
+    }
+
+    const people = await db
+      .select({
+        userID: users.userID,
+        userName: users.name,
+        emailID: users.emailId,
+        role: members.role,
+      })
+      .from(members)
+      .innerJoin(users, eq(members.memberID, users.userID))
+      .where(eq(members.workspaceID, wsID));
+    console.log(people);
+
+    const current = people.filter((i) => i.userID === req.user.userID);
+
+    await redisClient.set(
+      `ws:${wsID}:allpeople`,
+      JSON.stringify({ People: people, current: current }),
+      "EX",
+      60 * 60 * 24,
+      "NX",
+      (err, reply) => {
+        if (err) {
+          console.log(err);
+          return;
+        }
+      }
+    );
+
+    return res.json({ People: people, current: current[0].userName });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send({ message: "Internal server error in people" });
+  }
+};
+
 export const getPeople = async (req: Request, res: Response) => {
   const wsID = parseInt(req.params.wsID, 10);
-  console.log(wsID);
-  // const wsID = req.params.wsID;
-  if (isNaN(wsID) || !Number.isInteger(wsID)) {
-    return res.status(400).send({ message: "Invalid workspace ID" });
-  }
 
-  // const user_id = req.user.userID;
   try {
+    const cachedData = await redisClient.get(
+      `ws:${wsID}:people`,
+      (err, reply) => {
+        if (err) {
+          console.log(err);
+          return;
+        }
+        return reply;
+      }
+    );
+
+    if (cachedData) {
+      return res.json({ People: JSON.parse(cachedData) });
+    }
+
     const Manager = await db
       .select({
         userID: users.userID,
@@ -143,7 +210,6 @@ export const getPeople = async (req: Request, res: Response) => {
       .where(
         and(eq(members.workspaceID, wsID), eq(members.role, "collaborator"))
       );
-    // console.log(Teammate);
 
     const People = {
       Manager: Manager,
@@ -151,7 +217,31 @@ export const getPeople = async (req: Request, res: Response) => {
       Collaborator: Collaborator,
       Client: Client,
     };
-    // console.log(People);
+
+    await redisClient.set(
+      `ws:${wsID}:people`,
+      JSON.stringify(People),
+      "EX",
+      60 * 60 * 24,
+      "NX",
+      (err, reply) => {
+        if (err) {
+          console.log(err);
+          return;
+        }
+      }
+    );
+
+    const val = await redisClient.get(`ws:10:people`, (err, reply) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      console.log(reply);
+      return reply;
+    });
+
+    console.log(val);
 
     return res.json({ People: People });
   } catch (err) {
@@ -190,7 +280,7 @@ export const getYourWork = async (req: Request, res: Response) => {
           )
           .orderBy(tasks.deadline);
         // console.log(upcomingTask);
-        res.json({ upcomingTask: upcomingTask });
+        res.json(upcomingTask);
       } else {
         const upcomingTask = await db
           .select({
@@ -215,7 +305,7 @@ export const getYourWork = async (req: Request, res: Response) => {
           )
           .orderBy(tasks.deadline);
         // console.log(upcomingTask);
-        res.json({ upcomingTask: upcomingTask });
+        res.json(upcomingTask);
       }
     } else if (filterOption === "All") {
       if (user_id === req.workspace.projectManager) {
@@ -232,7 +322,7 @@ export const getYourWork = async (req: Request, res: Response) => {
           .from(tasks)
           .where(eq(tasks.workspaceID, wsID))
           .orderBy(desc(tasks.createdAt));
-        res.json({ Work: Work });
+        res.json(Work);
       } else {
         let Work = await db
           .select({
@@ -256,7 +346,7 @@ export const getYourWork = async (req: Request, res: Response) => {
             )
           )
           .orderBy(desc(tasks.createdAt));
-        res.json({ Work: Work });
+        res.json(Work);
       }
     }
   } catch (err) {
