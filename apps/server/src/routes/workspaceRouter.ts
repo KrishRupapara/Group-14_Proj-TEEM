@@ -1,6 +1,5 @@
 import { Router } from "express";
 import {
-  createWorkspaceGet,
   createWorkspacePost,
   getWorkspace,
   //settingsWSGet,
@@ -15,6 +14,7 @@ import {
   editWsDetailsPATCH,
   editWSMembersGet,
   editWSMembersPATCH,
+  getAllPeople,
 } from "../controllers";
 
 import {
@@ -25,10 +25,7 @@ import {
 } from "../middleware";
 const router: Router = Router();
 
-router
-  .route("/createWorkspace")
-  .get(requireAuth, createWorkspaceGet)
-  .post(requireAuth, createWorkspacePost);
+router.route("/createWorkspace").post(requireAuth, createWorkspacePost);
 
 router
   .route("/workspace/:wsID")
@@ -46,7 +43,10 @@ router
 router
   .route("/:wsID/people")
   .get(requireAuth, wsExist, authorizeMember, getPeople);
-// .get(getPeople);
+
+router
+  .route("/:wsID/allpeople")
+  .get(requireAuth, wsExist, authorizeMember, getAllPeople);
 
 router
   .route("/:wsID/yourWork")

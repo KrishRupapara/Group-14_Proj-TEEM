@@ -15,7 +15,7 @@ export default function Tasks({
   type: string;
   workspaceId: string;
   title: string;
-  date: string;
+  date: string | undefined;
   status: string;
 }) {
   return (
@@ -26,7 +26,7 @@ export default function Tasks({
           <div>
             <h1 className="font-semibold text-2xl">{title}</h1>
             <p className={cn(rale.className, "text-sm")}>
-              {new Date(date).toDateString()}
+              {new Date(date!).toDateString()}
             </p>
           </div>
         </div>

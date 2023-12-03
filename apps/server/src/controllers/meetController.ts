@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { db } from "../config/database";
 import { meets } from "../model/Meet";
 import { users } from "../model/User";
-import { eq, and } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 import { invitees } from "../model/MeetInvitee";
 import { members } from "../model/Workspace";
 import type { event } from "../types/calendarEvent";
@@ -20,10 +20,10 @@ dotenv.config();
 
 export const scheduleMeetHandler = async (req: Request, res: Response) => {
   const {
-    title,
+    summary: title,
     description,
     agenda,
-    date,
+    startDate: date,
     startTime,
     endTime,
     venue,
@@ -63,23 +63,12 @@ export const scheduleMeetHandler = async (req: Request, res: Response) => {
     .where(eq(users.userID, req.user.userID))
     .limit(1);
 
-  if (organizerData.length > 0 && organizerData[0].gmailID) {
-    insertEvent({
-      userID: organizerData[0].userID,
-      summary: title,
-      description: agenda,
-      startTime: `${date}T${startTime}:00+05:30`,
-      endTime: `${date}T${endTime}:00+05:30`,
-      organizerEmail: organizerData[0].gmailID,
-    });
-  }
-
   if (participants.length > 0) {
-    participants.forEach(async (participant: any) => {
+    participants.forEach(async (participant: string) => {
       const userData = await db
         .select()
         .from(users)
-        .where(eq(users.emailId, participant.emailId))
+        .where(eq(users.emailId, participant))
         .limit(1);
 
       const participantDetails = await db
@@ -110,7 +99,7 @@ export const scheduleMeetHandler = async (req: Request, res: Response) => {
           });
         }
       } else {
-        outsideParticipants.push(participant.emailId);
+        outsideParticipants.push(participant);
       }
     });
   }
@@ -195,7 +184,9 @@ export const deleteMeet = async (req: Request, res: Response) => {
     //delete meet from meet table
     await db
       .delete(meets)
-      .where(eq(meets.meetID, meetIDToDelete) && eq(meets.workspaceID, wsID));
+      .where(
+        and(eq(meets.meetID, meetIDToDelete), eq(meets.workspaceID, wsID))
+      );
 
     //delete meet from meetinvitees table
     await db
@@ -225,6 +216,71 @@ export const showInvitees = async (req: Request, res: Response) => {
       .from(invitees)
       .where(and(eq(invitees.workspaceID, wsID), eq(invitees.meetID, meetID)))
       .innerJoin(users, eq(users.userID, invitees.inviteeID));
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({ message: "Internal server error in task" });
+  }
+};
+
+export const editMeetDetails = async (req: Request, res: Response) => {
+  const wsID: any = req.workspace.workspaceID;
+  const meetID: any = req.params.meetID;
+
+  var { title, agenda, description, date, startTime, endTime, venue } =
+    req.body;
+
+  try {
+    if (
+      !title ||
+      !agenda ||
+      !description ||
+      !date ||
+      !startTime ||
+      !endTime ||
+      !venue
+    ) {
+      return res.status(400).json({ error: "Fields are insufficient" });
+    } else if (title === null || title === "")
+      return res.status(400).send({ error: "Title can not be empty" });
+    else {
+      const existingMeet = await db
+        .select()
+        .from(meets)
+        .where(and(eq(meets.meetID, meetID), eq(meets.workspaceID, wsID)))
+        .limit(1);
+
+      if (existingMeet.length === 0) {
+        return res.status(400).send({ message: "No such meet exists" });
+      }
+
+      if (existingMeet[0].organizerID !== req.user.userID) {
+        return res
+          .status(400)
+          .send({ message: "You are not authorized to edit this meet" });
+      }
+
+      const updatedFields: { [key: string]: string } = {};
+
+      if (title !== existingMeet[0].title) updatedFields.title = title;
+      if (description !== existingMeet[0].description)
+        updatedFields.description = description;
+      if (date !== existingMeet[0].meetDate) updatedFields.meetDate = date;
+      if (agenda !== existingMeet[0].agenda) updatedFields.agenda = agenda;
+      if (startTime !== existingMeet[0].startTime)
+        updatedFields.startTime = startTime;
+      if (endTime !== existingMeet[0].endTime) updatedFields.endTime = endTime;
+      if (venue !== existingMeet[0].venue) updatedFields.venue = venue;
+
+      if (Object.keys(updatedFields).length > 0) {
+        const updatedMeet = await db
+          .update(meets)
+          .set(updatedFields)
+          .where(and(eq(meets.meetID, meetID), eq(meets.workspaceID, wsID)));
+
+        return res.status(200).send({ message: "Meet Edited Successfully" });
+      }
+      return res.status(200).send({ message: "Nothing to update" });
+    }
   } catch (error) {
     console.log(error);
     return res.status(500).send({ message: "Internal server error in task" });

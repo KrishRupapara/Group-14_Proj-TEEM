@@ -34,6 +34,8 @@ export const googleoauthHandler = async (req: Request, res: Response) => {
         name: googleUser.name,
         emailId: googleUser.email,
         isVerified: true,
+        isConnectedToGoogle: true,
+        gmailID: googleUser.email,
       })
       .returning({ id: users.userID });
 

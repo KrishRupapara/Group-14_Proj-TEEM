@@ -12,11 +12,25 @@ import { workspaces, members } from "../model/Workspace";
 import { assignees } from "../model/TaskAssignee";
 import { updateProjectProgress } from "../utils/progress";
 
+import { client as redisClient } from "../config/redisConnect";
+
 export const taskDashboard = async (req: Request, res: Response) => {
   try {
-    const userID = req.user.userID;
+    // const userID = req.user.userID;
     const wsID = req.workspace.workspaceID;
     const task_ID = req.task.taskID;
+
+    const cachedTask = await redisClient.get(`task:${task_ID}`, (err, data) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).send({ message: "Internal server error" });
+      }
+      return data;
+    });
+
+    if (cachedTask) {
+      return res.status(200).json(JSON.parse(cachedTask));
+    }
 
     const Task = await db
       .select()
@@ -29,6 +43,7 @@ export const taskDashboard = async (req: Request, res: Response) => {
         assigneeID: assignees.assigneeID,
         assigneeName: users.name,
         assigneeRole: members.role,
+        assigneeEmailID: users.emailId,
       })
       .from(assignees)
       .innerJoin(users, eq(assignees.assigneeID, users.userID))
@@ -39,15 +54,28 @@ export const taskDashboard = async (req: Request, res: Response) => {
           eq(assignees.workspaceID, members.workspaceID)
         )
       )
-      .where(and(eq(assignees.taskID, task_ID), eq(assignees.workspaceID, wsID)));
-    
-      const taskDashboard = {
-        Task: Task[0],
-        Assignees: Assignees,
-      };
+      .where(
+        and(eq(assignees.taskID, task_ID), eq(assignees.workspaceID, wsID))
+      );
+    console.log(Assignees);
 
-      res.status(200).json(taskDashboard);
+    const taskDashboard = {
+      task: Task[0],
+      Assignees: Assignees,
+    };
 
+    await redisClient.set(
+      `task:${task_ID}`,
+      JSON.stringify(taskDashboard),
+      "EX",
+      60 * 60 * 24
+    );
+
+    if (cachedTask) {
+      return res.status(200).json(JSON.parse(cachedTask));
+    }
+
+    res.status(200).json(taskDashboard);
   } catch (err) {
     console.log(err);
     return res

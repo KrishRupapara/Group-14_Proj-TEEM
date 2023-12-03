@@ -7,12 +7,12 @@ import {
   resetPasswordPost,
   resendOtp,
   changePassword,
+  checkAuth,
 } from "./authController";
 
 import { googleoauthHandler, oauthHanlder } from "./oAuthController";
 
 import {
-  createWorkspaceGet,
   createWorkspacePost,
   getWorkspace,
 
@@ -29,12 +29,18 @@ import {
   profilePATCH,
 } from "./dashboardController";
 
-import { deleteMeet, scheduleMeetHandler } from "./meetController";
+import {
+  deleteMeet,
+  scheduleMeetHandler,
+  showInvitees,
+  editMeetDetails,
+} from "./meetController";
 
 import {
   assignTaskGet,
   assignTaskPost,
   getTask,
+
   //editTaskDetails,
   showAssignees,
   editTaskDetailsGet,
@@ -61,21 +67,20 @@ import {
   editWSMembersGet,
   editWSMembersPATCH,
   deleteWorkspaceDELETE,
+  getAllPeople,
 } from "./wsDashboardcontroller";
-
-import { showInvitees } from "./meetController";
 
 export {
   signUpHandler,
   verifyUserHandler,
   loginHandler,
   googleoauthHandler,
+  checkAuth,
   forgotPasswordPost,
   resetPasswordPost,
   resendOtp,
   changePassword,
   logoutHandler,
-  createWorkspaceGet,
   createWorkspacePost,
   getWorkspace,
   //addMembersGet,
@@ -114,5 +119,7 @@ export {
   deleteTask,
   taskDashboard,
   meetDashboard,
+  editMeetDetails,
   scheduleMeetHandler,
+  getAllPeople,
 };

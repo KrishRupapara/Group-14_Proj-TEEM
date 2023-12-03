@@ -49,6 +49,7 @@ export default function Dashboardfile() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ title, type, description, members }),
+        // body: JSON.stringify({ title, type, description, members }),
       }).then((res) => res.json());
 
       if (res.ok) toast.success(res.message);

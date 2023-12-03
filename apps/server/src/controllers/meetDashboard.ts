@@ -1,24 +1,32 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import { db } from "../config/database";
 import { users } from "../model/User";
 import { and, eq } from "drizzle-orm";
-import { getDecodedToken } from "../services/sessionServies";
-import { sendTask } from "../services/sendTask";
-import { signJWT } from "../utils/jwt";
 
 import { meets } from "../model/Meet";
 import { invitees } from "../model/MeetInvitee";
 
-import { workspaces, members } from "../model/Workspace";
+import { members } from "../model/Workspace";
 
-import { assignees } from "../model/TaskAssignee";
-import { updateProjectProgress } from "../utils/progress";
+import { client as redisClient } from "../config/redisConnect";
 
 export const meetDashboard = async (req: Request, res: Response) => {
   try {
-    const userID = req.user.userID;
     const wsID = req.workspace.workspaceID;
     const meetID = req.meet.meetID;
+
+    const cachedMeet = await redisClient.get(`meet:${meetID}`, (err, data) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).send({ message: "Internal server error" });
+      }
+      return data;
+    });
+
+    if (cachedMeet) {
+      console.log("cached");
+      return res.status(200).json(JSON.parse(cachedMeet));
+    }
 
     const Meet = await db
       .select()
@@ -32,6 +40,7 @@ export const meetDashboard = async (req: Request, res: Response) => {
         inviteesID: invitees.inviteeID,
         inviteesName: users.name,
         inviteesRole: members.role,
+        inviteesEmailID: users.emailId,
       })
       .from(invitees)
       .innerJoin(users, eq(invitees.inviteeID, users.userID))
@@ -43,14 +52,20 @@ export const meetDashboard = async (req: Request, res: Response) => {
         )
       )
       .where(and(eq(invitees.meetID, meetID), eq(invitees.workspaceID, wsID)));
-    
-      const meetDashboard = {
-        Meet: Meet[0],
-        Invitees : Invitees,
-      };
 
-      res.json(meetDashboard);
+    const meetDashboard = {
+      meet: Meet[0],
+      Invitees: Invitees,
+    };
 
+    await redisClient.set(
+      `meet:${meetID}`,
+      JSON.stringify(meetDashboard),
+      "EX",
+      60 * 60 * 24
+    );
+
+    res.json(meetDashboard);
   } catch (err) {
     console.log(err);
     return res
