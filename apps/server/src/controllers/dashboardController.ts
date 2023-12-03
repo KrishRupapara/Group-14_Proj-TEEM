@@ -138,7 +138,7 @@ export const profilePATCH = async (req: Request, res: Response) => {
     } else {
       return res.status(200).send({ message: "Nothing to updated" });
     }
-  }} catch (err) {
+  } catch (err) {
     console.log(err);
     return res
       .status(500)
