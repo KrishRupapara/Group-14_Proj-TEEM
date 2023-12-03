@@ -41,7 +41,7 @@ export default function Setting() {
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "members",
+    name: "members" as never,
   });
 
   // useEffect(() => {
@@ -114,7 +114,7 @@ export default function Setting() {
       // console.log("check");
 
       axios
-        .get("http://localhost:3500/api/" + id + "/editWSDetails")
+        .get(`${process.env.NEXT_PUBLIC_SERVER}/api/` + id + "/editWSDetails")
         .then(
           (res) => {
             setWorkspace({
