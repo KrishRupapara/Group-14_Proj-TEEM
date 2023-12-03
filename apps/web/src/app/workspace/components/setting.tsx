@@ -35,13 +35,13 @@ export default function Setting() {
 
   const { register, handleSubmit, control } = useForm({
     defaultValues: {
-      members: [],
+      members: [{}],
     },
   });
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "members" as never,
+    name: "members",
   });
 
   // useEffect(() => {
