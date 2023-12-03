@@ -1,0 +1,13 @@
+import { NextFunction, Request, Response } from "express";
+export declare const assignTaskGet: (req: Request, res: Response) => Promise<void>;
+export declare const assignTaskPost: (req: Request, res: Response) => Promise<Response<any, Record<string, any>> | undefined>;
+export declare const editTaskDetailsGet: (req: Request, res: Response) => Promise<Response<any, Record<string, any>> | undefined>;
+export declare const editTaskDetailsPATCH: (req: Request, res: Response) => Promise<Response<any, Record<string, any>>>;
+export declare const showAssignees: (req: Request, res: Response) => Promise<Response<any, Record<string, any>> | undefined>;
+export declare const editTaskAssigneesGet: (req: Request, res: Response) => Promise<void>;
+export declare const editTaskAssigneesPATCH: (req: Request, res: Response) => Promise<Response<any, Record<string, any>> | undefined>;
+export declare const getTask: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+export declare const editTaskDetails: (req: Request, res: Response) => Promise<Response<any, Record<string, any>> | undefined>;
+export declare const addTaskAssignees: (req: Request, res: Response) => Promise<Response<any, Record<string, any>> | undefined>;
+export declare const removeTaskAssignees: (req: Request, res: Response) => Promise<Response<any, Record<string, any>> | undefined>;
+export declare const deleteTask: (req: Request, res: Response) => Promise<Response<any, Record<string, any>> | undefined>;
