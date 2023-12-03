@@ -22,18 +22,23 @@ export default function UserAuthForm() {
     password: "",
   });
 
+  console.log("Our server is at", process.env.NEXT_PUBLIC_SERVER);
+
   async function submitgoogle(event: React.SyntheticEvent) {
     event.preventDefault();
     try {
       setIsLoading(true);
 
-      const res = await fetch("http://localhost:3500/api/auth/oauth/google", {
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
-      }).then((res) => res.json());
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER}/api/auth/oauth/google`,
+        {
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(user),
+        }
+      ).then((res) => res.json());
       console.log(res.message);
 
       if (res.message == "Login successful") {
