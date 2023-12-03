@@ -1,5 +1,5 @@
 "use client";
-import Navbar from "@/components/newNavbar";
+import NavComponent from "@/components/Navbar";
 import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
@@ -86,7 +86,7 @@ export default function Dashboardfile() {
   return (
     <>
       <div className="relative lg:h-[4rem] md:h-[3rem] sm:h-[2rem] z-20">
-        <Navbar />
+        <NavComponent />
       </div>
       <div className="bg-[#eef6ff] lg:min-h-[calc(100vh-4rem)] md:min-h-[calc(100vh-3rem)] sm:min-h-[calc(100vh-2rem)] flex flex-col">
         <div className="flex flex-col">
