@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 export const accessTokenCookieOptions: CookieOptions = {
   httpOnly: false,
   path: "/",
-  secure: false,
+  secure: true,
   expires: new Date(Date.now() + 86400 * 1000),
 };
 
