@@ -36,7 +36,8 @@ app.use(
 
 app.use(
   cors({
-    origin: ["https://teem-app.vercel.app", "http://localhost:3000"],
+    // origin: ["https://teem-app.vercel.app", "http://localhost:3000"],
+    origin: "*", //for testing
     credentials: true,
   })
 );
