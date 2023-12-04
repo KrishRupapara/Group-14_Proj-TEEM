@@ -8,7 +8,7 @@ const redisConnect_1 = require("../config/redisConnect");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 exports.accessTokenCookieOptions = {
     httpOnly: true,
-    secure: true,
+    secure: false,
     expires: new Date(Date.now() + 86400 * 1000),
 };
 exports.refreshTokenCookieOptions = Object.assign(Object.assign({}, exports.accessTokenCookieOptions), { expires: new Date(Date.now() + 30 * 86400 * 1000) });
