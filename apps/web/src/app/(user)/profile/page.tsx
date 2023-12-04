@@ -7,12 +7,12 @@ import UserProfile from "../components/user-profile";
 
 export default function Profilepage() {
   return (
-    <div className="h-screen w-screen overflow-hidden bg-[#E5F2FF] flex flex-col relative">
+    <div className="min-h-screen w-screen bg-[#E5F2FF] flex flex-col relative">
       <NavComponent />
       <div className="flex-grow flex items-center justify-center">
-        <div className="h-4/5 my-auto xl:w-1/3 sm:w-4/5 mx-auto bg-white rounded-2xl shadow-xl flex flex-col items-center justify-evenly">
-          <div className="h-24 w-24 flex items-center justify-center rounded-full bg-[#2222223b]">
-            <FontAwesomeIcon icon={faUser} height={50} />
+        <div className="my-auto xl:w-1/3 sm:w-4/5 mx-auto bg-white rounded-2xl shadow-xl flex flex-col items-center justify-evenly py-4">
+          <div className="flex items-center justify-center rounded-full bg-[#2222223b] py-6 px-7">
+            <FontAwesomeIcon icon={faUser} className="text-4xl" />
           </div>
           <UserProfile />
         </div>
