@@ -8,7 +8,7 @@ export default function StreamTitle({ id }: { id: string }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_SERVER}api/workspace/${id}`, {
+    fetch(`${process.env.NEXT_PUBLIC_SERVER}/api/workspace/${id}`, {
       method: "GET",
       credentials: "include",
       headers: {

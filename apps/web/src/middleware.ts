@@ -1,28 +1,33 @@
-import { NextRequest, NextResponse } from "next/server";
+// import { NextRequest, NextResponse } from "next/server";
 
-export async function middleware(req: NextRequest) {
-  if (!req.cookies.get("accessToken")) {
-    const url = new URL("/signup", req.nextUrl.origin);
-    return NextResponse.redirect(url.toString());
-  }
+// export async function middleware(req: NextRequest) {
+//   const accessToken = req.cookies.get("accessToken");
 
-  if (routes.includes(req.nextUrl.pathname) && req.cookies.get("accessToken")) {
-    const url = new URL("/dashboard", req.nextUrl.origin);
-    return NextResponse.redirect(url.toString());
-  }
+//   console.log("middleware", req.nextUrl.pathname, accessToken);
+// //
 
-  return NextResponse.next();
-}
+//   if (!accessToken) {
+//     const url = new URL("/signup", req.nextUrl.origin);
+//     return NextResponse.redirect(url.toString());
+//   }
 
-const routes = ["/"];
+//   if (routes.includes(req.nextUrl.pathname) && accessToken) {
+//     const url = new URL("/dashboard", req.nextUrl.origin);
+//     return NextResponse.redirect(url.toString());
+//   }
 
-export const config = {
-  matcher: [
-    "/profile",
-    "/dashboard",
-    "/workspace/",
-    "/workspace/:id",
-    "/workspace/:id/:slug/",
-    "/calendar",
-  ],
-};
+//   return NextResponse.next();
+// }
+
+// const routes = ["/"];
+
+// export const config = {
+//   matcher: [
+//     "/profile",
+//     "/dashboard",
+//     "/workspace/",
+//     "/workspace/:id",
+//     "/workspace/:id/:slug/",
+//     "/calendar",
+//   ],
+// };
