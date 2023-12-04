@@ -195,7 +195,7 @@ export const deleteMeet = async (req: Request, res: Response) => {
         and(eq(invitees.meetID, meetIDToDelete), eq(invitees.workspaceID, wsID))
       );
 
-    res.send({
+    res.status(200).send({
       message: "meet deleted successfully",
     });
   } catch (err) {
