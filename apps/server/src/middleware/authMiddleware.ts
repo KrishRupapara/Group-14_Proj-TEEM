@@ -34,6 +34,8 @@ export const requireAuth = (
         process.env.JWT_SECRET!
       ) as payload;
 
+      console.log("Payload is", payload);
+
       req.user = payload.tokenUser;
     } else if (refreshToken) {
       const payload = jwt.verify(refreshToken, process.env.JWT_SECRET!) as any;
