@@ -8,7 +8,10 @@ const redisConnect_1 = require("../config/redisConnect");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 exports.accessTokenCookieOptions = {
     httpOnly: true,
-    secure: false,
+    secure: true,
+    sameSite: "lax",
+    domain: "teem-app.vercel.app",
+    path: "/",
     expires: new Date(Date.now() + 86400 * 1000),
 };
 exports.refreshTokenCookieOptions = Object.assign(Object.assign({}, exports.accessTokenCookieOptions), { expires: new Date(Date.now() + 30 * 86400 * 1000) });

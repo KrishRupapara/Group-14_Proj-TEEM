@@ -5,7 +5,10 @@ import jwt from "jsonwebtoken";
 
 export const accessTokenCookieOptions: CookieOptions = {
   httpOnly: true,
-  secure: false,
+  secure: true,
+  sameSite: "lax",
+  domain: "teem-app.vercel.app",
+  path: "/",
   expires: new Date(Date.now() + 86400 * 1000),
 };
 
