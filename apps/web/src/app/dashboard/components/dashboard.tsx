@@ -38,18 +38,22 @@ export default function Dashboard() {
         <div className="h-[calc(100vh-5rem)] w-full">
           <div className="h-1/4"></div>
           <div className="grid grid-cols-3 h-3/4 w-full p-14 gap-10 ">
-            {data?.map((item) => (
-              <Link
-                href={`/workspace/${item.workspaceID}/stream`}
-                key={item.workspaceID}
-              >
-                <WorkspaceContainer
-                  title={item.title}
-                  description={item.description}
-                  progress={item.progress}
-                />
-              </Link>
-            ))}
+            {data.length > 0 ? (
+              data.map((item) => (
+                <Link
+                  href={`/workspace/${item.workspaceID}/stream`}
+                  key={item.workspaceID}
+                >
+                  <WorkspaceContainer
+                    title={item.title}
+                    description={item.description}
+                    progress={item.progress}
+                  />
+                </Link>
+              ))
+            ) : (
+              <h1>Create workspaces to see it in the dashboard</h1>
+            )}
           </div>
         </div>
       </div>
