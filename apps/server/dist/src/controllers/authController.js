@@ -114,7 +114,11 @@ const loginHandler = async (req, res) => {
         console.log(access_token, refresh_token);
         res.cookie("refreshToken", refresh_token, sessionServies_1.refreshTokenCookieOptions);
         res.cookie("accessToken", access_token, sessionServies_1.accessTokenCookieOptions);
-        return res.send({ message: "Login successful" });
+        return res.send({
+            message: "Login successful",
+            access_token,
+            refresh_token,
+        });
     }
     catch (err) {
         console.log(err);

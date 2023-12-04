@@ -194,7 +194,11 @@ export const loginHandler = async (req: Request, res: Response) => {
     res.cookie("refreshToken", refresh_token, refreshTokenCookieOptions);
     res.cookie("accessToken", access_token, accessTokenCookieOptions);
 
-    return res.send({ message: "Login successful" });
+    return res.send({
+      message: "Login successful",
+      access_token,
+      refresh_token,
+    });
   } catch (err) {
     console.log(err);
     return res.status(500).send({ message: "Internal server error" });
