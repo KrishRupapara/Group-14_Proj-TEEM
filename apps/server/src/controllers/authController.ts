@@ -89,10 +89,38 @@ export const verifyUserHandler = async (req: Request, res: Response) => {
       return res.status(400).send({ message: "Invalid OTP" });
     }
 
-    await db
+    const User = await db
       .update(users)
       .set({ isVerified: true })
-      .where(eq(users.emailId, email));
+      .where(eq(users.emailId, email))
+      .returning();
+
+    const userID = User[0].userID;
+    const name = User[0].name;
+    const isVerified = true;
+
+    const tokenUser = { userID, name, isVerified };
+
+    const session_id = User[0].userID.toString();
+
+    const access_token = signJWT({ tokenUser }, { expiresIn: "24h" });
+
+    const refresh_token = signJWT(
+      { tokenUser, session: session_id },
+      { expiresIn: "30d" }
+    );
+
+    const session = await createSession(
+      session_id,
+      req.get("user-agent") || "",
+      refresh_token,
+      isVerified
+    );
+
+    console.log(access_token, refresh_token);
+
+    res.cookie("refreshToken", refresh_token, refreshTokenCookieOptions);
+    res.cookie("accessToken", access_token, accessTokenCookieOptions);
 
     return res.status(200).send({ message: "User verified" });
   });
