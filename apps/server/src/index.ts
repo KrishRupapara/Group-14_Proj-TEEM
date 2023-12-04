@@ -34,12 +34,12 @@ app.use(
   })
 );
 
-// app.use(
-//   cors({
-//     origin: "https://teem-app.vercel.app",
-//     credentials: true,
-//   })
-// );
+app.use(
+  cors({
+    origin: "https://teem-app.vercel.app",
+    credentials: true,
+  })
+);
 app.use(helmet());
 app.use(compression());
 
