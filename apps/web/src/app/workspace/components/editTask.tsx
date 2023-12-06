@@ -88,7 +88,7 @@ export default function EditTask({
     const res = fetch(
       `${process.env.NEXT_PUBLIC_SERVER}/api/${task.workspaceID}/${task.taskID}/editTaskDetails`,
       {
-        method: "POST",
+        method: "PATCH",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",

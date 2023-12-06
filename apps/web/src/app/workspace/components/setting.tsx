@@ -127,7 +127,7 @@ export default function Setting() {
           } /*console.log(res)*/
         )
         .catch((err) => console.log(err));
-      const initialFieldsCount = members.length;
+      const initialFieldsCount = members.length - 1;
       for (let i = 0; i < initialFieldsCount; i++) {
         append({});
       }

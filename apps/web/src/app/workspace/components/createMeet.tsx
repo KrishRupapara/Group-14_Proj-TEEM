@@ -39,6 +39,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 
 import { useEffect, useState } from "react";
+import { useCookies } from "next-client-cookies";
 
 export type participant = {
   userID: number;
@@ -93,6 +94,7 @@ const defaultValues: Partial<MeetingFormValues> = {
 export function MeetingForm({ wsID }: { wsID: string }) {
   const [data, setData] = useState<Array<participant>>([]);
   const [loading, setLoading] = useState(true);
+  const cookie = useCookies();
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_SERVER}/api/${wsID}/allpeople`, {
@@ -100,6 +102,8 @@ export function MeetingForm({ wsID }: { wsID: string }) {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
+        Authorization: "Bearer " + cookie.get("accessToken"),
+        cookie: cookie.get("refreshToken")!,
       },
     })
       .then((res) => res.json())
@@ -135,12 +139,12 @@ export function MeetingForm({ wsID }: { wsID: string }) {
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
+          Authorization: "Bearer " + cookie.get("accessToken"),
+          cookie: cookie.get("refreshToken")!,
         },
         body: JSON.stringify(data),
       }
     ).then((res) => res.json());
-
-    // console.log(res);
   }
 
   const now = new Date();

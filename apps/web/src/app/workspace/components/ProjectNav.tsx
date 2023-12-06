@@ -17,14 +17,22 @@ export default function ProjectNav() {
         <NavComponent />
       </div>
       <div className="flex flex-col w-screen border-b py-2">
-        <div className="w-4/5 mx-auto flex items-center gap-4 text-lg justify-between">
-          <div className="flex items-center gap-4 text-lg">
-            <Link href={`/workspace/${id}/stream`}>Stream</Link>
-            <Link href={`/workspace/${id}/meet`}>Your meet</Link>
-            <Link href={`/workspace/${id}/people`}>People</Link>
-            <Link href={`/workspace/${id}/work`}>Your work</Link>
+        <div className="xl:w-4/5 sm:w-full xl:mx-auto p-1 xl:grid sm:grid xl:grid-cols-2 sm:grid-cols-1 items-center gap-4 text-lg">
+          <div className="xl:w-2/3 p-1 flex justify-between items-center xl:gap-5 sm:gap-2 text-lg">
+            <Link href={`/workspace/${id}/stream`} className="hover:font-bold">
+              Stream
+            </Link>
+            <Link href={`/workspace/${id}/meet`} className="hover:font-bold">
+              Your meet
+            </Link>
+            <Link href={`/workspace/${id}/people`} className="hover:font-bold">
+              People
+            </Link>
+            <Link href={`/workspace/${id}/work`} className="hover:font-bold">
+              Your work
+            </Link>
           </div>
-          <div className="flex items-center justify-between gap-3 text-2xl">
+          <div className="flex xl:justify-end  items-center gap-8 p-1 text-2xl">
             <TaskDialog id={id as string} />
             <MeetDialog id={id as string} />
             <Link href={`/workspace/${id}/setting`}>

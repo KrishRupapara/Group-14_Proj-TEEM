@@ -2,11 +2,6 @@ import { Request, Response } from "express";
 
 import { db } from "../config/database";
 import { users } from "../model/User";
-import { meets } from "../model/Meet";
-import { invitees } from "../model/MeetInvitee";
-import { members } from "../model/Workspace";
-import { tasks } from "../model/Task";
-import { assignees } from "../model/TaskAssignee";
 import { eq } from "drizzle-orm";
 import { sendOTP } from "../services/sendOTP";
 import bcrypt from "bcrypt";
@@ -15,14 +10,11 @@ import { randomInt } from "crypto";
 import { client as redisClient } from "../config/redisConnect";
 import {
   createSession,
-  findSessions,
   accessTokenCookieOptions,
   refreshTokenCookieOptions,
-  getDecodedToken,
   deleteSession,
 } from "../services/sessionServies";
 import { signJWT } from "../utils/jwt";
-import { workspaces } from "../model/Workspace";
 
 export const signUpHandler = async (req: Request, res: Response) => {
   var { email, name, password, organization, jobTitle, country } = req.body;
@@ -95,6 +87,8 @@ export const verifyUserHandler = async (req: Request, res: Response) => {
       .where(eq(users.emailId, email))
       .returning();
 
+    console.log(User);
+
     const userID = User[0].userID;
     const name = User[0].name;
     const isVerified = true;
@@ -117,7 +111,7 @@ export const verifyUserHandler = async (req: Request, res: Response) => {
       isVerified
     );
 
-    console.log(access_token, refresh_token);
+    // console.log("Inside the verify route", access_token, refresh_token);
 
     res.cookie("refreshToken", refresh_token, refreshTokenCookieOptions);
     res.cookie("accessToken", access_token, accessTokenCookieOptions);
@@ -154,7 +148,7 @@ export const loginHandler = async (req: Request, res: Response) => {
     }
 
     const session_id = User[0].userID.toString();
-    const existing_session = await findSessions(session_id);
+    // const existing_session = await findSessions(session_id);
 
     // if (existing_session) {
     //   if (!req.cookies.accessToken) {
@@ -189,11 +183,6 @@ export const loginHandler = async (req: Request, res: Response) => {
       refresh_token,
       isVerified
     );
-
-    // console.log(access_token, refresh_token);
-
-    res.cookie("refreshToken", refresh_token, refreshTokenCookieOptions);
-    res.cookie("accessToken", access_token, accessTokenCookieOptions);
 
     return res.send({
       message: "Login successful",

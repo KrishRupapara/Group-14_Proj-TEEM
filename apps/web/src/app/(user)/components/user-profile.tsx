@@ -10,9 +10,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useCookies } from "next-client-cookies";
 
 const UserProfileSchema = z.object({
   UserName: z.string(),
@@ -22,59 +22,36 @@ const UserProfileSchema = z.object({
   Email: z.string(),
 });
 
-type UserProfileSchemaType = z.infer<typeof UserProfileSchema>;
+export type UserProfileSchemaType = z.infer<typeof UserProfileSchema>;
 
-export default function UserProfile() {
-  const [loading, isLoading] = useState(true);
-  const [data, setData] = useState({
-    Country: "",
-    Email: "",
-    UserName: "",
-    JobTitle: "",
-    Organization: "",
-  });
+export default function UserProfile({
+  userData,
+}: {
+  userData: UserProfileSchemaType;
+}) {
   const server = process.env.NEXT_PUBLIC_SERVER;
+  const requestCookies = useCookies();
 
   const form = useForm<UserProfileSchemaType>({
     resolver: zodResolver(UserProfileSchema),
-    defaultValues: data,
+    defaultValues: userData,
     mode: "onChange",
   });
 
-  useEffect(() => {
-    fetch(`${server}/api/profile`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((data: UserProfileSchemaType) => {
-        setData(data);
-        isLoading(false);
-        form.reset(data);
-      });
-  }, []);
-
-  function onSubmit(data: UserProfileSchemaType) {
+  function onSubmit(data: any) {
     fetch(`${server}/api/profile`, {
       method: "PATCH",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${requestCookies.get("accessToken")}`,
+        cookie: `${requestCookies.get("refreshToken")}`,
       },
       body: JSON.stringify(data),
     }).then((res) => {
       console.log(res);
     });
   }
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  // console.log(data);.
 
   return (
     <Form {...form}>

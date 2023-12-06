@@ -40,6 +40,7 @@ import { participant } from "@/app/workspace/components/createMeet";
 import { Checkbox } from "@/components/ui/checkbox";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useCookies } from "next-client-cookies";
 
 const FormSchema = z.object({
   title: z
@@ -70,6 +71,7 @@ export default function Task({ wsID }: { wsID: string }) {
   const [data, setData] = useState<Array<participant>>([]);
 
   const router = useRouter();
+  const cookie = useCookies();
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_SERVER}/api/${wsID}/allpeople`, {
@@ -77,6 +79,8 @@ export default function Task({ wsID }: { wsID: string }) {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
+        Authorization: "Bearer " + cookie.get("accessToken"),
+        cookie: cookie.get("refreshToken")!,
       },
     })
       .then((res) => res.json())
@@ -84,7 +88,7 @@ export default function Task({ wsID }: { wsID: string }) {
         console.log(data);
         setData(data.People);
       });
-  }, [wsID]);
+  }, [wsID, cookie]);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -108,6 +112,8 @@ export default function Task({ wsID }: { wsID: string }) {
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
+          Authorization: "Bearer " + cookie.get("accessToken"),
+          cookie: cookie.get("refreshToken")!,
         },
         body: JSON.stringify(data),
       }

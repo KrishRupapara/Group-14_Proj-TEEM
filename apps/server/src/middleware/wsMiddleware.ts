@@ -11,10 +11,10 @@ export const wsExist = async (
   res: Response,
   next: NextFunction
 ) => {
-  const wsID:any = parseInt(req.params.wsID, 10);
+  const wsID: any = parseInt(req.params.wsID, 10);
 
   if (wsID != req.params.wsID) {
-    return res.status(400).send({Error: "Invalid wsID"});
+    return res.status(400).send({ Error: "Invalid wsID" });
   }
 
   try {
@@ -28,11 +28,8 @@ export const wsExist = async (
       .where(eq(workspaces.workspaceID, wsID))
       .limit(1);
 
-    // console.log(Workspace[0]);
-
     if (Workspace.length > 0) {
       req.workspace = Workspace[0];
-      // console.log(req.workspace);
       next();
     } else {
       res.status(404).send({ Message: "Workspace Doesn't Exist" });
@@ -50,20 +47,12 @@ export const authorizeManager = async (
   res: Response,
   next: NextFunction
 ) => {
-  // const ws_token = req.cookies.wsToken;
-  // const decodedWsToken = await getDecodedToken(ws_token);
-  // const wsID = decodedWsToken.workspace_id;
-
-  // const workspaceID: { wsID: any } = {
-  //   wsID: wsID,
-  // };
-
   const userID: any = req.user.userID;
 
   try {
     if (req.workspace.projectManager === userID) next();
     else {
-      res.status(401).send({error: "You do not own the workspace"});
+      res.status(401).send({ error: "You do not own the workspace" });
     }
   } catch (error) {
     console.log(error);

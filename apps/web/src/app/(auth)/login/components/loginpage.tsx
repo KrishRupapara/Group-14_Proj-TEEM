@@ -1,20 +1,14 @@
 "use client";
-import React from "react";
 import Image from "next/image";
 import { useState } from "react";
-// import { cn } from "@/lib/utils";
 import { Icons } from "@/components/ui/icons";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-// import { cookies } from "next/headers";
 import { useCookies } from "next-client-cookies";
-// import { useToast } from "@/components/ui/use-toast";
 
 export default function Loginpage() {
   const router = useRouter();
-  // const { toast } = useToast();
   const cookies = useCookies();
 
   const [isLoading, setIsLoading] = useState(false);

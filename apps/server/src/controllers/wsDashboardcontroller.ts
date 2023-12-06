@@ -26,6 +26,11 @@ export const getStream = async (req: Request, res: Response) => {
   }
 
   try {
+    const Workspace = await db
+      .select()
+      .from(workspaces)
+      .where(eq(workspaces.workspaceID, wsID));
+
     const taskStream = await db
       .select()
       .from(tasks)
@@ -82,7 +87,7 @@ export const getStream = async (req: Request, res: Response) => {
     // Stream.sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
     // // console.log(Stream);
 
-    res.json({ Stream: Stream });
+    res.json({ Workspace: Workspace[0], Stream: Stream });
   } catch (err) {
     console.log(err);
     return res.status(500).send({ message: "Internal server error in stream" });
