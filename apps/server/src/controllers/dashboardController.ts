@@ -6,24 +6,12 @@ import { eq } from "drizzle-orm";
 import { users } from "../model/User";
 import { members, workspaces } from "../model/Workspace";
 import { meets } from "../model/Meet";
-import { tasks } from "../model/Task";
 import { assignees } from "../model/TaskAssignee";
 import { invitees } from "../model/MeetInvitee";
 
-// import {updateProjectProgress} from "../utils/progress";
 
 export const dashboardGet = async (req: Request, res: Response) => {
   try {
-    // const User = await db
-    //   .select()
-    //   .from(users)
-    //   .where(eq(users.userID, req.user.userID))
-    //   .limit(1);
-
-    // console.log(User[0].userID);
-    console.log("dashboard");
-    console.log(req.user.userID);
-
     const Workspace = await db
       .select({
         workspaceID: workspaces.workspaceID,
@@ -38,17 +26,13 @@ export const dashboardGet = async (req: Request, res: Response) => {
       .innerJoin(users, eq(workspaces.projectManager, users.userID))
       .where(eq(members.memberID, req.user.userID));
 
-    console.log(Workspace);
-
     res.json(Workspace);
-    // res.send("<h1>Welcom to TEEM dashboard</h1>");
   } catch (err) {
     console.log(err);
     return res
       .status(500)
       .send({ message: "Internal server error in dashboard" });
   }
-  // res.send("<h1>Welcome to TEEM dashboard</h1>");
 };
 
 export const profileGet = async (req: Request, res: Response) => {
@@ -192,13 +176,7 @@ export const profileDELETE = async (req: Request, res: Response) => {
     //delete user from members table
     await db.delete(members).where(eq(userID, members.memberID));
 
-    // // delete user from redisclient
-    // redisClient.del(userToDel[0].emailId);
-
     res.status(200).json({ message: "User deleted successfully" });
-
-    // //delete user from sessions table
-    // deleteSession(userID);
 
     res.json({
       message: `User with email : ${userToDel[0].emailId} deleted successfully`,

@@ -1,6 +1,6 @@
-"use client";
+// "use client";
 import Tasks from "./tasks";
-import { useState, useEffect } from "react";
+// import { useState, useEffect } from "react";
 
 type dataType = {
   meetID?: number;
@@ -19,41 +19,43 @@ type dataType = {
 export default function WorkComponent({
   wsID,
   type,
+  tasks,
 }: {
   wsID: string;
   type: string;
+  tasks: Array<dataType>;
 }) {
-  const [tasks, setTasks] = useState<Array<dataType>>([]);
-  const [loading, setLoading] = useState(true);
+  // const [tasks, setTasks] = useState<Array<dataType>>([]);
+  // const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_SERVER}/api/${wsID}/your${type}`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        setTasks(data);
-        setLoading(false);
-      });
-  }, [wsID, type]);
+  // useEffect(() => {
+  //   fetch(`${process.env.NEXT_PUBLIC_SERVER}/api/${wsID}/your${type}`, {
+  //     method: "GET",
+  //     credentials: "include",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       console.log(data);
+  //       setTasks(data);
+  //       setLoading(false);
+  //     });
+  // }, [wsID, type]);
 
-  if (loading) {
-    return (
-      <div className="w-screen h-screen bg-gradient-to-b from-primaryblue to-white">
-        <div className="w-4/5 mx-auto pt-5">
-          <div className="flex justify-center items-center h-screen">
-            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-primaryblue"></div>
-          </div>
-          <h1>Loading....</h1>
-        </div>
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="w-screen h-screen bg-gradient-to-b from-primaryblue to-white">
+  //       <div className="w-4/5 mx-auto pt-5">
+  //         <div className="flex justify-center items-center h-screen">
+  //           <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-primaryblue"></div>
+  //         </div>
+  //         <h1>Loading....</h1>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="w-screen h-screen bg-gradient-to-b from-primaryblue to-white">

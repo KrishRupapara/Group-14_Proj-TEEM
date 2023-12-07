@@ -35,6 +35,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import type { meetType, inviteeType } from "./taskPage";
 import toast, { Toaster } from "react-hot-toast";
+import { useCookies } from "next-client-cookies";
 
 const meetingFormSchema = z.object({
   title: z
@@ -71,6 +72,7 @@ export function EditMeet({
   invitees: inviteeType[];
 }) {
   const val = meet.endTime.slice(0, 5);
+  const cookie = useCookies();
   const form = useForm<MeetingFormValues>({
     resolver: zodResolver(meetingFormSchema),
     defaultValues: {
@@ -89,16 +91,19 @@ export function EditMeet({
     const res = fetch(
       `${process.env.NEXT_PUBLIC_SERVER}/api/${meet.workspaceID}/${meet.meetID}/editMeetDetails`,
       {
-        method: "POST",
+        method: "PATCH",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie.get("accessToken")}`,
+          cookie: cookie.get("refreshToken")!,
         },
         body: JSON.stringify(data),
       }
     )
       .then((res) => res.json())
       .then((data) => {
+        console.log(data.message);
         if (data.message === "Meet Edited Successfully") {
           toast.success(data.message);
         } else {
@@ -289,11 +294,10 @@ export function EditMeet({
             type="submit"
             className="bg-[#295be75c] rounded-[7px] text-lg hover:bg-[#BDC4D8]  px-6 py-2"
           >
-            Create
+            Edit
           </Button>
         </form>
       </Form>
-      <Toaster />
     </>
   );
 }

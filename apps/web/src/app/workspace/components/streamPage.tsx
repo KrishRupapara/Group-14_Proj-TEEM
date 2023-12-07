@@ -1,10 +1,6 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
 import Tasks from "./tasks";
 
-type stream = {
+export type stream = {
   objectID: number;
   objectStatus: string;
   objectTitle: string;
@@ -15,34 +11,28 @@ type stream = {
   TaskDeadline?: string;
 };
 
-export default function StreamPage() {
-  const params = useParams();
-  const workspaceId = params["id"] as string;
-
-  const [data, setData] = useState<Array<stream>>([]);
-  const [loading, isLoading] = useState(true);
-
-  useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_SERVER}/api/${workspaceId}/stream`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        isLoading(false);
-        setData(data["Stream"]);
-        console.log(data["Stream"]);
-      });
-  }, [workspaceId]);
-
-  if (loading) return <div className="text-red-500">Loading...</div>;
+export default function StreamPage({
+  streamData,
+  workspaceId,
+  manager,
+}: {
+  streamData: Array<stream>;
+  workspaceId: string;
+  manager: string;
+}) {
+  if (streamData.length === 0)
+    return (
+      <div className="flex flex-col justify-center items-center mt-20">
+        <h1 className="text-2xl font-bold">No Tasks</h1>
+        <p className="text-lg text-gray-500">
+          Create a task or a meet to see it here
+        </p>
+      </div>
+    );
 
   return (
     <>
-      {data?.map((item, id) => (
+      {streamData?.map((item, id) => (
         <Tasks
           key={id}
           id={item.objectID}

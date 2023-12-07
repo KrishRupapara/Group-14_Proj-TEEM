@@ -4,10 +4,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function IconType({ type }: { type: string }) {
   return (
-    <div className="rounded-full bg-[#CEDBFF] p-3">
+    <div className="rounded-full bg-[#CEDBFF] py-3 px-4">
       <FontAwesomeIcon
         icon={type === "meet" ? faVideo : faClipboard}
-        className="lg:h-10 lg:w-10 sm:h-9 sm:w-9"
+        className="text-xl"
       />
     </div>
   );

@@ -4,10 +4,10 @@ import { CookieOptions } from "express";
 import jwt from "jsonwebtoken";
 
 export const accessTokenCookieOptions: CookieOptions = {
-  httpOnly: true,
-  secure: true,
-  sameSite: "lax",
-  domain: "teem-app.vercel.app",
+  httpOnly: false,
+  secure: false,
+  // sameSite: "none",
+  // domain: "teem-app.vercel.app",
   path: "/",
   expires: new Date(Date.now() + 86400 * 1000),
 };

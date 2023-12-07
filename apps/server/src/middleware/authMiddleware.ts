@@ -23,9 +23,8 @@ export const requireAuth = (
   res: Response,
   next: NextFunction
 ) => {
-  const { accessToken, refreshToken } = req.cookies;
-
-  console.log(accessToken, refreshToken);
+  const accessToken = req.headers.authorization?.split(" ")[1];
+  const refreshToken = req.headers.cookie;
 
   try {
     if (accessToken) {
@@ -50,10 +49,6 @@ export const requireAuth = (
       res.cookie("accessToken", access_token, accessTokenCookieOptions);
 
       req.user = payload.tokenUser;
-
-      if (!req.user.isVerified) {
-        return res.status(401).json({ message: "Please verify your email" });
-      }
     } else {
       return res.status(401).json({ message: "Please login Again" });
     }

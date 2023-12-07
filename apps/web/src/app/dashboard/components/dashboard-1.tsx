@@ -1,34 +1,8 @@
-"use client";
-import Progressbar from "@/components/ui/progress-bar";
 import NavComponent from "@/components/Navbar";
-
-import { useEffect, useState } from "react";
+import Progressbar from "@/components/ui/progress-bar";
 import Link from "next/link";
 
-export default function Dashboard() {
-  const [loading, isLoading] = useState(true);
-  const [data, setData] = useState([
-    { workspaceID: 0, title: "", description: "", progress: "" },
-  ]);
-
-  useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_SERVER}/api/dashboard`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setData(data);
-        isLoading(false);
-        console.log(data);
-      });
-  }, []);
-
-  if (loading) return <div>Loading...</div>;
-  console.log(data);
+export default function NewDashboard({ data }: { data: any }) {
   return (
     <div className="bg-gradient-to-b from-primaryblue to-white">
       <NavComponent />
@@ -37,7 +11,7 @@ export default function Dashboard() {
         {/* Task */}
         <div className="mt-24 w-full">
           <div className="xl:grid xl:grid-cols-3 sm:grid sm:grid-cols-1 xl:h-3/4 mx-auto sm:h-full w-full gap-10 ">
-            {data?.map((item) => (
+            {data?.map((item: any) => (
               <Link
                 href={`/workspace/${item.workspaceID}/stream`}
                 key={item.workspaceID}

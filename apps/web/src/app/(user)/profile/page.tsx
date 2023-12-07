@@ -1,11 +1,12 @@
-"use client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
-
 import NavComponent from "@/components/Navbar";
-import UserProfile from "../components/user-profile";
+import UserProfile, { UserProfileSchemaType } from "../components/user-profile";
+import { request } from "@/utils/request";
 
-export default function Profilepage() {
+export default async function page() {
+  const res = (await request("/profile", "GET")) as UserProfileSchemaType;
+
   return (
     <div className="min-h-screen w-screen bg-[#E5F2FF] flex flex-col relative">
       <NavComponent />
@@ -14,7 +15,7 @@ export default function Profilepage() {
           <div className="flex items-center justify-center rounded-full bg-[#2222223b] py-6 px-7">
             <FontAwesomeIcon icon={faUser} className="text-4xl" />
           </div>
-          <UserProfile />
+          <UserProfile userData={res} />
         </div>
       </div>
     </div>

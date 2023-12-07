@@ -1,18 +1,15 @@
 "use client";
-import React from "react";
 import Image from "next/image";
 import { useState } from "react";
-// import { cn } from "@/lib/utils";
 import { Icons } from "@/components/ui/icons";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-// import { useToast } from "@/components/ui/use-toast";
+import { useCookies } from "next-client-cookies";
 
 export default function Loginpage() {
   const router = useRouter();
-  // const { toast } = useToast();
+  const cookies = useCookies();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -40,6 +37,9 @@ export default function Loginpage() {
 
       if (res.message == "Login successful") {
         toast.success("Login successful");
+
+        cookies.set("accessToken", res.access_token);
+        cookies.set("refreshToken", res.refresh_token);
 
         setTimeout(() => {
           router.push(`dashboard`);

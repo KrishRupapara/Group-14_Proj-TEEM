@@ -91,7 +91,7 @@ body {
 }
 
 .signup-bg {
-  background: #E5F2FF;
+  background: #e5f2ff;
 }
 
 .signup-right {
@@ -99,14 +99,14 @@ body {
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   mix-blend-mode: darken;
 }
-.bg-dash {
+/* .bg-dash {
   background: linear-gradient(
     178deg,
     #779fa1 29.88%,
     rgba(136, 73, 143, 0.68) 105.03%
   );
   /*   background: linear-gradient(179deg, #BDDDFF 1.09%, rgba(255, 255, 255, 0.68) 105.47%); */
-}
+/* }  */
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -145,18 +145,20 @@ input::-webkit-inner-spin-button {
 }
 
 .progress-ring__circle {
-    stroke-dasharray: 400, 400;
-    transition: stroke-dashoffset 0.35s;
-    transform: rotate(-90deg);
-    transform-origin: 50% 50%;
-  }
-  
-@media only screen and (min-width : 480px) 
-{
-    .revprop{ display: flex; flex-direction: column-reverse; }
+  stroke-dasharray: 400, 400;
+  transition: stroke-dashoffset 0.35s;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
 }
 
-.bg-nav{
+@media only screen and (min-width: 480px) {
+  .revprop {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+}
+
+.bg-nav {
   background: url("/img/bgimage.webp");
   background-size: cover;
 }

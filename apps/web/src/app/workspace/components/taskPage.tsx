@@ -1,17 +1,14 @@
-"use client";
 import IconType from "@/components/ui/IconType";
 import { rale } from "@/utils/fonts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
 import { cn } from "@/lib/utils";
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import EditTaskDialog from "./editTaskDialog";
-import toast, { Toaster } from "react-hot-toast";
-import { useRouter } from "next/navigation";
+import { Toaster } from "react-hot-toast";
 import EditMeetDialog from "./editMeetDialog";
+import DeleteTask from "./DeleteTask";
 
-type dataType = {
+export type dataType = {
   Invitees?: Array<inviteeType>;
   meet?: meetType;
   task?: taskType;
@@ -61,60 +58,14 @@ export default function TaskPage({
   wsID,
   taskID,
   type,
+  data,
 }: {
   wsID: string;
   taskID: string;
   type: string;
+  data: dataType;
 }) {
-  const [data, setData] = useState<dataType>({});
-  const [loading, isLoading] = useState(true);
-  const router = useRouter();
-
-  useEffect(() => {
-    fetch(
-      `http://localhost:3500/api/workspace/${wsID}/${type}/${taskID}/dashboard`,
-      {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        isLoading(false);
-        setData(data);
-        console.log(data);
-      });
-  }, [wsID, taskID, type]);
-
   const Type = type[0].toUpperCase() + type.slice(1);
-
-  const onDelete = () => {
-    const res = fetch(
-      `${process.env.NEXT_PUBLIC_SERVER}/api/${wsID}/${taskID}/edit${Type}Details`,
-      {
-        method: "DELETE",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        if (data.message === "Task deleted successfully") {
-          toast.success("Task deleted successfully");
-          setTimeout(() => {
-            router.push(`/workspace/${wsID}/stream`);
-          }, 700);
-        } else toast.error("Error in deleting task");
-      });
-  };
-
-  if (loading) return <div className="text-red-500">Loading...</div>;
 
   return (
     <div className="w-screen h-[calc(100vh-5.1rem)] bg-gradient-to-b from-primaryblue to-white">
@@ -128,17 +79,24 @@ export default function TaskPage({
                 <h1 className="font-semibold text-2xl">
                   {type === "meet" ? data["meet"]?.title : data["task"]?.title}
                 </h1>
-                <p className={rale.className}>
-                  {type === "meet"
-                    ? new Date(data["meet"]?.meetDate!).toDateString()
-                    : new Date(data["task"]?.deadline!).toDateString()}
-                </p>
+
+                <div className="flex gap-2">
+                  <h1 className="font-semibold"> Created At :</h1>
+                  <p className={rale.className}>
+                    {type === "meet"
+                      ? new Date(data["meet"]?.meetDate!).toDateString()
+                      : new Date(data["task"]?.createdAt!).toDateString()}
+                  </p>
+                </div>
                 {type === "meet" ? (
                   <p>
                     {data["meet"]?.startTime + " to " + data["meet"]?.endTime}
                   </p>
                 ) : (
-                  <p>{data["task"]?.deadline}</p>
+                  <div className="flex gap-2">
+                    <h1 className="font-semibold">Deadline :</h1>
+                    <p>{new Date(data["task"]?.deadline!).toDateString()}</p>
+                  </div>
                 )}
               </div>
             </div>
@@ -195,12 +153,7 @@ export default function TaskPage({
           ) : (
             <EditMeetDialog meet={data["meet"]!} invitees={data["Invitees"]!} />
           )}
-          <Button
-            className="bg-delete text-xl px-24 py-2 hover:bg-delete"
-            onClick={onDelete}
-          >
-            Delete
-          </Button>
+          <DeleteTask wsID={wsID} taskID={taskID} Type={Type} />
         </div>
       </div>
     </div>

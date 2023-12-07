@@ -1,6 +1,3 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import PeopleCard from "./PeopleCard";
 
 export type peopleType = {
@@ -19,28 +16,7 @@ export type person = {
   role: string;
 };
 
-export default function PeopleComponent({ wsID }: { wsID: string }) {
-  const [data, setData] = useState<peopleType>();
-  const [loading, isLoading] = useState(true);
-
-  useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_SERVER}/api/${wsID}/people`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setData(data);
-        console.log(data.People.Manager[0].emailID);
-        isLoading(false);
-      });
-  }, [wsID]);
-
-  if (loading) return <div>Loading....</div>;
-
+export default function PeopleComponent({ data }: { data: peopleType }) {
   return (
     <>
       {/* Project Manager */}

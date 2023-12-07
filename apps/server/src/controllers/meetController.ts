@@ -223,11 +223,13 @@ export const showInvitees = async (req: Request, res: Response) => {
 };
 
 export const editMeetDetails = async (req: Request, res: Response) => {
-  const wsID: any = req.workspace.workspaceID;
-  const meetID: any = req.params.meetID;
+  const wsID = parseInt(req.params.wsID);
+  const meetID = parseInt(req.params.meetID);
 
   var { title, agenda, description, date, startTime, endTime, venue } =
     req.body;
+
+  // console.log(req.body);
 
   try {
     if (
@@ -239,15 +241,17 @@ export const editMeetDetails = async (req: Request, res: Response) => {
       !endTime ||
       !venue
     ) {
-      return res.status(400).json({ error: "Fields are insufficient" });
+      return res.status(400).send({ message: "Fields are insufficient" });
     } else if (title === null || title === "")
-      return res.status(400).send({ error: "Title can not be empty" });
+      return res.status(400).send({ message: "Title can not be empty" });
     else {
       const existingMeet = await db
         .select()
         .from(meets)
         .where(and(eq(meets.meetID, meetID), eq(meets.workspaceID, wsID)))
         .limit(1);
+
+      // console.log(existingMeet);
 
       if (existingMeet.length === 0) {
         return res.status(400).send({ message: "No such meet exists" });
